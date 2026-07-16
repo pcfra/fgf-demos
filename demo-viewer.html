@@ -1,0 +1,1487 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tu Negocio | Tienda Online</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>/* Fallback fonts for offline */ @media offline { body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important; } }</style>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --primary-light: #3b82f6;
+            --accent: #f59e0b;
+            --bg: #f8fafc;
+            --bg-white: #ffffff;
+            --bg-card: #ffffff;
+            --bg-hero: linear-gradient(135deg, #1e3a5f 0%, #0f172a 100%);
+            --text: #1e293b;
+            --text-muted: #64748b;
+            --text-light: #94a3b8;
+            --success: #10b981;
+            --border: #e2e8f0;
+            --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 4px 12px rgba(0,0,0,0.04);
+            --shadow-lg: 0 8px 30px rgba(0,0,0,0.12);
+            --radius: 16px;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+        /* ===== TOP NAV ===== */
+        .navbar {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+            background: rgba(255,255,255,0.95); backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            padding: 0 24px; height: 64px;
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .nav-left { display: flex; align-items: center; gap: 14px; }
+        .nav-logo {
+            width: 42px; height: 42px; border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.2em; background: var(--primary); color: #fff; font-weight: 700;
+        }
+        .nav-name { font-weight: 700; font-size: 1.05em; color: var(--text); }
+        .nav-center { flex: 1; max-width: 480px; margin: 0 24px; }
+        .search-box { width: 100%; position: relative; }
+        .search-box input {
+            width: 100%; padding: 11px 16px 11px 44px;
+            background: var(--bg); border: 1px solid var(--border);
+            border-radius: 12px; color: var(--text); font-size: 0.9em; font-family: inherit;
+            transition: 0.2s;
+        }
+        .search-box input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37,99,235,0.1); background: #fff; }
+        .search-box input::placeholder { color: var(--text-light); }
+        .search-box i { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--text-light); font-size: 0.85em; }
+        .nav-right { display: flex; align-items: center; gap: 8px; }
+        .nav-link {
+            background: none; border: none; color: var(--text-muted);
+            font-size: 1.15em; cursor: pointer; padding: 10px; border-radius: 10px;
+            transition: 0.2s; position: relative; font-family: inherit;
+        }
+        .nav-link:hover { color: var(--primary); background: rgba(37,99,235,0.06); }
+        .cart-badge {
+            position: absolute; top: 4px; right: 4px;
+            width: 20px; height: 20px; background: #ef4444;
+            border-radius: 50%; font-size: 0.6em; font-weight: 700; color: #fff;
+            display: none; align-items: center; justify-content: center;
+        }
+        .nav-admin-btn {
+            padding: 9px 18px; background: var(--primary); color: #fff;
+            border: none; border-radius: 10px; font-size: 0.82em; font-weight: 600;
+            cursor: pointer; font-family: inherit; transition: 0.2s;
+        }
+        .nav-admin-btn:hover { background: var(--primary-dark); }
+
+        /* ===== HERO ===== */
+        .hero {
+            margin-top: 64px; padding: 60px 24px 50px;
+            background: var(--bg-hero); color: #fff; text-align: center;
+            position: relative; overflow: hidden;
+        }
+        .hero::before {
+            content: ''; position: absolute; top: -50%; right: -20%; width: 500px; height: 500px;
+            background: radial-gradient(circle, rgba(37,99,235,0.15) 0%, transparent 70%);
+        }
+        .hero::after {
+            content: ''; position: absolute; bottom: -30%; left: -10%; width: 400px; height: 400px;
+            background: radial-gradient(circle, rgba(245,158,11,0.1) 0%, transparent 70%);
+        }
+        .hero-content { position: relative; z-index: 1; max-width: 700px; margin: 0 auto; }
+        .hero-icon {
+            width: 72px; height: 72px; border-radius: 20px; margin: 0 auto 20px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.8em; background: rgba(255,255,255,0.1); backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.15);
+        }
+        .hero h1 { font-size: 2.6em; font-weight: 900; margin-bottom: 10px; letter-spacing: -0.02em; }
+        .hero .subtitle { color: rgba(255,255,255,0.7); font-size: 1.1em; margin-bottom: 6px; }
+        .hero .address { color: rgba(255,255,255,0.5); font-size: 0.9em; margin-bottom: 4px; }
+        .hero .address i, .hero .horario i { color: var(--accent); margin-right: 4px; }
+        .hero .horario { color: rgba(255,255,255,0.5); font-size: 0.85em; margin-bottom: 24px; }
+        .hero-tags { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
+        .hero-tag {
+            padding: 8px 18px; border-radius: 24px; font-size: 0.8em; font-weight: 600;
+            background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.15);
+            display: flex; align-items: center; gap: 7px; color: rgba(255,255,255,0.85);
+        }
+        .hero-tag i { color: var(--accent); }
+
+        /* ===== TRUST BAR ===== */
+        .trust-bar {
+            background: #fff; border-bottom: 1px solid var(--border);
+            padding: 14px 24px; display: flex; justify-content: center; gap: 40px;
+            flex-wrap: wrap;
+        }
+        .trust-item {
+            display: flex; align-items: center; gap: 8px;
+            font-size: 0.82em; font-weight: 500; color: var(--text-muted);
+        }
+        .trust-item i { color: var(--success); font-size: 1em; }
+
+        /* ===== CATEGORIES ===== */
+        .categories {
+            padding: 24px 24px 12px; max-width: 1100px; margin: 0 auto;
+            display: flex; gap: 10px; overflow-x: auto; scrollbar-width: none;
+        }
+        .categories::-webkit-scrollbar { display: none; }
+        .cat-btn {
+            padding: 10px 20px; border-radius: 24px; font-size: 0.85em; font-weight: 500;
+            background: #fff; border: 1px solid var(--border);
+            color: var(--text-muted); cursor: pointer; white-space: nowrap;
+            font-family: inherit; transition: 0.2s;
+        }
+        .cat-btn:hover { border-color: var(--primary); color: var(--primary); }
+        .cat-btn.active {
+            background: var(--primary); color: #fff; border-color: var(--primary);
+        }
+
+        /* ===== PRODUCTS ===== */
+        .section-header {
+            max-width: 1100px; margin: 0 auto; padding: 28px 24px 16px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .section-header h2 { font-size: 1.35em; font-weight: 800; }
+        .section-header .count { color: var(--text-light); font-size: 0.85em; }
+
+        .products-grid {
+            max-width: 1100px; margin: 0 auto; padding: 0 24px 120px;
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 20px;
+        }
+        .product-card {
+            background: var(--bg-card); border: 1px solid var(--border);
+            border-radius: var(--radius); overflow: hidden; cursor: pointer;
+            transition: 0.3s; position: relative;
+        }
+        .product-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+            border-color: transparent;
+        }
+        .product-img {
+            width: 100%; height: 200px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1em; position: relative; overflow: hidden;
+        }
+        .product-img .product-visual {
+            width: 80px; height: 80px; border-radius: 20px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 2.2em; background: rgba(255,255,255,0.9);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        .product-body { padding: 18px; }
+        .product-cat {
+            font-size: 0.72em; font-weight: 600; text-transform: uppercase;
+            letter-spacing: 0.05em; color: var(--primary); margin-bottom: 6px;
+        }
+        .product-name { font-weight: 700; font-size: 1em; margin-bottom: 6px; line-height: 1.3; }
+        .product-desc { font-size: 0.82em; color: var(--text-muted); margin-bottom: 14px; line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        .product-footer { display: flex; justify-content: space-between; align-items: center; }
+        .product-price { font-weight: 800; font-size: 1.25em; color: var(--text); }
+        .product-price small { font-size: 0.65em; color: var(--text-light); font-weight: 400; display: block; margin-top: 2px; }
+        .add-cart-btn {
+            width: 44px; height: 44px; border-radius: 12px;
+            background: var(--primary); color: #fff; border: none;
+            font-size: 1em; cursor: pointer; transition: 0.2s;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .add-cart-btn:hover { background: var(--primary-dark); transform: scale(1.08); }
+        .product-badge {
+            position: absolute; top: 14px; right: 14px;
+            padding: 5px 12px; border-radius: 8px; font-size: 0.72em; font-weight: 700;
+            background: var(--accent); color: #fff;
+        }
+        .product-stock {
+            position: absolute; top: 14px; left: 14px;
+            padding: 5px 10px; border-radius: 8px; font-size: 0.7em; font-weight: 600;
+            background: rgba(16,185,129,0.1); color: var(--success);
+        }
+
+        /* ===== NO RESULTS ===== */
+        .no-results {
+            grid-column: 1 / -1; text-align: center; padding: 80px 24px;
+        }
+        .no-results .icon { font-size: 3.5em; margin-bottom: 16px; opacity: 0.15; }
+        .no-results p { color: var(--text-muted); font-size: 1.05em; }
+
+        /* ===== PRODUCT MODAL ===== */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); z-index: 300;
+            display: none; align-items: flex-end; justify-content: center;
+        }
+        .modal-overlay.active { display: flex; }
+        .modal {
+            width: 100%; max-width: 520px; max-height: 88vh;
+            background: #fff; border-radius: 24px 24px 0 0;
+            overflow-y: auto; animation: slideUp 0.35s cubic-bezier(0.16,1,0.3,1);
+        }
+        @keyframes slideUp { from { transform: translateY(100%); opacity: 0.5; } to { transform: translateY(0); opacity: 1; } }
+        .modal-img {
+            width: 100%; height: 260px; display: flex; align-items: center;
+            justify-content: center; position: relative;
+        }
+        .modal-img .modal-visual {
+            width: 100px; height: 100px; border-radius: 28px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 3em; background: rgba(255,255,255,0.95);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+        }
+        .modal-close {
+            position: absolute; top: 14px; right: 14px;
+            width: 40px; height: 40px; border-radius: 50%;
+            background: rgba(0,0,0,0.4); color: #fff; border: none;
+            font-size: 1em; cursor: pointer; backdrop-filter: blur(10px);
+        }
+        .modal-body { padding: 28px; }
+        .modal-cat { font-size: 0.75em; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--primary); margin-bottom: 8px; }
+        .modal-name { font-size: 1.5em; font-weight: 800; margin-bottom: 10px; }
+        .modal-desc { color: var(--text-muted); font-size: 0.92em; line-height: 1.7; margin-bottom: 24px; }
+        .modal-price { font-size: 2em; font-weight: 900; color: var(--text); margin-bottom: 24px; }
+        .modal-qty { display: flex; align-items: center; gap: 18px; margin-bottom: 24px; }
+        .qty-btn {
+            width: 48px; height: 48px; border-radius: 14px;
+            background: var(--bg); border: 1px solid var(--border);
+            color: var(--text); font-size: 1.2em; cursor: pointer; transition: 0.2s;
+        }
+        .qty-btn:hover { border-color: var(--primary); color: var(--primary); }
+        .qty-val { font-size: 1.3em; font-weight: 700; min-width: 30px; text-align: center; }
+        .modal-add {
+            width: 100%; padding: 18px; background: var(--primary); color: #fff;
+            border: none; border-radius: 14px; font-size: 1.05em; font-weight: 700;
+            cursor: pointer; font-family: inherit; transition: 0.2s;
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+        }
+        .modal-add:hover { background: var(--primary-dark); }
+        .modal-add .total-label { font-weight: 400; opacity: 0.8; }
+
+        /* ===== CART DRAWER ===== */
+        .cart-overlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.4); z-index: 400; display: none;
+        }
+        .cart-overlay.active { display: block; }
+        .cart-drawer {
+            position: fixed; top: 0; right: 0; bottom: 0;
+            width: 100%; max-width: 420px; background: #fff;
+            z-index: 401; transform: translateX(100%); transition: 0.35s cubic-bezier(0.16,1,0.3,1);
+            display: flex; flex-direction: column; box-shadow: -10px 0 40px rgba(0,0,0,0.1);
+        }
+        .cart-drawer.active { transform: translateX(0); }
+        .cart-header {
+            padding: 22px 28px; border-bottom: 1px solid var(--border);
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .cart-header h3 { font-size: 1.1em; font-weight: 700; }
+        .cart-close {
+            width: 40px; height: 40px; border-radius: 10px;
+            background: var(--bg); border: 1px solid var(--border); color: var(--text);
+            font-size: 1em; cursor: pointer;
+        }
+        .cart-items { flex: 1; overflow-y: auto; padding: 20px 28px; }
+        .cart-empty { text-align: center; padding: 70px 0; color: var(--text-light); }
+        .cart-empty .icon { font-size: 3.5em; margin-bottom: 16px; opacity: 0.15; }
+        .cart-item {
+            display: flex; gap: 16px; padding: 16px 0;
+            border-bottom: 1px solid var(--border); align-items: center;
+        }
+        .cart-item-img {
+            width: 60px; height: 60px; border-radius: 14px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.5em; background: var(--bg); flex-shrink: 0;
+        }
+        .cart-item-info { flex: 1; }
+        .cart-item-name { font-weight: 600; font-size: 0.9em; margin-bottom: 4px; }
+        .cart-item-price { color: var(--text); font-weight: 700; font-size: 0.92em; }
+        .cart-item-qty { display: flex; align-items: center; gap: 10px; margin-top: 8px; }
+        .cart-qty-btn {
+            width: 30px; height: 30px; border-radius: 8px;
+            background: var(--bg); border: 1px solid var(--border);
+            color: var(--text); font-size: 0.85em; cursor: pointer;
+        }
+        .cart-qty-val { font-weight: 700; font-size: 0.9em; min-width: 20px; text-align: center; }
+        .cart-item-remove { color: #ef4444; background: none; border: none; cursor: pointer; font-size: 0.9em; padding: 6px; border-radius: 6px; }
+        .cart-item-remove:hover { background: rgba(239,68,68,0.06); }
+        .cart-footer { padding: 22px 28px; border-top: 1px solid var(--border); }
+        .cart-total {
+            display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px;
+        }
+        .cart-total span { font-size: 0.95em; color: var(--text-muted); }
+        .cart-total strong { font-size: 1.6em; font-weight: 900; }
+        .cart-checkout {
+            width: 100%; padding: 18px; background: #25d366; color: #fff;
+            border: none; border-radius: 14px; font-size: 1em; font-weight: 700;
+            cursor: pointer; font-family: inherit; transition: 0.2s;
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+        }
+        .cart-checkout:hover { background: #1da851; transform: translateY(-1px); }
+
+        /* ===== BOOKING TIME SLOTS ===== */
+        .time-slot {
+            padding: 10px 8px; border-radius: 10px; text-align: center;
+            background: var(--bg); border: 1px solid var(--border);
+            color: var(--text); font-size: 0.85em; font-weight: 600;
+            cursor: pointer; transition: 0.2s; font-family: inherit;
+        }
+        .time-slot:hover { border-color: var(--primary); color: var(--primary); }
+        .time-slot.selected { background: var(--primary); color: #fff; border-color: var(--primary); }
+        .time-slot.unavailable { background: #fee2e2; color: #ef4444; border-color: #fecaca; cursor: not-allowed; opacity: 0.6; }
+
+        /* ===== BOOKING CONFIRMATION BADGE ===== */
+        .booking-badge {
+            position: fixed; top: 80px; right: 24px; z-index: 150;
+            background: #10b981; color: #fff; padding: 14px 24px;
+            border-radius: 14px; font-weight: 600; font-size: 0.9em;
+            box-shadow: 0 8px 25px rgba(16,185,129,0.3);
+            display: none; animation: slideIn 0.3s ease;
+        }
+        @keyframes slideIn { from { transform: translateX(100px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+        /* ===== TOAST ===== */
+        .toast {
+            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(20px);
+            background: var(--text); color: #fff; padding: 14px 28px;
+            border-radius: 14px; font-weight: 600; font-size: 0.9em;
+            z-index: 600; opacity: 0; transition: 0.3s cubic-bezier(0.16,1,0.3,1); pointer-events: none;
+            display: flex; align-items: center; gap: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+        /* ===== CHECKOUT MODAL ===== */
+        .checkout-modal {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); z-index: 500;
+            display: none; align-items: center; justify-content: center; padding: 20px;
+        }
+        .checkout-modal.active { display: flex; }
+        .checkout-box {
+            background: #fff; border-radius: 24px; width: 100%; max-width: 500px;
+            max-height: 90vh; overflow-y: auto; animation: slideUp 0.35s cubic-bezier(0.16,1,0.3,1);
+        }
+        .checkout-header {
+            padding: 24px 28px 0; display: flex; align-items: center; justify-content: space-between;
+        }
+        .checkout-header h2 { font-size: 1.25em; font-weight: 800; }
+        .checkout-close {
+            width: 40px; height: 40px; border-radius: 50%; background: var(--bg);
+            border: 1px solid var(--border); color: var(--text); font-size: 1em; cursor: pointer;
+        }
+        .checkout-body { padding: 24px 28px 28px; }
+        .checkout-summary {
+            background: var(--bg); border-radius: 14px; padding: 16px; margin-bottom: 24px;
+        }
+        .checkout-summary .summary-item {
+            display: flex; justify-content: space-between; padding: 8px 0;
+            font-size: 0.88em; border-bottom: 1px solid var(--border);
+        }
+        .checkout-summary .summary-item:last-child { border-bottom: none; }
+        .checkout-summary .summary-total {
+            display: flex; justify-content: space-between; padding: 12px 0 0;
+            font-weight: 800; font-size: 1.15em;
+        }
+        .form-group { margin-bottom: 16px; }
+        .form-group label { display: block; font-size: 0.82em; font-weight: 600; color: var(--text-muted); margin-bottom: 7px; }
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%; padding: 13px 16px; background: var(--bg); border: 1px solid var(--border);
+            border-radius: 12px; color: var(--text); font-family: inherit; font-size: 0.92em;
+            transition: 0.2s;
+        }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37,99,235,0.08);
+        }
+        .form-group textarea { resize: none; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .checkout-submit {
+            width: 100%; padding: 18px; background: #25d366; color: #fff;
+            border: none; border-radius: 14px; font-size: 1.05em; font-weight: 700;
+            cursor: pointer; font-family: inherit; transition: 0.2s;
+            display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 8px;
+        }
+        .checkout-submit:hover { background: #1da851; }
+
+        /* ===== FOOTER ===== */
+        .footer {
+            padding: 40px 24px; text-align: center; border-top: 1px solid var(--border);
+            background: #fff;
+        }
+        .footer p { font-size: 0.82em; color: var(--text-light); }
+        .footer .brand { color: var(--primary); font-weight: 700; }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 640px) {
+            .nav-center { display: none; }
+            .mobile-search { padding: 0 16px 12px; max-width: 1100px; margin: 0 auto; }
+            .mobile-search .search-box { display: block; }
+            .hero { padding: 44px 20px 36px; }
+            .hero h1 { font-size: 1.8em; }
+            .hero-icon { width: 56px; height: 56px; font-size: 1.4em; }
+            .products-grid { grid-template-columns: repeat(2, 1fr); gap: 14px; padding: 0 16px 100px; }
+            .product-img { height: 140px; }
+            .product-img .product-visual { width: 60px; height: 60px; font-size: 1.6em; }
+            .product-desc { display: none; }
+            .product-body { padding: 14px; }
+            .product-name { font-size: 0.88em; }
+            .product-price { font-size: 1.05em; }
+            .add-cart-btn { width: 38px; height: 38px; border-radius: 10px; font-size: 0.9em; }
+            .trust-bar { gap: 20px; padding: 12px 16px; }
+            .trust-item { font-size: 0.75em; }
+            .section-header { padding: 20px 16px 12px; }
+            .categories { padding: 16px 16px 8px; }
+        }
+
+        /* Product image backgrounds per category */
+        .cat-bg-motores { background: linear-gradient(135deg, #fef3c7, #fde68a); }
+        .cat-bg-transmision { background: linear-gradient(135deg, #dbeafe, #bfdbfe); }
+        .cat-bg-carroceria { background: linear-gradient(135deg, #e0e7ff, #c7d2fe); }
+        .cat-bg-electrico { background: linear-gradient(135deg, #fef9c3, #fde047); }
+        .cat-bg-suspension { background: linear-gradient(135deg, #d1fae5, #a7f3d0); }
+        .cat-bg-climatizacion { background: linear-gradient(135deg, #cffafe, #a5f3fc); }
+        .cat-bg-aceites { background: linear-gradient(135deg, #fce7f3, #fbcfe8); }
+        .cat-bg-frenos { background: linear-gradient(135deg, #fee2e2, #fecaca); }
+        .cat-bg-default { background: linear-gradient(135deg, #f1f5f9, #e2e8f0); }
+    </style>
+</head>
+<body>
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <div class="nav-left">
+            <div class="nav-logo" id="navLogo">FGF</div>
+            <span class="nav-name" id="navName">Mi Negocio</span>
+        </div>
+        <div class="nav-center">
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" id="searchInput" placeholder="${isServiceBusiness ? 'Buscar servicios...' : 'Buscar productos...'}" oninput="filterProducts()">
+            </div>
+        </div>
+        <div class="nav-right">
+            <button class="nav-admin-btn" onclick="openAdmin()" style="display:none;" id="adminBtn">
+                <i class="fas fa-cog"></i> Admin
+            </button>
+            <button class="nav-link" id="cartBtn" onclick="openCart()" style="display:none;">
+                <i class="fas fa-shopping-cart"></i>
+                <span class="cart-badge" id="cartBadge">0</span>
+            </button>
+            <button class="nav-link" id="bookingBtn" onclick="openBookingModal()" style="display:none;">
+                <i class="fas fa-calendar-check"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- HERO -->
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-icon" id="heroIcon">🔧</div>
+            <h1 id="heroName">Tu Negocio</h1>
+            <p class="subtitle" id="heroSubtitle">Tu negocio al alcance de todos</p>
+            <p class="address" id="heroAddress"><i class="fas fa-map-marker-alt"></i> Talagante</p>
+            <p class="horario" id="heroHorario"><i class="fas fa-clock"></i> Lun-Sáb 9:00-19:00</p>
+            <div class="hero-tags" id="heroTags">
+                <span class="hero-tag"><i class="fas fa-globe"></i> Tienda Online</span>
+                <span class="hero-tag"><i class="fas fa-truck"></i> Despacho a Domicilio</span>
+                <span class="hero-tag"><i class="fas fa-credit-card"></i> Tarjeta y Contra Entrega</span>
+                <span class="hero-tag"><i class="fas fa-shield-alt"></i> Garantía Incluida</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- TRUST BAR -->
+    <div class="trust-bar">
+        <div class="trust-item"><i class="fas fa-check-circle"></i> Compra Segura</div>
+        <div class="trust-item"><i class="fas fa-truck"></i> Despacho 24-48h</div>
+        <div class="trust-item"><i class="fas fa-undo"></i> Devolución Gratis</div>
+        <div class="trust-item"><i class="fas fa-headset"></i> Soporte WhatsApp</div>
+    </div>
+
+    <!-- CATEGORIES -->
+    <div class="categories" id="categoriesBar"></div>
+
+    <!-- MOBILE SEARCH -->
+    <div class="mobile-search">
+        <div class="search-box">
+            <i class="fas fa-search"></i>
+            <input type="text" id="searchInputMobile" placeholder="Buscar productos..." oninput="filterProductsMobile()">
+        </div>
+    </div>
+
+    <!-- PRODUCTS -->
+    <div class="section-header">
+        <h2 id="sectionTitle">Nuestros Productos</h2>
+        <span class="count" id="productsCount">0 productos</span>
+    </div>
+    <div class="products-grid" id="productsGrid"></div>
+
+    <!-- PRODUCT DETAIL MODAL -->
+    <div class="modal-overlay" id="productModal" onclick="closeModal(event)">
+        <div class="modal" onclick="event.stopPropagation()">
+            <div class="modal-img" id="modalImg">
+                <button class="modal-close" onclick="closeProductModal()"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-cat" id="modalCat"></div>
+                <div class="modal-name" id="modalName"></div>
+                <div class="modal-desc" id="modalDesc"></div>
+                <div class="modal-price" id="modalPrice"></div>
+                <div class="modal-qty">
+                    <button class="qty-btn" onclick="changeQty(-1)"><i class="fas fa-minus"></i></button>
+                    <span class="qty-val" id="modalQty">1</span>
+                    <button class="qty-btn" onclick="changeQty(1)"><i class="fas fa-plus"></i></button>
+                </div>
+                <button class="modal-add" onclick="addToCartFromModal()">
+                    <i class="fas fa-cart-plus"></i>
+                    <span>Agregar al carro</span>
+                    <span class="total-label" id="modalTotal">$0</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- CART DRAWER -->
+    <div class="cart-overlay" id="cartOverlay" onclick="closeCart()"></div>
+    <div class="cart-drawer" id="cartDrawer">
+        <div class="cart-header">
+            <h3><i class="fas fa-shopping-cart" style="color:var(--primary); margin-right:8px;"></i> Mi Carro</h3>
+            <button class="cart-close" onclick="closeCart()"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="cart-items" id="cartItems">
+            <div class="cart-empty">
+                <div class="icon">🛒</div>
+                <p style="font-weight:600;">Tu carro está vacío</p>
+                <p style="font-size:0.85em; margin-top:6px;">Agrega productos para comenzar</p>
+            </div>
+        </div>
+        <div class="cart-footer" id="cartFooter" style="display:none;">
+            <div class="cart-total">
+                <span>Total</span>
+                <strong id="cartTotal">$0</strong>
+            </div>
+            <button class="cart-checkout" onclick="openCheckout()">
+                <i class="fas fa-check-circle"></i> Finalizar Pedido
+            </button>
+        </div>
+    </div>
+
+    <!-- CHECKOUT MODAL -->
+    <div class="checkout-modal" id="checkoutModal" onclick="closeCheckout(event)">
+        <div class="checkout-box" onclick="event.stopPropagation()">
+            <div class="checkout-header">
+                <h2><i class="fas fa-clipboard-check" style="color:var(--primary); margin-right:8px;"></i> Finalizar Pedido</h2>
+                <button class="checkout-close" onclick="closeCheckoutModal()"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="checkout-body">
+                <div class="checkout-summary" id="checkoutSummary"></div>
+                <form id="checkoutForm" onsubmit="submitOrder(event)">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Tu nombre *</label>
+                            <input id="checkName" required placeholder="Carlos Mendoza">
+                        </div>
+                        <div class="form-group">
+                            <label>Teléfono *</label>
+                            <input id="checkPhone" required placeholder="+56 9 1234 5678">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Dirección de despacho *</label>
+                        <input id="checkAddress" required placeholder="Av. San Martín 1234">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Comuna</label>
+                            <input id="checkComuna" placeholder="Talagante" value="Talagante">
+                        </div>
+                        <div class="form-group">
+                            <label>Método de pago</label>
+                            <select id="checkPayment">
+                                <option value="WhatsApp">📱 WhatsApp</option>
+                                <option value="tarjeta">💳 Tarjeta</option>
+                                <option value="transferencia">🏦 Transferencia</option>
+                                <option value="contraentrega">💵 Contra Entrega</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Notas (opcional)</label>
+                        <textarea id="checkNotes" rows="2" placeholder="Sin timbre, dejar en portón..."></textarea>
+                    </div>
+                    <button type="submit" class="checkout-submit">
+                        <i class="fab fa-whatsapp"></i> Confirmar Pedido
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- BOOKING MODAL -->
+    <div class="checkout-modal" id="bookingModal" onclick="closeBookingModal(event)">
+        <div class="checkout-box" onclick="event.stopPropagation()">
+            <div class="checkout-header">
+                <h2><i class="fas fa-calendar-check" style="color:var(--primary); margin-right:8px;"></i> Agendar Hora</h2>
+                <button class="checkout-close" onclick="closeBookingModal()"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="checkout-body">
+                <!-- Service Selection -->
+                <div class="form-group">
+                    <label>Servicio *</label>
+                    <select id="bookService" onchange="updateBookingPrice()">
+                        <option value="">Seleccionar servicio...</option>
+                    </select>
+                </div>
+                <div id="bookPriceDisplay" style="background:var(--bg); border-radius:14px; padding:16px; margin-bottom:20px; display:none;">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <span style="font-size:0.88em; color:var(--text-muted);">Precio del servicio</span>
+                        <span id="bookPrice" style="font-size:1.3em; font-weight:800; color:var(--primary);">$0</span>
+                    </div>
+                </div>
+                <!-- Professional Selection -->
+                <div class="form-group">
+                    <label>Profesional</label>
+                    <select id="bookProfessional">
+                        <option value="">Cualquier disponible</option>
+                        <option value="prof1">Profesional 1</option>
+                        <option value="prof2">Profesional 2</option>
+                    </select>
+                </div>
+                <!-- Date Selection -->
+                <div class="form-group">
+                    <label>Fecha *</label>
+                    <input type="date" id="bookDate" min="" onchange="updateAvailableSlots()">
+                </div>
+                <!-- Time Slots -->
+                <div class="form-group">
+                    <label>Horario *</label>
+                    <div id="timeSlots" style="display:grid; grid-template-columns:repeat(4,1fr); gap:8px;"></div>
+                </div>
+                <!-- Client Info -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Tu nombre *</label>
+                        <input id="bookName" required placeholder="María López">
+                    </div>
+                    <div class="form-group">
+                        <label>Teléfono *</label>
+                        <input id="bookPhone" required placeholder="+56 9 1234 5678">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Notas (opcional)</label>
+                    <textarea id="bookNotes" rows="2" placeholder="Alergias, preferencias..."></textarea>
+                </div>
+                <button onclick="submitBooking()" class="checkout-submit">
+                    <i class="fab fa-whatsapp"></i> Confirmar Cita
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOAST -->
+    <div class="toast" id="toast"><i class="fas fa-check-circle"></i> <span id="toastMsg"></span></div>
+
+    <!-- FOOTER -->
+    <div class="footer">
+        <p>Powerd by <span class="brand">FGF Digital</span> — Tu negocio en internet</p>
+    </div>
+
+    <script>
+    // ===== AUTONOMOUS MODE =====
+    // No server needed - everything runs locally
+    // Orders & bookings saved to localStorage
+    
+    // ===== URL PARAMS =====
+    const params = new URLSearchParams(window.location.search);
+    const businessName = params.get('nombre') || 'Tu Negocio';
+    const businessTipo = params.get('tipo') || 'taller';
+    const businessTel = params.get('telefono') || '56912345678';
+    const businessDir = params.get('direccion') || 'Talagante';
+    const businessHorario = params.get('horario') || 'Lun-Sáb 9:00-19:00';
+    const businessColor = params.get('color') || 'blue';
+
+    const emojis = {
+        taller:'🔧', desarmaduria:'🚗', ferreteria:'🔩', panaderia:'🍪',
+        restaurante:'🍕', boutique:'👗', clinica:'🏥', peluqueria:'💇',
+        mascotas:'🐕', minimarket:'🛒', libreria:'📚', spa:'💆',
+        barberia:'💈', gimnasio:'💪', psicologo:'🧠', nutricionista:'🥗',
+        kinesiologo:'💆', tatuador:'🎨', profesor:'📚', fotografo:'📸',
+        abogado:'⚖️', otro:'📦'
+    };
+    const colors = {
+        blue:['#2563eb','#1d4ed8'], purple:['#7c3aed','#6d28d9'],
+        green:['#059669','#047857'], orange:['#ea580c','#c2410c'],
+        red:['#dc2626','#b91c1c'], pink:['#db2777','#be185d']
+    };
+
+    // Service-based business types (need appointment booking)
+    const serviceTypes = ['peluqueria','barberia','spa','clinica','mascotas','gimnasio','psicologo','nutricionista','kinesiologo','tatuador','profesor','fotografo','abogado'];
+    const isServiceBusiness = serviceTypes.includes(businessTipo);
+
+    const catBgs = {
+        'Motores':'cat-bg-motores','Transmisión':'cat-bg-transmision','Carrocería':'cat-bg-carroceria',
+        'Eléctrico':'cat-bg-electrico','Suspensión':'cat-bg-suspension','Climatización':'cat-bg-climatizacion',
+        'Aceites':'cat-bg-aceites','Frenos':'cat-bg-frenos','Filtros':'cat-bg-transmision',
+        'Encendido':'cat-bg-electrico','Líquidos':'cat-bg-climatizacion','Accesorios':'cat-bg-suspension',
+        'Luces':'cat-bg-electrico','Servicios':'cat-bg-aceites','Motor':'cat-bg-motores',
+        'Herramientas':'cat-bg-transmision','Construcción':'cat-bg-carroceria','Pinturas':'cat-bg-aceites',
+        'Panes':'cat-bg-motores','Frituras':'cat-bg-motores','Tortas':'cat-bg-aceites',
+        'Salados':'cat-bg-motores','Dulces':'cat-bg-aceites','Bebidas':'cat-bg-climatizacion',
+        'Pizzas':'cat-bg-motores','Empanadas':'cat-bg-motores','Completo':'cat-bg-motores',
+        'Pastas':'cat-bg-transmision','Ensaladas':'cat-bg-suspension','Japonés':'cat-bg-climatizacion',
+        'Vestidos':'cat-bg-aceites','Pantalones':'cat-bg-transmision','Poleras':'cat-bg-suspension',
+        'Chaquetas':'cat-bg-carroceria','Calzado':'cat-bg-motores',
+        'Joyas':'cat-bg-electrico',
+        'Consultas':'cat-bg-suspension','Vacunas':'cat-bg-climatizacion','Prevención':'cat-bg-transmision',
+        'Cirugías':'cat-bg-frenos','Diagnóstico':'cat-bg-electrico','Laboratorio':'cat-bg-motores',
+        'Odontología':'cat-bg-aceites','Estética':'cat-bg-suspension',
+        'Cortes':'cat-bg-motores','Tratamientos':'cat-bg-aceites','Coloración':'cat-bg-electrico',
+        'Manicure':'cat-bg-suspension','Facial':'cat-bg-climatizacion','Masajes':'cat-bg-carroceria',
+        'Alimentos':'cat-bg-motores','Higiene':'cat-bg-climatizacion','Juguetes':'cat-bg-electrico',
+        'Ropa mascota':'cat-bg-aceites','Servicios vet':'cat-bg-suspension',
+        'Lácteos':'cat-bg-climatizacion','Carnes':'cat-bg-frenos','Verduras':'cat-bg-suspension',
+        'Frutas':'cat-bg-motores','Bebidas':'cat-bg-climatizacion','Snacks':'cat-bg-electrico',
+        'Abarrotes':'cat-bg-aceites','Congelados':'cat-bg-climatizacion','Panadería':'cat-bg-motores',
+        'Libros':'cat-bg-motores','Útiles':'cat-bg-electrico','Papelería':'cat-bg-suspension',
+        'Arte':'cat-bg-aceites','Tecnología':'cat-bg-climatizacion',
+        'Masaje':'cat-bg-carroceria','Fisioterapia':'cat-bg-suspension','Relajación':'cat-bg-climatizacion'
+    };
+
+    // ===== PRODUCT CATALOGS PER BUSINESS TYPE =====
+    const catalogs = {
+        desarmaduria: [
+            {id:1,name:'Motor 1.6 Toyota',price:350000,desc:'Motor completo reconstruido. Garantía 3 meses.',cat:'Motores',emoji:'🚗',stock:3,sold:4},
+            {id:2,name:'Caja Velocidades Manual',price:180000,desc:'Caja 5 velocidades. Revisada y probada.',cat:'Transmisión',emoji:'⚙️',stock:5,sold:7},
+            {id:3,name:'Puerta Delantera Derecha',price:45000,desc:'Puerta original sin abolladuras. Color a elección.',cat:'Carrocería',emoji:'🚪',stock:8,sold:12},
+            {id:4,name:'Faros LED Halogen',price:89990,desc:'Faros LED de alto rendimiento. Instalación incluida.',cat:'Eléctrico',emoji:'💡',stock:12,sold:18},
+            {id:5,name:'Parachoques Delantero',price:35000,desc:'Parachoques original. Sin rayones.',cat:'Carrocería',emoji:'🛡️',stock:6,sold:9},
+            {id:6,name:'Alternador 12V',price:55000,desc:'Alternador remanufacturado. 6 meses garantía.',cat:'Eléctrico',emoji:'⚡',stock:10,sold:14},
+            {id:7,name:'Compresor A/C',price:65000,desc:'Compresor de aire acondicionado revisado.',cat:'Climatización',emoji:'❄️',stock:4,sold:6},
+            {id:8,name:'Amortiguador Delantero',price:42000,desc:'Amortiguador hidráulico. Par incluido.',cat:'Suspensión',emoji:'🔩',stock:8,sold:11},
+            {id:9,name:'Pastillas de Freno',price:18990,desc:'Pastillas cerámicas de alto rendimiento.',cat:'Frenos',emoji:'🛑',stock:15,sold:20},
+            {id:10,name:'Filtro de Aceite',price:6990,desc:'Filtro original. Compatible con Toyota.',cat:'Aceites',emoji:'🛢️',stock:30,sold:45},
+            {id:11,name:'Aceite Motor 5W30',price:15990,desc:'Aceite sintético 5L. Para motores Toyota.',cat:'Aceites',emoji:'🛢️',stock:25,sold:38},
+            {id:12,name:'Kit Correa Distribución',price:28990,desc:'Kit completo con tensor y poleas.',cat:'Motor',emoji:'🔧',stock:12,sold:8},
+        ],
+        taller: [
+            {id:1,name:'Cambio de Aceite Sintético',price:29990,desc:'Aceite 5W30 sintético + filtro. 10000km.',cat:'Servicios',emoji:'🛢️',stock:99,sold:45},
+            {id:2,name:'Alineación y Balanceo',price:19990,desc:'Alineación 4 ruedas + balanceo completo.',cat:'Servicios',emoji:'🔧',stock:99,sold:38},
+            {id:3,name:'Revisión Frenos Completa',price:15990,desc:'Inspección de pastillas, discos y líquido.',cat:'Servicios',emoji:'🛑',stock:99,sold:22},
+            {id:4,name:'Diagnóstico Computarizado',price:12990,desc:'Escaneo OBD2 completo. Lectura de códigos.',cat:'Servicios',emoji:'💻',stock:99,sold:30},
+            {id:5,name:'Cambio de Pastillas',price:24990,desc:'Pastillas delanteras cerámicas + mano de obra.',cat:'Frenos',emoji:'🛑',stock:20,sold:15},
+            {id:6,name:'Reparación de Suspensión',price:45000,desc:'Cambio de amortiguadores y bujes.',cat:'Suspensión',emoji:'🔩',stock:99,sold:12},
+            {id:7,name:'Service 80.000km',price:89990,desc:'Service completo: aceite, filtros, correa, líquidos.',cat:'Servicios',emoji:'📋',stock:99,sold:8},
+            {id:8,name:'Reparación Eléctrica',price:35000,desc:'Diagnóstico y reparación de fallas eléctricas.',cat:'Eléctrico',emoji:'⚡',stock:99,sold:18},
+            {id:9,name:'Cambio de Batería',price:59990,desc:'Batería 12V 60AH. Incluye instalación.',cat:'Eléctrico',emoji:'🔋',stock:10,sold:14},
+            {id:10,name:'Reparación A/C',price:45000,desc:'Carga de gas, revisión de compresor.',cat:'Climatización',emoji:'❄️',stock:99,sold:10},
+            {id:11,name:'Purga de Frenos',price:9990,desc:'Purga de líquido de frenos.',cat:'Frenos',emoji:'🛢️',stock:99,sold:25},
+            {id:12,name:'Cambio Correa Distribución',price:38990,desc:'Kit correa + tensor + poleas. Mano de obra incluida.',cat:'Servicios',emoji:'🔧',stock:99,sold:9},
+        ],
+        ferreteria: [
+            {id:1,name:'Martillo Stanley 16oz',price:8990,desc:'Martillo de uña profesional. Mango fibra.',cat:'Herramientas',emoji:'🔨',stock:20,sold:15},
+            {id:2,name:'Taladro Percutor Bosch',price:49990,desc:'Taladro 750W. 2 velocidades + percutor.',cat:'Herramientas',emoji:'🔩',stock:8,sold:12},
+            {id:3,name:'Sierra Circular 7"',price:39990,desc:'Sierra eléctrica 1400W. Corte preciso.',cat:'Herramientas',emoji:'🪚',stock:5,sold:7},
+            {id:4,name:'Pintura Interior Latex 20L',price:28990,desc:'Pintura vinílica blanco. Rendimiento 10m²/L.',cat:'Pinturas',emoji:'🎨',stock:15,sold:20},
+            {id:5,name:'Cemento Gris 25kg',price:5990,desc:'Cemento grisPortland. Mínimo resistencia 250kg.',cat:'Construcción',emoji:'🧱',stock:50,sold:40},
+            {id:6,name:'Ladrillo Hueco x12',price:750,desc:'Ladrillo hueco 18x18x33cm. Muro exterior.',cat:'Construcción',emoji:'🧱',stock:200,sold:150},
+            {id:7,name:'Tubería PVC 4"',price:3990,desc:'Tubería PVC 4 pulgadas. Agua residual.',cat:'Construcción',emoji:'🔧',stock:30,sold:18},
+            {id:8,name:'Cable Eléctrico 2.5mm x100m',price:18990,desc:'Cable cobre flexible. Para instalaciones.',cat:'Eléctrico',emoji:'⚡',stock:12,sold:10},
+            {id:9,name:'Tornillos Acero x100',price:4990,desc:'Tornillos para madera 3"x#8. Acero zincado.',cat:'Herramientas',emoji:'🔩',stock:40,sold:35},
+            {id:10,name:'Sierra Manual 24"',price:7990,desc:'Sierra de mano profesional. Hoja incluida.',cat:'Herramientas',emoji:'🪚',stock:10,sold:8},
+            {id:11,name:'Pintura Terraza 20L',price:34990,desc:'Pintura acrílica para techos y terrazas.',cat:'Pinturas',emoji:'🎨',stock:12,sold:9},
+            {id:12,name:'Nivel Láser 360°',price:29990,desc:'Nivel láser autonivelante. Alcance 50m.',cat:'Herramientas',emoji:'📏',stock:6,sold:4},
+        ],
+        panaderia: [
+            {id:1,name:'Pan Marraqueta x1',price:450,desc:'Pan fresco del día. Crujiente por fuera.',cat:'Panes',emoji:'🍞',stock:100,sold:250},
+            {id:2,name:'Pan Hallulla x1',price:500,desc:'Pan suave y mantecoso. Ideal para sándwich.',cat:'Panes',emoji:'🍞',stock:80,sold:180},
+            {id:3,name:'Sopaipilla x1',price:400,desc:'Sopaipilla caliente. Con mostaza opcional.',cat:'Frituras',emoji:'🍩',stock:60,sold:200},
+            {id:4,name:'Torta de Chocolate',price:22990,desc:'Torta completa. 12 porciones. Crema y ganache.',cat:'Tortas',emoji:'🎂',stock:5,sold:12},
+            {id:5,name:'Croissant de Jamón y Queso',price:2290,desc:'Croissant hojaldrada relleno. recién horneado.',cat:'Salados',emoji:'🥐',stock:20,sold:35},
+            {id:6,name:'Empanada de Pino x1',price:1890,desc:'Empanada al horno. Pino, huevo, aceituna.',cat:'Salados',emoji:'🥟',stock:40,sold:60},
+            {id:7,name:'Berlín Relleno',price:1590,desc:'Berlín con crema pastelera. Azúcar glass.',cat:'Dulces',emoji:'🍩',stock:15,sold:25},
+            {id:8,name:'Kuchen de Fruta',price:2990,desc:'Kuchen individual. Fruta de temporada.',cat:'Tortas',emoji:'🍰',stock:10,sold:18},
+            {id:9,name:'Torta Mil Hojas',price:19990,desc:'Torta mil hojas completa. 10 porciones.',cat:'Tortas',emoji:'🎂',stock:3,sold:8},
+            {id:10,name:'Pan con Chicharrón',price:2890,desc:'Pan frica con chicharrón y pebre.',cat:'Salados',emoji:'🍞',stock:25,sold:40},
+            {id:11,name:'Marraqueta x6',price:2500,desc:'Media docena de marraqueta fresca.',cat:'Panes',emoji:'🍞',stock:30,sold:80},
+            {id:12,name:'Café con Leche',price:1500,desc:'Café espresso con leche caliente.',cat:'Bebidas',emoji:'☕',stock:99,sold:120},
+        ],
+        restaurante: [
+            {id:1,name:'Pizza Margarita',price:7990,desc:'Pizza horno leña. Tomate, mozzarella, albahaca.',cat:'Pizzas',emoji:'🍕',stock:99,sold:45},
+            {id:2,name:'Pizza Pepperoni',price:8990,desc:'Pizza con doble pepperoni y queso.',cat:'Pizzas',emoji:'🍕',stock:99,sold:38},
+            {id:3,name:'Empanada de Pino x4',price:6990,desc:'4 empanadas al horno de pino casero.',cat:'Empanadas',emoji:'🥟',stock:99,sold:30},
+            {id:4,name:'Completo Italiano',price:3990,desc:'Pan, palta, tomate, mayonesa y salchicha.',cat:'Completo',emoji:'🌭',stock:99,sold:55},
+            {id:5,name:'Lomo Salteado',price:12990,desc:'Lomo a la plancha con verduras salteadas.',cat:'Pastas',emoji:'🥩',stock:99,sold:20},
+            {id:6,name:'Ensalada César',price:6990,desc:'Lechuga, pollo, crutones, parmesano, salsa césar.',cat:'Ensaladas',emoji:'🥗',stock:99,sold:15},
+            {id:7,name:'Sushi Roll Salmón x8',price:8990,desc:'8 piezas de roll de salmón fresco.',cat:'Japonés',emoji:'🍣',stock:99,sold:22},
+            {id:8,name:'Hamburguesa Clásica',price:5990,desc:'Carne 150g, lechuga, tomate, queso, papas.',cat:'Completo',emoji:'🍔',stock:99,sold:40},
+            {id:9,name:'Pasta Carbonara',price:7990,desc:'Espagueti carbonara con panceta y huevo.',cat:'Pastas',emoji:'🍝',stock:99,sold:18},
+            {id:10,name:'Papas Fritas',price:3490,desc:'Papas fritas crocantes con salsa.',cat:'Ensaladas',emoji:'🍟',stock:99,sold:60},
+            {id:11,name:'Cerveza Artesanal',price:3990,desc:'Cerveza rubia artesanal 350ml.',cat:'Bebidas',emoji:'🍺',stock:30,sold:25},
+            {id:12,name:'Helado Artesanal',price:2990,desc:'2 bolas de helado. Chocolate, vainilla, frambuesa.',cat:'Bebidas',emoji:'🍦',stock:20,sold:30},
+        ],
+        boutique: [
+            {id:1,name:'Vestido Elegante Rojo',price:29990,desc:'Vestido largo. Tela seda. Tallas S-XL.',cat:'Vestidos',emoji:'👗',stock:8,sold:12},
+            {id:2,name:'Jean Slim Hombre',price:19990,desc:'Jean negro slim fit. Algodón elástico.',cat:'Pantalones',emoji:'👖',stock:15,sold:20},
+            {id:3,name:'Polera Básica Pack x3',price:14990,desc:'3 poleras algodón. Blanco, negro, gris.',cat:'Poleras',emoji:'👕',stock:25,sold:30},
+            {id:4,name:'Chaqueta Cuero Sintético',price:39990,desc:'Chaqueta style bomber. Forro interior.',cat:'Chaquetas',emoji:'🧥',stock:5,sold:8},
+            {id:5,name:'Zapatillas Urbanas',price:24990,desc:'Zapatillas deportivas. Diferentes colores.',cat:'Calzado',emoji:'👟',stock:12,sold:18},
+            {id:6,name:'Bolso Cuero Artesanal',price:18990,desc:'Bolso hobo. Cuero legítimo. Hecho en Chile.',cat:'Accesorios',emoji:'👜',stock:7,sold:10},
+            {id:7,name:'Gafas de Sol Polarizadas',price:12990,desc:'Lentes UV400. Marco acetato.',cat:'Accesorios',emoji:'🕶️',stock:10,sold:15},
+            {id:8,name:'Collar Plata 925',price:15990,desc:'Collar cadena plata 925. Con dije.',cat:'Joyas',emoji:'💍',stock:6,sold:9},
+            {id:9,name:'Vestido Casual floral',price:24990,desc:'Vestido midi estampado floral. Tela liviana.',cat:'Vestidos',emoji:'👗',stock:10,sold:7},
+            {id:10,name:'Pantalón Cargo',price:17990,desc:'Cargo multiple bolsillos. Algodón lavado.',cat:'Pantalones',emoji:'👖',stock:12,sold:11},
+            {id:11,name:'Bufanda Lana',price:9990,desc:'Bufanda 100% lana. Colores surtidos.',cat:'Accesorios',emoji:'🧣',stock:8,sold:5},
+            {id:12,name:'Pulsera Charm',price:7990,desc:'Pulsera plata con charms intercambiables.',cat:'Joyas',emoji:'💎',stock:15,sold:20},
+        ],
+        clinica: [
+            {id:1,name:'Consulta General',price:15000,desc:'Consulta médica general. 30 minutos.',cat:'Consultas',emoji:'🩺',stock:99,sold:45},
+            {id:2,name:'Consulta Pediatría',price:18000,desc:'Consulta especialista en niños.',cat:'Consultas',emoji:'👶',stock:99,sold:30},
+            {id:3,name:'Consulta Dermatología',price:22000,desc:'Especialista en piel y cabello.',cat:'Consultas',emoji:'🧴',stock:99,sold:20},
+            {id:4,name:'Vacuna COVID-19',price:25000,desc:'Vacuna actualizada. Dosis única.',cat:'Vacunas',emoji:'💉',stock:50,sold:40},
+            {id:5,name:'Examen Sangre Completo',price:12000,desc:'Biometría hemática completa.',cat:'Laboratorio',emoji:'🩸',stock:99,sold:35},
+            {id:6,name:'Electrocardiograma',price:18000,desc:'ECG completo con informe.',cat:'Diagnóstico',emoji:'❤️',stock:99,sold:15},
+            {id:7,name:'Control Embarazo',price:20000,desc:'Control prenatal completo.',cat:'Consultas',emoji:'🤰',stock:99,sold:12},
+            {id:8,name:'Limpieza Dental',price:25000,desc:'Limpieza + pulido + fluor.',cat:'Odontología',emoji:'🦷',stock:99,sold:25},
+            {id:9,name:'Cirugía Menor',price:45000,desc:'Cirugía ambulatoria menor.',cat:'Cirugías',emoji:'🏥',stock:99,sold:8},
+            {id:10,name:'Terapia Física x1',price:12000,desc:'Sesión de kinesiología.',cat:'Consultas',emoji:'💪',stock:99,sold:20},
+            {id:11,name:'Vacuna Influenza',price:8000,desc:'Vacuna gripe estacional.',cat:'Vacunas',emoji:'💉',stock:30,sold:22},
+            {id:12,name:'Mamografía',price:35000,desc:'Mamografía bilateral con informe.',cat:'Diagnóstico',emoji:'🔬',stock:99,sold:10},
+        ],
+        peluqueria: [
+            {id:1,name:'Corte Mujer',price:12000,desc:'Corte + lavado + secado básico.',cat:'Cortes',emoji:'✂️',stock:99,sold:45},
+            {id:2,name:'Corte Hombre',price:7000,desc:'Corte moderno + lavado.',cat:'Cortes',emoji:'✂️',stock:99,sold:55},
+            {id:3,name:'Tinte Completo',price:25000,desc:'Tinte + lavado + secado. Toda la cabeza.',cat:'Coloración',emoji:'🎨',stock:99,sold:20},
+            {id:4,name:'Mechas Californianas',price:35000,desc:'Mechas + matizante + hidratación.',cat:'Coloración',emoji:'✨',stock:99,sold:15},
+            {id:5,name:'Alisado Brasileño',price:45000,desc:'Alisado definitivo. Resiste 3 meses.',cat:'Tratamientos',emoji:'💆',stock:99,sold:12},
+            {id:6,name:'Hidratación Profunda',price:15000,desc:'Tratamiento capilar con keratina.',cat:'Tratamientos',emoji:'💆',stock:99,sold:25},
+            {id:7,name:'Manicure Completa',price:8000,desc:'Manicure + esmalte tradicional.',cat:'Manicure',emoji:'💅',stock:99,sold:30},
+            {id:8,name:'Pedicure Spa',price:12000,desc:'Pedicure + exfoliación + masaje.',cat:'Manicure',emoji:'🦶',stock:99,sold:18},
+            {id:9,name:'Cejas y Pestañas',price:6000,desc:'Diseño de cejas + lifting de pestañas.',cat:'Facial',emoji:'👁️',stock:99,sold:35},
+            {id:10,name:'Facial Limpieza Profunda',price:18000,desc:'Limpieza facial + máscara + hidratación.',cat:'Facial',emoji:'🧖',stock:99,sold:10},
+            {id:11,name:'Brushing + Secado',price:8000,desc:'Lavado + brushing profesional.',cat:'Cortes',emoji:'💇',stock:99,sold:40},
+            {id:12,name:'Boda/Evento Pack',price:55000,desc:'Peinado de novia + maquillaje + uñas.',cat:'Cortes',emoji:'👰',stock:99,sold:8},
+        ],
+        mascotas: [
+            {id:1,name:'Balanceado Perro Adulto 15kg',price:29990,desc:'Alimento premium. Pollo y arroz.',cat:'Alimentos',emoji:'🐕',stock:15,sold:25},
+            {id:2,name:'Balanceado Gato 8kg',price:19990,desc:'Alimento para gatos. Salmón.',cat:'Alimentos',emoji:'🐈',stock:12,sold:18},
+            {id:3,name:'Juguete Felpudo Perro',price:4990,desc:'Juguete resistente con sonido.',cat:'Juguetes',emoji:'🧸',stock:20,sold:30},
+            {id:4,name:'Correa Retráctil 5m',price:8990,desc:'Correa extensible hasta 5 metros.',cat:'Accesorios',emoji:'🦮',stock:10,sold:15},
+            {id:5,name:'Shampoo Medicado',price:7990,desc:'Shampoo antipulgas. Para perros.',cat:'Higiene',emoji:'🧴',stock:15,sold:20},
+            {id:6,name:'Ropa Perro Small',price:5990,desc:'Suéter para perro pequeño. Diferentes tallas.',cat:'Ropa mascota',emoji:'🐕‍🦺',stock:10,sold:8},
+            {id:7,name:'Cama Ortopédica Med',price:24990,desc:'Cama espuma viscoelástica. 80x60cm.',cat:'Accesorios',emoji:'🛏️',stock:5,sold:7},
+            {id:8,name:'Comedero Inox x2',price:6990,desc:'Platos inoxidables. Base antideslizante.',cat:'Accesorios',emoji:'🥣',stock:12,sold:14},
+            {id:9,name:'Consulta Veterinaria',price:12000,desc:'Consulta general + desparasitación.',cat:'Servicios vet',emoji:'🩺',stock:99,sold:35},
+            {id:10,name:'Vacuna Antirrábica',price:8000,desc:'Vacuna perro/gato. Certificado incluido.',cat:'Servicios vet',emoji:'💉',stock:99,sold:20},
+            {id:11,name:'Chaleco Reflectante',price:4990,desc:'Chaleco visibility. Para paseos nocturnos.',cat:'Ropa mascota',emoji:'🦺',stock:8,sold:5},
+            {id:12,name:'Snack Dental Perro',price:3990,desc:'Snacks limpieza dental. 200g.',cat:'Alimentos',emoji:'🦴',stock:25,sold:30},
+        ],
+        minimarket: [
+            {id:1,name:'Leche Entera 1L',price:890,desc:'Leche entera fresca. Marca nacional.',cat:'Lácteos',emoji:'🥛',stock:50,sold:80},
+            {id:2,name:'Pan Blanco x6',price:1200,desc:'Pan blanco molde. 6 rebanadas.',cat:'Panadería',emoji:'🍞',stock:30,sold:50},
+            {id:3,name:'Huevos Docena',price:2890,desc:'Huevos frescos. Docena grande.',cat:'Lácteos',emoji:'🥚',stock:40,sold:60},
+            {id:4,name:'Arroz Grado 1 1kg',price:1290,desc:'Arroz premium. Grano largo.',cat:'Abarrotes',emoji:'🍚',stock:60,sold:45},
+            {id:5,name:'Aceite Vegetal 1L',price:1990,desc:'Aceite vegetal. Para freír y cocinar.',cat:'Abarrotes',emoji:'🫒',stock:35,sold:40},
+            {id:6,name:'Atún en Lata x2',price:1890,desc:'2 latas atún en agua. 170g c/u.',cat:'Abarrotes',emoji:'🐟',stock:45,sold:55},
+            {id:7,name:'Papa 1kg',price:990,desc:'Papa nacional. Fresca del día.',cat:'Verduras',emoji:'🥔',stock:30,sold:35},
+            {id:8,name:'Plátano 1kg',price:1190,desc:'Plátano fresco. Origen local.',cat:'Frutas',emoji:'🍌',stock:25,sold:30},
+            {id:9,name:'Agua Mineral 1.5L',price:790,desc:'Agua mineral sin gas. Botella.',cat:'Bebidas',emoji:'💧',stock:50,sold:70},
+            {id:10,name:'Coca Cola 2L',price:1890,desc:'Coca Cola original. Botella 2 litros.',cat:'Bebidas',emoji:'🥤',stock:30,sold:45},
+            {id:11,name:'Papel Higiénico x4',price:1990,desc:'4 rollos. Hoja doble. Marca nacional.',cat:'Higiene',emoji:'🧻',stock:40,sold:35},
+            {id:12,name:'Snack Papas x1',price:990,desc:'Papas fritas sabor clásico. Bolsa 100g.',cat:'Snacks',emoji:'🥔',stock:35,sold:40},
+        ],
+        libreria: [
+            {id:1,name:'Cuaderno 100 Hojas',price:1990,desc:'Cuaderno rayado. Tamaño cartilla.',cat:'Papelería',emoji:'📓',stock:50,sold:60},
+            {id:2,name:'Lápices Colores x12',price:2990,desc:'12 colores. Marca Faber-Castell.',cat:'Arte',emoji:'🖍️',stock:25,sold:30},
+            {id:3,name:'Libro Técnico Programación',price:29990,desc:'Libro completo. Python desde cero.',cat:'Libros',emoji:'📘',stock:8,sold:12},
+            {id:4,name:'Mochila Escolar',price:14990,desc:'Mochila resistente. Múltiples compartimentos.',cat:'Útiles',emoji:'🎒',stock:15,sold:20},
+            {id:5,name:'Calculadora Científica',price:12990,desc:'Calculadora natural display. 500 funciones.',cat:'Tecnología',emoji:'🔢',stock:10,sold:8},
+            {id:6,name:'Set Geometría x12',price:4990,desc:'Compás, escuadra, transportador. Estuche.',cat:'Útiles',emoji:'📐',stock:20,sold:15},
+            {id:7,name:'Resma Hojas A4 x500',price:3490,desc:'500 hojas blancas. 75g/m².',cat:'Papelería',emoji:'📄',stock:30,sold:25},
+            {id:8,name:'Marcadores Permanentes x6',price:3990,desc:'6 colores. Punta ultrafine.',cat:'Arte',emoji:'🖊️',stock:15,sold:18},
+            {id:9,name:'Fundo Laptop 15"',price:8990,desc:'Fundo acolchado. Ajustable.',cat:'Tecnología',emoji:'💻',stock:8,sold:6},
+            {id:10,name:'Cuaderno Actividades x5',price:5990,desc:'5 cuadernos de actividades infantiles.',cat:'Papelería',emoji:'📝',stock:20,sold:22},
+            {id:11,name:'Birome x10',price:2490,desc:'10 biromes azul. Tinta fluida.',cat:'Papelería',emoji:'🖊️',stock:40,sold:50},
+            {id:12,name:'Acuarelas x24',price:5990,desc:'24 colores. Paleta + pincel incluido.',cat:'Arte',emoji:'🎨',stock:12,sold:10},
+        ],
+        spa: [
+            {id:1,name:'Masaje Descontracturante 60min',price:28000,desc:'Masaje profundo. Alivio de tensiones.',cat:'Masaje',emoji:'💆',stock:99,sold:30},
+            {id:2,name:'Masaje Relajante 90min',price:35000,desc:'Masaje con aceites esenciales. Experiencia completa.',cat:'Relajación',emoji:'🕯️',stock:99,sold:25},
+            {id:3,name:'Exfoliación Corporal',price:22000,desc:'Exfoliación con sales minerales + hidratación.',cat:'Tratamientos',emoji:'✨',stock:99,sold:15},
+            {id:4,name:'Facial Antiedad',price:32000,desc:'Limpieza + peelings + mascarilla + masaje facial.',cat:'Facial',emoji:'🧖',stock:99,sold:12},
+            {id:5,name:'Reflexología Podal',price:18000,desc:'Masaje reflejología en pies. 45 minutos.',cat:'Masaje',emoji:'🦶',stock:99,sold:20},
+            {id:6,name:'Aromaterapia',price:25000,desc:'Sesión con aceites esenciales + masaje suave.',cat:'Relajación',emoji:'🌸',stock:99,sold:18},
+            {id:7,name:'Pack Spa Day',price:65000,desc:'Masaje + facial + exfoliación + almuerzo.',cat:'Relajación',emoji:'🎁',stock:99,sold:8},
+            {id:8,name:'Circuito Hidroterapia',price:18000,desc:'Jacuzzi + sauna + baño turco.',cat:'Relajación',emoji:'🛁',stock:99,sold:14},
+            {id:9,name:'Depilación Cejas',price:5000,desc:'Diseño de cejas con cera.',cat:'Facial',emoji:'👁️',stock:99,sold:40},
+            {id:10,name:'Masaje Prenatal',price:28000,desc:'Masaje suave para embarazadas. 50min.',cat:'Masaje',emoji:'🤰',stock:99,sold:10},
+            {id:11,name:'Pack Pareja',price:85000,desc:'2 masajes relajantes + jacuzzi + champán.',cat:'Relajación',emoji:'💑',stock:99,sold:6},
+            {id:12,name:'Drenaje Linfático',price:25000,desc:'Drenaje linfático. Reducción de retención.',cat:'Tratamientos',emoji:'💪',stock:99,sold:11},
+        ],
+        barberia: [
+            {id:1,name:'Corte de Cabello',price:7000,desc:'Corte moderno + lavado.',cat:'Cortes',emoji:'✂️',stock:99,sold:55},
+            {id:2,name:'Barba + Cejas',price:5000,desc:'Diseño de barba + corrección cejas.',cat:'Cortes',emoji:'💈',stock:99,sold:40},
+            {id:3,name:'Corte + Barba',price:10000,desc:'Combo corte masculino + barba completa.',cat:'Cortes',emoji:'💈',stock:99,sold:35},
+            {id:4,name:'Degradado / Fade',price:8000,desc:'Corte degradado profesional.',cat:'Cortes',emoji:'✂️',stock:99,sold:30},
+            {id:5,name:'Lavado + Secado',price:3000,desc:'Lavado capilar con masaje + secado.',cat:'Cortes',emoji:'💧',stock:99,sold:25},
+            {id:6,name:'Afeitado Clásico',price:4000,desc:'Afeitado con navaja + toalla caliente.',cat:'Cortes',emoji:'🪒',stock:99,sold:15},
+            {id:7,name:'Coloración Barba',price:6000,desc:'Tinte para barba. Cubre canas.',cat:'Tratamientos',emoji:'🎨',stock:99,sold:10},
+            {id:8,name:'Tratamiento Anticaída',price:8000,desc:'Tratamiento capilar anticaída.',cat:'Tratamientos',emoji:'💆',stock:99,sold:8},
+            {id:9,name:'Pedicure Caballero',price:5000,desc:'Cuidado de pies + esmalte transparente.',cat:'Tratamientos',emoji:'🦶',stock:99,sold:12},
+            {id:10,name:'Corte Infantil',price:5000,desc:'Corte para niños. Hasta 12 años.',cat:'Cortes',emoji:'👦',stock:99,sold:20},
+            {id:11,name:'Diseño Cejas',price:3000,desc:'Corrección y diseño de cejas.',cat:'Cortes',emoji:'👁️',stock:99,sold:25},
+            {id:12,name:'Pack Novio',price:25000,desc:'Corte + barba + cejas + masaje + lavado.',cat:'Cortes',emoji:'🤵',stock:99,sold:5},
+        ],
+        gimnasio: [
+            {id:1,name:'Membresía Mensual',price:19990,desc:'Acceso ilimitado. Todos los días.',cat:'Membresías',emoji:'💪',stock:99,sold:45},
+            {id:2,name:'Clase Funcional x4',price:14990,desc:'4 clases de entrenamiento funcional.',cat:'Clases',emoji:'🏋️',stock:99,sold:30},
+            {id:3,name:'Clase Yoga x4',price:12990,desc:'4 clases de yoga. Todos los niveles.',cat:'Clases',emoji:'🧘',stock:99,sold:20},
+            {id:4,name:'Crossfit Pack x8',price:24990,desc:'8 clases de crossfit intensivo.',cat:'Clases',emoji:'🔥',stock:99,sold:15},
+            {id:5,name:'Pilates x4',price:16990,desc:'4 clases de pilates.',cat:'Clases',emoji:'🤸',stock:99,sold:18},
+            {id:6,name:'Entrenamiento Personal x4',price:39990,desc:'4 sesiones personalizadas 1-on-1.',cat:'Clases',emoji:'💪',stock:99,sold:10},
+            {id:7,name:'Inscripción',price:9990,desc:'Inscripción única. Incluye evaluate.',cat:'Membresías',emoji:'📋',stock:99,sold:50},
+            {id:8,name:'Membresía Pareja',price:34990,desc:'Acceso ilimitado para 2 personas.',cat:'Membresías',emoji:'💑',stock:99,sold:12},
+            {id:9,name:'Clase Spinning x4',price:11990,desc:'4 clases de spinning.',cat:'Clases',emoji:'🚴',stock:99,sold:22},
+            {id:10,name:'Nutrición Deportiva',price:25000,desc:'Consulta + plan nutricional personalizado.',cat:'Servicios',emoji:'🥗',stock:99,sold:8},
+            {id:11,name:'Membresía Semanal',price:7990,desc:'Acceso 7 días. Ideal para turistas.',cat:'Membresías',emoji:'🎫',stock:99,sold:15},
+            {id:12,name:'Evaluación Física',price:8990,desc:'Evaluación completa + plan de entrenamiento.',cat:'Servicios',emoji:'📊',stock:99,sold:20},
+        ],
+        psicologo: [
+            {id:1,name:'Consulta Individual',price:25000,desc:'Sesión de 50 minutos. Presencial u online.',cat:'Consultas',emoji:'🧠',stock:99,sold:35},
+            {id:2,name:'Terapia de Pareja',price:35000,desc:'Sesión de 60 minutos. Parejas.',cat:'Consultas',emoji:'💑',stock:99,sold:15},
+            {id:3,name:'Terapia Familiar',price:40000,desc:'Sesión de 60 minutos. Familia.',cat:'Consultas',emoji:'👨‍👩‍👧‍👦',stock:99,sold:10},
+            {id:4,name:'Evaluación Psicológica',price:45000,desc:'Evaluación completa + informe.',cat:'Consultas',emoji:'📋',stock:99,sold:8},
+            {id:5,name:'Terapia Infantil',price:28000,desc:'Sesión para niños y adolescentes.',cat:'Consultas',emoji:'👶',stock:99,sold:12},
+            {id:6,name:'Coaching Personal',price:30000,desc:'Sesión de coaching 60 minutos.',cat:'Consultas',emoji:'🎯',stock:99,sold:18},
+            {id:7,name:'Taller Grupo Ansiedad',price:15000,desc:'Taller grupal. Manejo de ansiedad.',cat:'Talleres',emoji:'🧘',stock:20,sold:15},
+            {id:8,name:'Taller Grupo Autoestima',price:15000,desc:'Taller grupal. Mejora de autoestima.',cat:'Talleres',emoji:'💪',stock:20,sold:12},
+            {id:9,name:'Consulta Online',price:22000,desc:'Sesión por videollamada.',cat:'Consultas',emoji:'💻',stock:99,sold:25},
+            {id:10,name:'Pack 4 Sesiones',price:88000,desc:'4 sesiones individuales. Ahorra $12.000.',cat:'Packs',emoji:'📦',stock:99,sold:20},
+            {id:11,name:'Primera Consulta',price:18000,desc:'Primera vez. Evaluación inicial.',cat:'Consultas',emoji:'🤝',stock:99,sold:30},
+            {id:12,name:'Informe Psicológico',price:35000,desc:'Informe profesional para trámites.',cat:'Servicios',emoji:'📄',stock:99,sold:6},
+        ],
+        nutricionista: [
+            {id:1,name:'Consulta Nutricional',price:22000,desc:'Consulta individual 45 min.',cat:'Consultas',emoji:'🥗',stock:99,sold:40},
+            {id:2,name:'Plan Nutricional',price:35000,desc:'Plan personalizado 1 mes.',cat:'Planes',emoji:'📋',stock:99,sold:30},
+            {id:3,name:'Control Peso',price:15000,desc:'Seguimiento mensual. Plan incluido.',cat:'Consultas',emoji:'⚖️',stock:99,sold:25},
+            {id:4,name:'Consulta Deportiva',price:28000,desc:'Nutrición para deportistas.',cat:'Consultas',emoji:'💪',stock:99,sold:15},
+            {id:5,name:'Consulta Online',price:18000,desc:'Por videollamada. Misma calidad.',cat:'Consultas',emoji:'💻',stock:99,sold:20},
+            {id:6,name:'Control Embarazo',price:25000,desc:'Nutrición prenatal.',cat:'Consultas',emoji:'🤰',stock:99,sold:10},
+            {id:7,name:'Consulta Infantil',price:20000,desc:'Nutrición pediátrica.',cat:'Consultas',emoji:'👶',stock:99,sold:12},
+            {id:8,name:'Pack 4 Consultas',price:72000,desc:'4 consultas + plan. Ahorra $16.000.',cat:'Packs',emoji:'📦',stock:99,sold:18},
+            {id:9,name:'Evaluación Corporal',price:12000,desc:'InBody + análisis completo.',cat:'Consultas',emoji:'📊',stock:99,sold:22},
+            {id:10,name:'Taller Alimentación',price:8000,desc:'Taller grupal. Alimentación saludable.',cat:'Talleres',emoji:'🍎',stock:20,sold:15},
+            {id:11,name:'Plan Vegetariano',price:38000,desc:'Plan vegetariano 1 mes.',cat:'Planes',emoji:'🌱',stock:99,sold:8},
+            {id:12,name:'Consulta Diabetes',price:25000,desc:'Control nutricional diabetes.',cat:'Consultas',emoji:'🩸',stock:99,sold:10},
+        ],
+        kinesiologo: [
+            {id:1,name:'Sesión Kinesiología',price:18000,desc:'Sesión 45 min. Evaluación + tratamiento.',cat:'Sesiones',emoji:'💆',stock:99,sold:35},
+            {id:2,name:'Fisioterapia Deportiva',price:22000,desc:'Rehabilitación deportiva.',cat:'Sesiones',emoji:'🏃',stock:99,sold:20},
+            {id:3,name:'Masaje Descontracturante',price:15000,desc:'Masaje terapéutico 45 min.',cat:'Sesiones',emoji:'💆',stock:99,sold:30},
+            {id:4,name:'Rehabilitación Columna',price:20000,desc:'Tratamiento columna vertebral.',cat:'Sesiones',emoji:'🦴',stock:99,sold:15},
+            {id:5,name:'Terapia Neural',price:18000,desc:'Sesión de terapia neural.',cat:'Sesiones',emoji:'⚡',stock:99,sold:12},
+            {id:6,name:'Electroterapia',price:12000,desc:'Sesión con electrodo + ultrasonido.',cat:'Sesiones',emoji:'⚡',stock:99,sold:18},
+            {id:7,name:'Drenaje Linfático',price:18000,desc:'Drenaje manual. 60 min.',cat:'Sesiones',emoji:'💪',stock:99,sold:10},
+            {id:8,name:'Rehabilitación Hombro',price:18000,desc:'Tratamiento hombro.',cat:'Sesiones',emoji:'💪',stock:99,sold:8},
+            {id:9,name:'Rehabilitación Rodilla',price:18000,desc:'Tratamiento rodilla.',cat:'Sesiones',emoji:'🦵',stock:99,sold:12},
+            {id:10,name:'Pack 8 Sesiones',price:126000,desc:'8 sesiones. Ahorra $18.000.',cat:'Packs',emoji:'📦',stock:99,sold:15},
+            {id:11,name:'Kinesiología Respiratoria',price:16000,desc:'Tratamiento respiratorio.',cat:'Sesiones',emoji:'🫁',stock:99,sold:8},
+            {id:12,name:'Evaluación Postural',price:12000,desc:'Análisis postural completo.',cat:'Sesiones',emoji:'🧍',stock:99,sold:20},
+        ],
+        tatuador: [
+            {id:1,name:'Tatuaje Pequeño',price:35000,desc:'Hasta 5cm. Diseño simple.',cat:'Tatuajes',emoji:'🎨',stock:99,sold:30},
+            {id:2,name:'Tatuaje Mediano',price:65000,desc:'Hasta 10cm. Diseño detallado.',cat:'Tatuajes',emoji:'🎨',stock:99,sold:25},
+            {id:3,name:'Tatuaje Grande',price:120000,desc:'Hasta 20cm. Diseño completo.',cat:'Tatuajes',emoji:'🎨',stock:99,sold:15},
+            {id:4,name:'Sleeve Brazo',price:350000,desc:'Manga completa. Múltiples sesiones.',cat:'Tatuajes',emoji:'💪',stock:99,sold:8},
+            {id:5,name:'Tatuaje en Blanco y Negro',price:45000,desc:'Estilo realismo B&N.',cat:'Tatuajes',emoji:'⚫',stock:99,sold:20},
+            {id:6,name:'Cover Up',price:80000,desc:'Cubrir tatuaje anterior.',cat:'Tatuajes',emoji:'🔄',stock:99,sold:10},
+            {id:7,name:'Diseño Personalizado',price:15000,desc:'Diseño exclusivo. No incluye tatuaje.',cat:'Servicios',emoji:'✏️',stock:99,sold:25},
+            {id:8,name:'Sesión Retoque',price:20000,desc:'Retoque de tatuaje existente.',cat:'Servicios',emoji:'🔧',stock:99,sold:12},
+            {id:9,name:'Piercing Simple',price:25000,desc:'Piercing + joya de titanio.',cat:'Piercing',emoji:'💎',stock:99,sold:18},
+            {id:10,name:'Piercing Premium',price:40000,desc:'Piercing + joya de oro.',cat:'Piercing',emoji:'👑',stock:99,sold:10},
+            {id:11,name:'Aftercare Kit',price:8000,desc:'Kit cuidado post-tatuaje.',cat:'Productos',emoji:'🧴',stock:30,sold:40},
+            {id:12,name:'Consulta Diseño',price:0,desc:'Consulta gratuita para diseño.',cat:'Servicios',emoji:'🤝',stock:99,sold:50},
+        ],
+        profesor: [
+            {id:1,name:'Clase Particular 1h',price:12000,desc:'Clase personalizada. Cualquier materia.',cat:'Clases',emoji:'📚',stock:99,sold:45},
+            {id:2,name:'Clase Inglés 1h',price:14000,desc:'Clase de inglés. Todos los niveles.',cat:'Clases',emoji:'🇬🇧',stock:99,sold:35},
+            {id:3,name:'Clase Matemáticas 1h',price:12000,desc:'Álgebra, cálculo, estadística.',cat:'Clases',emoji:'🔢',stock:99,sold:30},
+            {id:4,name:'Clase Programación 1h',price:18000,desc:'Python, JavaScript, SQL.',cat:'Clases',emoji:'💻',stock:99,sold:20},
+            {id:5,name:'Pack 4 Clases',price:42000,desc:'4 clases. Ahorra $6.000.',cat:'Packs',emoji:'📦',stock:99,sold:25},
+            {id:6,name:'Pack 8 Clases',price:80000,desc:'8 clases. Ahorra $16.000.',cat:'Packs',emoji:'📦',stock:99,sold:15},
+            {id:7,name:'Clase Grupo (2-4)',price:8000,desc:'Clase grupal. Precio por persona.',cat:'Clases',emoji:'👥',stock:99,sold:18},
+            {id:8,name:'Preparación PSU/SAT',price:15000,desc:'Preparación exámenes.',cat:'Clases',emoji:'📝',stock:99,sold:22},
+            {id:9,name:'Clase Online 1h',price:10000,desc:'Por videollamada.',cat:'Clases',emoji:'💻',stock:99,sold:15},
+            {id:10,name:'Clase Música 1h',price:14000,desc:'Guitarra, piano, canto.',cat:'Clases',emoji:'🎵',stock:99,sold:12},
+            {id:11,name:'Clase Idioma Francés',price:14000,desc:'Francés todos los niveles.',cat:'Clases',emoji:'🇫🇷',stock:99,sold:8},
+            {id:12,name:'Consulta Académica',price:8000,desc:'Orientación y plan de estudio.',cat:'Consultas',emoji:'🎓',stock:99,sold:20},
+        ],
+        fotografo: [
+            {id:1,name:'Sesión Fotográfica 1h',price:50000,desc:'1 hora. 20 fotos editadas.',cat:'Sesiones',emoji:'📸',stock:99,sold:30},
+            {id:2,name:'Sesión Fotografía Productos',price:65000,desc:'Fotos de productos. Hasta 30 fotos.',cat:'Sesiones',emoji:'📦',stock:99,sold:20},
+            {id:3,name:'Book Profesional',price:120000,desc:'Sesión 2h. 50 fotos editadas.',cat:'Sesiones',emoji:'📷',stock:99,sold:15},
+            {id:4,name:'Fotografía Evento 3h',price:180000,desc:'Evento social. 3 horas.',cat:'Sesiones',emoji:'🎉',stock:99,sold:10},
+            {id:5,name:'Cobertura Boda',price:450000,desc:'Cobertura completa boda.',cat:'Sesiones',emoji:'💒',stock:99,sold:8},
+            {id:6,name:'Fotografía Corporativa',price:80000,desc:'Fotos empresa/perfil.',cat:'Sesiones',emoji:'🏢',stock:99,sold:12},
+            {id:7,name:'Sesión Familiar 1h',price:55000,desc:'Sesión familia. 25 fotos.',cat:'Sesiones',emoji:'👨‍👩‍👧‍👦',stock:99,sold:18},
+            {id:8,name:'Sesión Embarazo',price:60000,desc:'Fotografía embarazo. 30 fotos.',cat:'Sesiones',emoji:'🤰',stock:99,sold:10},
+            {id:9,name:'Fotografía Gastronómica',price:70000,desc:'Fotos de comida/menú.',cat:'Sesiones',emoji:'🍽️',stock:99,sold:15},
+            {id:10,name:'Edición Extra (10 fotos)',price:25000,desc:'10 fotos adicionales editadas.',cat:'Servicios',emoji:'✨',stock:99,sold:20},
+            {id:11,name:'Álbum Digital',price:35000,desc:'Álbum diseñado. PDF.',cat:'Servicios',emoji:'📖',stock:99,sold:8},
+            {id:12,name:'Retoque Profesional x5',price:15000,desc:'5 fotos retoque profesional.',cat:'Servicios',emoji:'🖌️',stock:99,sold:12},
+        ],
+        abogado: [
+            {id:1,name:'Consulta Legal',price:30000,desc:'Consulta 45 min. Cualquier tema.',cat:'Consultas',emoji:'⚖️',stock:99,sold:35},
+            {id:2,name:'Derecho Familia',price:35000,desc:'Consulta especializada familia.',cat:'Consultas',emoji:'👨‍👩‍👧‍👦',stock:99,sold:20},
+            {id:3,name:'Derecho Laboral',price:30000,desc:'Consulta laboral. Despido, contrato.',cat:'Consultas',emoji:'💼',stock:99,sold:25},
+            {id:4,name:'Derecho Civil',price:30000,desc:'Consulta civil. Contratos, demandas.',cat:'Consultas',emoji:'📜',stock:99,sold:18},
+            {id:5,name:'Redacción Contrato',price:80000,desc:'Redacción o revisión de contrato.',cat:'Servicios',emoji:'📄',stock:99,sold:15},
+            {id:6,name:'Demanda Judicial',price:150000,desc:'Preparación y presentación.',cat:'Servicios',emoji:'⚖️',stock:99,sold:8},
+            {id:7,name:'Consulta Online',price:25000,desc:'Por videollamada.',cat:'Consultas',emoji:'💻',stock:99,sold:20},
+            {id:8,name:'Derecho Penal',price:40000,desc:'Consulta penal urgente.',cat:'Consultas',emoji:'🔒',stock:99,sold:10},
+            {id:9,name:'Asesoría Empresarial',price:45000,desc:'Consulta empresarial. Socios, contratos.',cat:'Consultas',emoji:'🏢',stock:99,sold:12},
+            {id:10,name:'Arriendo Local',price:50000,desc:'Revisión contrato arriendo.',cat:'Servicios',emoji:'🏠',stock:99,sold:8},
+            {id:11,name:'Consulta Tributario',price:35000,desc:'Derecho tributario. Impuestos.',cat:'Consultas',emoji:'💰',stock:99,sold:10},
+            {id:12,name:'Pack 3 Consultas',price:75000,desc:'3 consultas. Ahorra $15.000.',cat:'Packs',emoji:'📦',stock:99,sold:15},
+        ],
+        otro: [
+            {id:1,name:'Producto 1',price:9990,desc:'Descripción del producto demo.',cat:'General',emoji:'📦',stock:10,sold:5},
+            {id:2,name:'Producto 2',price:14990,desc:'Descripción del producto demo.',cat:'General',emoji:'📦',stock:10,sold:5},
+            {id:3,name:'Producto 3',price:19990,desc:'Descripción del producto demo.',cat:'General',emoji:'📦',stock:10,sold:5},
+            {id:4,name:'Producto 4',price:24990,desc:'Descripción del producto demo.',cat:'General',emoji:'📦',stock:10,sold:5},
+            {id:5,name:'Producto 5',price:29990,desc:'Descripción del producto demo.',cat:'General',emoji:'📦',stock:10,sold:5},
+            {id:6,name:'Producto 6',price:34990,desc:'Descripción del producto demo.',cat:'General',emoji:'📦',stock:10,sold:5},
+            {id:7,name:'Producto 7',price:39990,desc:'Descripción del producto demo.',cat:'General',emoji:'📦',stock:10,sold:5},
+            {id:8,name:'Producto 8',price:44990,desc:'Descripción del producto demo.',cat:'General',emoji:'📦',stock:10,sold:5},
+            {id:9,name:'Producto 9',price:49990,desc:'Descripción del producto demo.',cat:'General',emoji:'📦',stock:10,sold:5},
+            {id:10,name:'Producto 10',price:54990,desc:'Descripción del producto demo.',cat:'General',emoji:'📦',stock:10,sold:5},
+            {id:11,name:'Producto 11',price:59990,desc:'Descripción del producto demo.',cat:'General',emoji:'📦',stock:10,sold:5},
+            {id:12,name:'Producto 12',price:64990,desc:'Descripción del producto demo.',cat:'General',emoji:'📦',stock:10,sold:5},
+        ]
+    };
+
+    // Select products based on business type
+    const tipoKey = businessTipo || 'otro';
+    const defaultProducts = (catalogs[tipoKey] || catalogs.otro)
+        .map((p,i) => ({...p, id: i+1, category: p.cat}));
+
+    // Start with hardcoded products immediately — page ALWAYS works
+    let allProducts = [...defaultProducts];
+    initStore(); // <-- THIS WAS MISSING, causing blank page
+
+    function initStore() {
+        document.title = `${businessName} | Tienda Online`;
+        document.getElementById('navLogo').textContent = businessName.substring(0,2).toUpperCase();
+        document.getElementById('navName').textContent = businessName;
+        
+        const emoji = emojis[businessTipo] || '📦';
+        document.getElementById('heroIcon').textContent = emoji;
+        document.getElementById('heroName').textContent = businessName;
+        
+        // Dynamic subtitle per type
+        const subtitles = {
+            peluqueria:'Tu salón de belleza de confianza', barberia:'Estilo masculino premium',
+            spa:'Bienestar y relajación', clinica:'Salud para toda la familia',
+            mascotas:'Amor y cuidado para tu mascota', gimnasio:'Transforma tu cuerpo',
+            psicologo:'Tu bienestar mental importa', nutricionista:'Nutrición personalizada',
+            kinesiologo:'Recuperación y movement', tatuador:'Arte en tu piel',
+            profesor:'Aprende con los mejores', fotografo:'Momentos que duran para siempre',
+            abogado:'Asesoría legal de confianza',
+            taller:'Mecánica automotriz de confianza', desarmaduria:'Repuestos originales al mejor precio',
+            ferreteria:'Todo para tu hogar y obra', panaderia:'Horneado fresco cada día',
+            restaurante:'Sabor que enamora', boutique:'Moda que te define',
+            minimarket:'Todo lo que necesitas un solo lugar', libreria:'Conocimiento al alcance de tu mano',
+            otro:'Tu negocio al alcance de todos'
+        };
+        document.getElementById('heroSubtitle').textContent = subtitles[businessTipo] || 'Tu negocio al alcance de todos';
+        document.getElementById('heroAddress').innerHTML = `<i class="fas fa-map-marker-alt"></i> ${businessDir}`;
+        document.getElementById('heroHorario').innerHTML = `<i class="fas fa-clock"></i> ${businessHorario}`;
+
+        const [c1, c2] = colors[businessColor] || colors.blue;
+        document.documentElement.style.setProperty('--primary', c1);
+        document.documentElement.style.setProperty('--primary-dark', c2);
+
+        // Show appropriate button based on business type
+        if (isServiceBusiness) {
+            document.getElementById('bookingBtn').style.display = 'flex';
+            document.getElementById('cartBtn').style.display = 'none';
+        } else {
+            document.getElementById('cartBtn').style.display = 'flex';
+            document.getElementById('bookingBtn').style.display = 'none';
+        }
+
+        // Dynamic hero tags per type
+        const heroTags = document.getElementById('heroTags');
+        if (isServiceBusiness) {
+            heroTags.innerHTML = `
+                <span class="hero-tag"><i class="fas fa-calendar-check"></i> Agendamiento Online</span>
+                <span class="hero-tag"><i class="fab fa-whatsapp"></i> Confirmación por WhatsApp</span>
+                <span class="hero-tag"><i class="fas fa-clock"></i> Horarios Flexibles</span>
+                <span class="hero-tag"><i class="fas fa-star"></i> Profesionales Certificados</span>
+            `;
+        } else {
+            heroTags.innerHTML = `
+                <span class="hero-tag"><i class="fas fa-globe"></i> Tienda Online</span>
+                <span class="hero-tag"><i class="fas fa-truck"></i> Despacho a Domicilio</span>
+                <span class="hero-tag"><i class="fas fa-credit-card"></i> Tarjeta y Contra Entrega</span>
+                <span class="hero-tag"><i class="fas fa-shield-alt"></i> Garantía Incluida</span>
+            `;
+        }
+
+        const categories = [...new Set(allProducts.map(p => p.category))];
+        const catBar = document.getElementById('categoriesBar');
+        catBar.innerHTML = `<button class="cat-btn active" onclick="filterCategory('Todos', this)">Todos</button>` +
+            categories.map(c => `<button class="cat-btn" onclick="filterCategory('${c}', this)">${c}</button>`).join('');
+
+        renderProducts(allProducts);
+        
+        document.getElementById('sectionTitle').textContent = isServiceBusiness ? 'Nuestros Servicios' : 'Nuestros Productos';
+        document.getElementById('searchInputMobile').placeholder = isServiceBusiness ? 'Buscar servicios...' : 'Buscar productos...';
+    }
+
+    // ===== RENDER =====
+    function getCatBg(cat) { return catBgs[cat] || 'cat-bg-default'; }
+    
+    function renderProducts(products) {
+        const grid = document.getElementById('productsGrid');
+        const label = isServiceBusiness ? 'servicios' : 'productos';
+        document.getElementById('productsCount').textContent = `${products.length} ${label}`;
+        if (products.length === 0) {
+            grid.innerHTML = `<div class="no-results"><div class="icon">🔍</div><p>No se encontraron productos</p></div>`;
+            return;
+        }
+        grid.innerHTML = products.map(p => `
+            <div class="product-card" onclick="openProductModal(${p.id})">
+                <div class="product-img ${p.image ? '' : getCatBg(p.category)}" style="${p.image ? 'background:linear-gradient(135deg,#f1f5f9,#e2e8f0);' : ''}">
+                    ${p.image 
+                        ? `<img src="${p.image}" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.innerHTML='<div class=\\'product-visual\\'>${p.emoji||'📦'}</div>'">`
+                        : `<div class="product-visual">${p.emoji || '📦'}</div>`
+                    }
+                    ${p.stock < 10 && p.stock > 0 ? `<span class="product-stock">¡Últimas!</span>` : ''}
+                </div>
+                <div class="product-body">
+                    <div class="product-cat">${p.category}</div>
+                    <div class="product-name">${p.name}</div>
+                    <div class="product-desc">${p.desc}</div>
+                    <div class="product-footer">
+                        <div class="product-price">$${p.price.toLocaleString('es-CL')}<small>IVA incluido</small></div>
+                        <button class="add-cart-btn" onclick="event.stopPropagation(); quickAdd(${p.id})" title="Agregar al carro">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    // ===== SEARCH & FILTER =====
+    let currentCategory = 'Todos';
+    function filterProducts() {
+        const q = document.getElementById('searchInput').value.toLowerCase();
+        document.getElementById('searchInputMobile').value = q;
+        applyFilter(q);
+    }
+    function filterProductsMobile() {
+        const q = document.getElementById('searchInputMobile').value.toLowerCase();
+        document.getElementById('searchInput').value = q;
+        applyFilter(q);
+    }
+    function applyFilter(q) {
+        let filtered = allProducts;
+        if (currentCategory !== 'Todos') filtered = filtered.filter(p => p.category === currentCategory);
+        if (q) filtered = filtered.filter(p => p.name.toLowerCase().includes(q) || p.desc.toLowerCase().includes(q));
+        renderProducts(filtered);
+    }
+    function filterCategory(cat, btn) {
+        currentCategory = cat;
+        document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        applyFilter(document.getElementById('searchInput').value.toLowerCase());
+    }
+
+    // ===== PRODUCT MODAL =====
+    let currentProduct = null;
+    let currentQty = 1;
+    function openProductModal(id) {
+        currentProduct = allProducts.find(p => p.id === id);
+        currentQty = 1;
+        document.getElementById('modalImg').className = `modal-img ${currentProduct.image ? '' : getCatBg(currentProduct.category)}`;
+        document.getElementById('modalImg').innerHTML = `<button class="modal-close" onclick="closeProductModal()"><i class="fas fa-times"></i></button>${currentProduct.image ? `<img src="${currentProduct.image}" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.innerHTML='<button class=\\'modal-close\\' onclick=\\'closeProductModal()\\'><i class=\\'fas fa-times\\'></i></button><div class=\\'modal-visual\\'>${currentProduct.emoji||'📦'}</div>'">` : `<div class="modal-visual">${currentProduct.emoji || '📦'}</div>`}`;
+        document.getElementById('modalCat').textContent = currentProduct.category;
+        document.getElementById('modalName').textContent = currentProduct.name;
+        document.getElementById('modalDesc').textContent = currentProduct.desc;
+        document.getElementById('modalQty').textContent = '1';
+        updateModalTotal();
+        document.getElementById('productModal').classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+    function closeProductModal() {
+        document.getElementById('productModal').classList.remove('active');
+        document.body.style.overflow = '';
+    }
+    function closeModal(e) { if (e.target === e.currentTarget) closeProductModal(); }
+    function changeQty(d) {
+        currentQty = Math.max(1, Math.min(99, currentQty + d));
+        document.getElementById('modalQty').textContent = currentQty;
+        updateModalTotal();
+    }
+    function updateModalTotal() {
+        document.getElementById('modalTotal').textContent = `$${(currentProduct.price * currentQty).toLocaleString('es-CL')}`;
+    }
+    function addToCartFromModal() {
+        addToCart(currentProduct.id, currentQty);
+        closeProductModal();
+    }
+    function quickAdd(id) { addToCart(id, 1); }
+
+    // ===== CART =====
+    let cart = [];
+    function addToCart(productId, qty) {
+        const product = allProducts.find(p => p.id === productId);
+        const existing = cart.find(c => c.id === productId);
+        if (existing) existing.qty += qty;
+        else cart.push({ ...product, qty });
+        updateCart();
+        showToast(`${product.name} agregado al carro`);
+    }
+    function updateCart() {
+        const badge = document.getElementById('cartBadge');
+        const totalItems = cart.reduce((s, c) => s + c.qty, 0);
+        badge.textContent = totalItems;
+        badge.style.display = totalItems > 0 ? 'flex' : 'none';
+        const itemsDiv = document.getElementById('cartItems');
+        const footerDiv = document.getElementById('cartFooter');
+        if (cart.length === 0) {
+            itemsDiv.innerHTML = `<div class="cart-empty"><div class="icon">🛒</div><p style="font-weight:600;">Tu carro está vacío</p><p style="font-size:0.85em; margin-top:6px;">Agrega productos para comenzar</p></div>`;
+            footerDiv.style.display = 'none';
+            return;
+        }
+        footerDiv.style.display = 'block';
+        itemsDiv.innerHTML = cart.map(c => `
+            <div class="cart-item">
+                <div class="cart-item-img">${c.emoji || '📦'}</div>
+                <div class="cart-item-info">
+                    <div class="cart-item-name">${c.name}</div>
+                    <div class="cart-item-price">$${(c.price * c.qty).toLocaleString('es-CL')}</div>
+                    <div class="cart-item-qty">
+                        <button class="cart-qty-btn" onclick="changeCartQty(${c.id},-1)"><i class="fas fa-minus"></i></button>
+                        <span class="cart-qty-val">${c.qty}</span>
+                        <button class="cart-qty-btn" onclick="changeCartQty(${c.id},1)"><i class="fas fa-plus"></i></button>
+                    </div>
+                </div>
+                <button class="cart-item-remove" onclick="removeFromCart(${c.id})"><i class="fas fa-trash-alt"></i></button>
+            </div>
+        `).join('');
+        const total = cart.reduce((s, c) => s + c.price * c.qty, 0);
+        document.getElementById('cartTotal').textContent = `$${total.toLocaleString('es-CL')}`;
+    }
+    function changeCartQty(id, d) {
+        const item = cart.find(c => c.id === id);
+        if (item) { item.qty += d; if (item.qty <= 0) cart = cart.filter(c => c.id !== id); }
+        updateCart();
+    }
+    function removeFromCart(id) { cart = cart.filter(c => c.id !== id); updateCart(); }
+    function openCart() {
+        document.getElementById('cartOverlay').classList.add('active');
+        document.getElementById('cartDrawer').classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+    function closeCart() {
+        document.getElementById('cartOverlay').classList.remove('active');
+        document.getElementById('cartDrawer').classList.remove('active');
+        document.body.style.overflow = '';
+    }
+
+    // ===== CHECKOUT =====
+    function openCheckout() {
+        if (cart.length === 0) return;
+        closeCart();
+        const total = cart.reduce((s, c) => s + c.price * c.qty, 0);
+        document.getElementById('checkoutSummary').innerHTML =
+            cart.map(c => `<div class="summary-item"><span>${c.name} x${c.qty}</span><span style="font-weight:600;">$${(c.price*c.qty).toLocaleString('es-CL')}</span></div>`).join('') +
+            `<div class="summary-total"><span>Total</span><span style="color:var(--text);">$${total.toLocaleString('es-CL')}</span></div>`;
+        document.getElementById('checkoutModal').classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+    function closeCheckoutModal() {
+        document.getElementById('checkoutModal').classList.remove('active');
+        document.body.style.overflow = '';
+    }
+    function closeCheckout(e) { if (e.target === e.currentTarget) closeCheckoutModal(); }
+
+    async function submitOrder(e) {
+        e.preventDefault();
+        const total = cart.reduce((s, c) => s + c.price * c.qty, 0);
+        const orderData = {
+            id: 'PED-' + Date.now().toString(36).toUpperCase(),
+            client: document.getElementById('checkName').value,
+            phone: document.getElementById('checkPhone').value,
+            items: cart.map(c => ({id: c.id, name: c.name, price: c.price, qty: c.qty})),
+            total, payment: document.getElementById('checkPayment').value,
+            address: document.getElementById('checkAddress').value,
+            comuna: document.getElementById('checkComuna').value,
+            notes: document.getElementById('checkNotes').value,
+            businessName,
+            businessTipo,
+            status: 'nuevo',
+            createdAt: new Date().toISOString()
+        };
+
+        // Save to localStorage (works offline, no server needed)
+        try {
+            const orders = JSON.parse(localStorage.getItem('fgf_orders') || '[]');
+            orders.push(orderData);
+            localStorage.setItem('fgf_orders', JSON.stringify(orders));
+            showToast('✅ Pedido ' + orderData.id + ' registrado');
+        } catch(err) { console.log('Error saving order:', err); }
+
+        if (orderData.payment === 'WhatsApp') {
+            let msg = `🛒 *Pedido desde ${businessName}*\n\n👤 ${orderData.client}\n📱 ${orderData.phone}\n📍 ${orderData.address} - ${orderData.comuna}\n\n`;
+            cart.forEach(c => { msg += `• ${c.name} x${c.qty} — $${(c.price*c.qty).toLocaleString('es-CL')}\n`; });
+            msg += `\n💰 *Total: $${total.toLocaleString('es-CL')}*`;
+            if (orderData.notes) msg += `\n📝 ${orderData.notes}`;
+            window.open(`https://wa.me/${businessTel}?text=${encodeURIComponent(msg)}`, '_blank');
+        }
+
+        cart = []; updateCart(); closeCheckoutModal();
+        showToast('🛒 ¡Pedido enviado! Te contactaremos pronto.');
+    }
+
+    // ===== ADMIN (inline simple) =====
+    function openAdmin() { window.open('admin-panel.html' + window.location.search, '_blank'); }
+
+    // ===== TOAST =====
+    function showToast(msg) {
+        const t = document.getElementById('toast');
+        document.getElementById('toastMsg').textContent = msg;
+        t.classList.add('show');
+        setTimeout(() => t.classList.remove('show'), 2500);
+    }
+
+    // ===== BOOKING SYSTEM =====
+    let selectedTimeSlot = null;
+    const timeSlotOptions = ['09:00','09:30','10:00','10:30','11:00','11:30','12:00','12:30','14:00','14:30','15:00','15:30','16:00','16:30','17:00','17:30'];
+
+    function initBooking() {
+        // Set minimum date to today
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('bookDate').min = today;
+        document.getElementById('bookDate').value = today;
+        
+        // Populate services from catalog
+        const serviceSelect = document.getElementById('bookService');
+        allProducts.forEach(p => {
+            const option = document.createElement('option');
+            option.value = p.id;
+            option.textContent = `${p.name} - $${p.price.toLocaleString('es-CL')}`;
+            serviceSelect.appendChild(option);
+        });
+        
+        updateAvailableSlots();
+    }
+
+    function updateBookingPrice() {
+        const serviceId = document.getElementById('bookService').value;
+        const priceDisplay = document.getElementById('bookPriceDisplay');
+        if (serviceId) {
+            const product = allProducts.find(p => p.id == serviceId);
+            if (product) {
+                document.getElementById('bookPrice').textContent = `$${product.price.toLocaleString('es-CL')}`;
+                priceDisplay.style.display = 'block';
+            }
+        } else {
+            priceDisplay.style.display = 'none';
+        }
+    }
+
+    function updateAvailableSlots() {
+        const date = document.getElementById('bookDate').value;
+        const slotsDiv = document.getElementById('timeSlots');
+        if (!date) { slotsDiv.innerHTML = '<p style="color:var(--text-muted); grid-column:1/-1;">Seleccioná una fecha</p>'; return; }
+        
+        // Simulate some slots as unavailable (random based on date)
+        const seed = date.split('-').reduce((a,b) => a + parseInt(b), 0);
+        const unavailable = timeSlotOptions.filter((_, i) => (seed + i * 7) % 5 === 0);
+        
+        slotsDiv.innerHTML = timeSlotOptions.map(slot => {
+            const isUnavailable = unavailable.includes(slot);
+            return `<button type="button" class="time-slot ${isUnavailable ? 'unavailable' : ''}" 
+                onclick="${isUnavailable ? '' : `selectTimeSlot('${slot}', this)`}"
+                ${isUnavailable ? 'disabled' : ''}>
+                ${slot}
+            </button>`;
+        }).join('');
+        
+        selectedTimeSlot = null;
+    }
+
+    function selectTimeSlot(time, el) {
+        document.querySelectorAll('.time-slot').forEach(s => s.classList.remove('selected'));
+        el.classList.add('selected');
+        selectedTimeSlot = time;
+    }
+
+    function openBookingModal() {
+        document.getElementById('bookingModal').classList.add('active');
+        document.body.style.overflow = 'hidden';
+        if (!document.getElementById('bookService').options.length || document.getElementById('bookService').options.length <= 1) {
+            initBooking();
+        }
+    }
+
+    function closeBookingModal(e) {
+        if (e && e.target !== e.currentTarget) return;
+        document.getElementById('bookingModal').classList.remove('active');
+        document.body.style.overflow = '';
+    }
+
+    async function submitBooking() {
+        const serviceId = document.getElementById('bookService').value;
+        const date = document.getElementById('bookDate').value;
+        const name = document.getElementById('bookName').value;
+        const phone = document.getElementById('bookPhone').value;
+        const professional = document.getElementById('bookProfessional').value;
+        const notes = document.getElementById('bookNotes').value;
+        
+        if (!serviceId || !date || !selectedTimeSlot || !name || !phone) {
+            showToast('⚠️ Completá todos los campos obligatorios');
+            return;
+        }
+        
+        const product = allProducts.find(p => p.id == serviceId);
+        const bookingData = {
+            id: 'CIT-' + Date.now().toString(36).toUpperCase(),
+            service: product.name,
+            servicePrice: product.price,
+            date,
+            time: selectedTimeSlot,
+            professional,
+            client: name,
+            phone,
+            notes,
+            businessName,
+            businessTipo,
+            status: 'confirmada',
+            createdAt: new Date().toISOString()
+        };
+        
+        // Save to localStorage (works offline, no server needed)
+        try {
+            const bookings = JSON.parse(localStorage.getItem('fgf_bookings') || '[]');
+            bookings.push(bookingData);
+            localStorage.setItem('fgf_bookings', JSON.stringify(bookings));
+            showToast('✅ Cita agendada - ID: ' + bookingData.id);
+        } catch(err) { console.log('Error saving booking:', err); }
+        
+        // Send WhatsApp confirmation
+        let msg = `📅 *Cita agendada en ${businessName}*\n\n👤 ${name}\n📱 ${phone}\n💻 ${product.name}\n💰 $${product.price.toLocaleString('es-CL')}\n📅 ${date}\n⏰ ${selectedTimeSlot}\n👨‍⚕️ ${professional || 'Cualquier profesional'}`;
+        if (notes) msg += `\n📝 ${notes}`;
+        window.open(`https://wa.me/${businessTel}?text=${encodeURIComponent(msg)}`, '_blank');
+        
+        closeBookingModal();
+        showToast('✅ ¡Cita confirmada! Te esperamos.');
+    }
+
+    updateCart();
+    </script>
+</body>
+</html>
