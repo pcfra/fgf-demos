@@ -1267,19 +1267,7 @@
 
     function toggleEditMode() {
         editMode = !editMode;
-        const text = document.getElementById('editModeText');
-        const btn = document.getElementById('floatingAdminLink');
-        
-        if (editMode) {
-            text.textContent = 'Salir del Modo Edición';
-            btn.style.background = 'linear-gradient(135deg,#ef4444,#dc2626)';
-            showToast('✅ Modo edición activado');
-        } else {
-            text.textContent = 'Gestionar Mi Tienda';
-            btn.style.background = 'linear-gradient(135deg,#7c3aed,#6d28d9)';
-            showToast('🔒 Modo edición desactivado');
-        }
-        
+        showToast(editMode ? '✅ Modo edición activado' : '🔒 Modo edición desactivado');
         renderProducts(allProducts);
     }
 
