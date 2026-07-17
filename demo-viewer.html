@@ -1070,10 +1070,11 @@
     // Load custom products from admin panel (localStorage)
     try {
         const customProducts = JSON.parse(localStorage.getItem('fgf_custom_products') || '[]');
-        if (customProducts.length > 0) {
+        const myProducts = customProducts.filter(cp => !cp.businessName || cp.businessName === businessName);
+        if (myProducts.length > 0) {
             const maxId = allProducts.reduce((m, p) => Math.max(m, p.id), 0);
-            customProducts.forEach((cp, i) => {
-                allProducts.push({ ...cp, id: maxId + i + 1 });
+            myProducts.forEach((cp, i) => {
+                allProducts.push({ ...cp, id: maxId + i + 1, category: cp.category || cp.cat || 'General' });
             });
         }
     } catch(e) {}
