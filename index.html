@@ -747,10 +747,28 @@ function renderClientsSection() {
                 <div class="client-actions">
                     <button class="client-btn" onclick="navigator.clipboard.writeText('${l.code}').then(()=>showToast('Licencia copiada'))"><i class="fas fa-copy"></i> Copiar</button>
                     <button class="client-btn" onclick="copyDemoLinkForClient('${l.code}')"><i class="fas fa-link"></i> Link</button>
+                    <button class="client-btn" style="color:var(--danger); border-color:rgba(239,68,68,0.3);" onclick="deleteClient('${l.code}')"><i class="fas fa-trash"></i></button>
                 </div>
             </div>
         </div>`;
     }).join('');
+}
+
+function deleteClient(licenseCode) {
+    if (!confirm('¿Eliminar este cliente?\n\nSe borrarán todos sus datos (productos, pedidos, fotos).')) return;
+    const licenses = JSON.parse(localStorage.getItem('fgf_licenses') || '[]');
+    const filtered = licenses.filter(l => l.code !== licenseCode);
+    localStorage.setItem('fgf_licenses', JSON.stringify(filtered));
+    // Clean up client data from localStorage
+    const prefix = 'fgf_client_' + licenseCode + '_';
+    const keysToRemove = [];
+    for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key && key.startsWith(prefix)) keysToRemove.push(key);
+    }
+    keysToRemove.forEach(k => localStorage.removeItem(k));
+    renderClientsSection();
+    showToast('Cliente eliminado');
 }
 
 function copyDemoLinkForClient(licenseCode) {
