@@ -459,8 +459,8 @@
             </div>
         </div>
         <div class="nav-right">
-            <button class="nav-admin-btn" onclick="openAdmin()" id="adminBtn" style="display:none;">
-                <i class="fas fa-cog"></i> Admin
+            <button class="nav-link" onclick="openAdmin()" id="adminBtn" style="display:none;" title="Panel de Administración">
+                <i class="fas fa-cog"></i>
             </button>
             <button class="nav-link" id="cartBtn" onclick="openCart()" style="display:none;">
                 <i class="fas fa-shopping-cart"></i>
@@ -680,13 +680,6 @@
 
     <!-- TOAST -->
     <div class="toast" id="toast"><i class="fas fa-check-circle"></i> <span id="toastMsg"></span></div>
-
-    <!-- FLOATING ADMIN BUTTON (only for business owner with license) -->
-    <div id="floatingAdmin" style="display:none; position:fixed; bottom:24px; right:24px; z-index:250;">
-        <button id="floatingAdminLink" onclick="toggleEditMode()" style="display:flex; align-items:center; gap:10px; padding:14px 24px; background:linear-gradient(135deg,#7c3aed,#6d28d9); color:#fff; border:none; border-radius:16px; text-decoration:none; font-weight:700; font-size:0.9em; box-shadow:0 8px 30px rgba(124,58,237,0.4); transition:0.3s; font-family:inherit; cursor:pointer;">
-            <i class="fas fa-cog"></i> <span id="editModeText">Gestionar Mi Tienda</span>
-        </button>
-    </div>
 
     <!-- ADD PRODUCT MODAL -->
     <div class="checkout-modal" id="addProductModal" onclick="closeAddProductModal(event)">
@@ -1193,9 +1186,9 @@
         const isPremium = localStorage.getItem(lk('premium')) === 'true';
         const crown = isPremium ? ' 👑' : '';
         
-        // Show floating admin button for business owner
+        // Show gear button for business owner (only when license in URL)
         if (clientLicense) {
-            document.getElementById('floatingAdmin').style.display = 'block';
+            document.getElementById('adminBtn').style.display = 'flex';
         }
         
         document.title = `${businessName}${crown} | Tienda Online`;
