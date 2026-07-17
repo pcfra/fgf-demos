@@ -681,6 +681,13 @@
     <!-- TOAST -->
     <div class="toast" id="toast"><i class="fas fa-check-circle"></i> <span id="toastMsg"></span></div>
 
+    <!-- FLOATING ADMIN BUTTON (only for business owner with license) -->
+    <div id="floatingAdmin" style="display:none; position:fixed; bottom:24px; right:24px; z-index:250;">
+        <a id="floatingAdminLink" href="#" style="display:flex; align-items:center; gap:10px; padding:14px 24px; background:linear-gradient(135deg,#7c3aed,#6d28d9); color:#fff; border-radius:16px; text-decoration:none; font-weight:700; font-size:0.9em; box-shadow:0 8px 30px rgba(124,58,237,0.4); transition:0.3s; font-family:inherit;">
+            <i class="fas fa-cog"></i> Gestionar Mi Tienda
+        </a>
+    </div>
+
     <!-- FOOTER -->
     <div class="footer">
         <p>Powered by <span class="brand">FGF Digital</span> — Tu negocio en internet</p>
@@ -1089,6 +1096,12 @@
         // Check premium status
         const isPremium = localStorage.getItem(lk('premium')) === 'true';
         const crown = isPremium ? ' 👑' : '';
+        
+        // Show floating admin button for business owner
+        if (clientLicense) {
+            document.getElementById('floatingAdmin').style.display = 'block';
+            document.getElementById('floatingAdminLink').href = 'admin-panel.html' + window.location.search;
+        }
         
         document.title = `${businessName}${crown} | Tienda Online`;
         document.getElementById('navLogo').textContent = businessName.substring(0,2).toUpperCase();
