@@ -333,6 +333,22 @@
         <button class="btn-action btn-copy" style="width:100%; margin-top:6px; padding:14px;" onclick="copyBoth()">
             <i class="fas fa-copy"></i> Copiar Ambos Links
         </button>
+
+        <!-- QR CODES -->
+        <div id="qrSection" style="display:none; margin-top:16px;">
+            <div style="display:flex; gap:12px;">
+                <div style="flex:1; background:#fff; border-radius:16px; padding:18px; text-align:center;">
+                    <div style="font-size:0.72em; font-weight:700; color:#475569; text-transform:uppercase; margin-bottom:10px;">QR Tienda (para imprimir)</div>
+                    <img id="qrTienda" style="width:180px; height:180px; border-radius:10px; margin-bottom:10px;" alt="QR Tienda">
+                    <div><a id="qrTiendaDownload" href="#" download="QR-Tienda.png" style="display:inline-block; padding:8px 16px; background:rgba(139,92,246,0.1); color:#8b5cf6; border-radius:8px; font-size:0.78em; font-weight:600; text-decoration:none;"><i class="fas fa-download"></i> Descargar QR</a></div>
+                </div>
+                <div style="flex:1; background:#fff; border-radius:16px; padding:18px; text-align:center;">
+                    <div style="font-size:0.72em; font-weight:700; color:#475569; text-transform:uppercase; margin-bottom:10px;">QR Admin (para el dueño)</div>
+                    <img id="qrAdmin" style="width:180px; height:180px; border-radius:10px; margin-bottom:10px;" alt="QR Admin">
+                    <div><a id="qrAdminDownload" href="#" download="QR-Admin.png" style="display:inline-block; padding:8px 16px; background:rgba(236,72,153,0.1); color:#ec4899; border-radius:8px; font-size:0.78em; font-weight:600; text-decoration:none;"><i class="fas fa-download"></i> Descargar QR</a></div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- CLIENT LICENSE DISPLAY -->
@@ -863,6 +879,19 @@ function generate() {
     document.getElementById('urlTienda').textContent = generatedUrls.tienda;
     document.getElementById('urlAdmin').textContent = generatedUrls.admin;
     document.getElementById('results').classList.add('active');
+
+    // QR Codes
+    const qrTienda = document.getElementById('qrTienda');
+    const qrAdmin = document.getElementById('qrAdmin');
+    const qrTiendaDl = document.getElementById('qrTiendaDownload');
+    const qrAdminDl = document.getElementById('qrAdminDownload');
+    const qrTiendaUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=' + encodeURIComponent(generatedUrls.tienda);
+    const qrAdminUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=' + encodeURIComponent(generatedUrls.admin);
+    qrTienda.src = qrTiendaUrl;
+    qrAdmin.src = qrAdminUrl;
+    qrTiendaDl.href = qrTiendaUrl + '&format=png';
+    qrAdminDl.href = qrAdminUrl + '&format=png';
+    document.getElementById('qrSection').style.display = 'block';
 
     // Show client license
     document.getElementById('clientLicenseCode').textContent = clientLicense;
