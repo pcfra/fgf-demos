@@ -316,7 +316,7 @@
         <div class="nav-section">Configuración</div>
         <div class="nav-item" onclick="showPage('licencias', this)"><i class="fas fa-key"></i> Licencias</div>
         <div class="nav-item" onclick="showPage('config', this)"><i class="fas fa-cog"></i> Configuración</div>
-        <div class="nav-item" id="navVerTienda" onclick="window.close()"><i class="fas fa-store"></i> Ver Tienda</div>
+        <div class="nav-item" id="navVerTienda" onclick="openStore()"><i class="fas fa-store"></i> Ver Tienda</div>
         <div style="margin-top:auto; padding:16px 14px; border-top:1px solid var(--border);">
             <div class="license-badge" id="sidebarLicenseBadge" style="display:none;">
                 <div style="flex:1;">
@@ -1160,7 +1160,11 @@ function getShareUrl() {
     const name = encodeURIComponent(getScopedConfig('name') || bizName);
     const tipo = encodeURIComponent(bizTipo);
     const lic = encodeURIComponent(clientLicense || '');
-    return `https://pcfra.github.io/fgf-demos/demo-viewer.html?nombre=${name}&tipo=${tipo}&licencia=${lic}`;
+    return `https://pcfra.github.io/fgf-demos/demo-viewer.html?nombre=${name}&tipo=${tipo}&licencia=${lic}&telefono=${encodeURIComponent(bizTel)}&direccion=${encodeURIComponent(bizDir)}&horario=${encodeURIComponent(bizHorario)}&color=${encodeURIComponent(params.get('color') || 'blue')}`;
+}
+
+function openStore() {
+    window.open(getShareUrl(), '_blank');
 }
 
 function showShareCard() {
@@ -1942,11 +1946,46 @@ function renderProductosTable() {
             <td>${p.sold} uds</td>
             <td><span class="badge ${p.stock < 20 ? 'badge-danger' : 'badge-success'}">${p.stock === 999 ? '∞' : p.stock}</span></td>
             <td>
+                <button class="btn btn-success btn-sm" style="margin-right:4px; padding:4px 10px; font-size:0.75em; background:#10b981; color:#fff; border:none; border-radius:6px; cursor:pointer;" onclick="sellProduct(${p.id})" title="Vender 1 unidad"><i class="fas fa-minus-circle"></i> Vender</button>
                 <button class="btn btn-outline btn-sm" style="margin-right:4px; padding:4px 10px; font-size:0.75em;" onclick='editProduct(${JSON.stringify(p).replace(/'/g, "&#39;")})'><i class="fas fa-edit"></i></button>
                 <button class="btn btn-danger btn-sm" style="padding:4px 10px; font-size:0.75em;" onclick="deleteProduct(${p.id})"><i class="fas fa-trash"></i></button>
             </td>
         </tr>
     `).join('');
+}
+
+function sellProduct(productId) {
+    const p = products.find(pr => pr.id === productId);
+    if (!p) return;
+    
+    if (p.stock === 999) {
+        // Servicios sin stock limitado
+        p.sold++;
+        saveProducts();
+        renderProductosTable();
+        showToast(`✅ +1 venta de "${p.name}"`);
+        return;
+    }
+    
+    if (p.stock <= 0) {
+        showToast(`⚠️ Sin stock de "${p.name}"`);
+        return;
+    }
+    
+    const qty = prompt(`¿Cuántas unidades vendiste de "${p.name}"?`, '1');
+    if (!qty || isNaN(qty) || parseInt(qty) <= 0) return;
+    
+    const amount = parseInt(qty);
+    if (amount > p.stock) {
+        showToast(`⚠️ Solo tienes ${p.stock} unidades en stock`);
+        return;
+    }
+    
+    p.stock -= amount;
+    p.sold += amount;
+    saveProducts();
+    renderProductosTable();
+    showToast(`✅ ${amount} unidad(es) vendida(s) de "${p.name}". Stock: ${p.stock}`);
 }
 
 function editProduct(p) {
