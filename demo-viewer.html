@@ -1086,17 +1086,17 @@
     initStore();
 
     function initStore() {
-        // Show admin button if there's a license (business owner)
-        if (clientLicense) {
-            document.getElementById('adminBtn').style.display = 'flex';
-        }
-        document.title = `${businessName} | Tienda Online`;
+        // Check premium status
+        const isPremium = localStorage.getItem(lk('premium')) === 'true';
+        const crown = isPremium ? ' 👑' : '';
+        
+        document.title = `${businessName}${crown} | Tienda Online`;
         document.getElementById('navLogo').textContent = businessName.substring(0,2).toUpperCase();
-        document.getElementById('navName').textContent = businessName;
+        document.getElementById('navName').textContent = businessName + crown;
         
         const emoji = emojis[businessTipo] || '📦';
         document.getElementById('heroIcon').textContent = emoji;
-        document.getElementById('heroName').textContent = businessName;
+        document.getElementById('heroName').textContent = businessName + crown;
         
         // Dynamic subtitle per type
         const subtitles = {

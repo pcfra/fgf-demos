@@ -1143,6 +1143,10 @@ function updateDemoBanner() {
     if (banner) {
         banner.style.display = isPremium ? 'none' : 'flex';
     }
+    // Hide all premium buttons when already premium
+    document.querySelectorAll('.btn-premium').forEach(btn => {
+        btn.style.display = isPremium ? 'none' : 'flex';
+    });
 }
 
 function openPremiumWhatsApp() {
