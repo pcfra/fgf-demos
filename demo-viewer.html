@@ -1179,6 +1179,11 @@
         }
     } catch(e) {}
     
+    // ===== STATE (must be before initStore) =====
+    let editMode = false;
+    let productPhotoData = null;
+    let editPhotoData = null;
+
     initStore();
 
     function initStore() {
@@ -1261,13 +1266,22 @@
     }
 
     // ===== EDIT MODE =====
-    let editMode = false;
-    let productPhotoData = null;
-    let editPhotoData = null;
 
     function toggleEditMode() {
         editMode = !editMode;
-        showToast(editMode ? '✅ Modo edición activado' : '🔒 Modo edición desactivado');
+        const text = document.getElementById('editModeText');
+        const btn = document.getElementById('floatingAdminLink');
+        
+        if (editMode) {
+            text.textContent = 'Salir del Modo Edición';
+            btn.style.background = 'linear-gradient(135deg,#ef4444,#dc2626)';
+            showToast('✅ Modo edición activado');
+        } else {
+            text.textContent = 'Gestionar Mi Tienda';
+            btn.style.background = 'linear-gradient(135deg,#7c3aed,#6d28d9)';
+            showToast('🔒 Modo edición desactivado');
+        }
+        
         renderProducts(allProducts);
     }
 
@@ -1396,18 +1410,6 @@
 
     function saveProductsToStorage() {
         localStorage.setItem(lk('products'), JSON.stringify(allProducts));
-    }
-
-    function openAddProductModal() {
-        document.getElementById('addProductModal').classList.add('active');
-        document.getElementById('addProductForm').reset();
-        document.getElementById('productPhotoPreview').innerHTML = '📷';
-        productPhotoData = null;
-    }
-
-    function closeAddProductModal(e) {
-        if (e && e.target !== e.currentTarget) return;
-        document.getElementById('addProductModal').classList.remove('active');
     }
 
     // ===== RENDER =====
@@ -1794,4 +1796,3 @@
     </script>
 </body>
 </html>
-<!-- 1784259888 -->
