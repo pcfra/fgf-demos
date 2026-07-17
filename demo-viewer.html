@@ -691,6 +691,10 @@
     // No server needed - everything runs locally
     // Orders & bookings saved to localStorage
     
+    // ===== CLIENT LICENSE (data scoping) =====
+    const clientLicense = new URLSearchParams(window.location.search).get('licencia') || '';
+    const lk = (key) => clientLicense ? `fgf_client_${clientLicense}_${key}` : key;
+
     // ===== URL PARAMS =====
     const params = new URLSearchParams(window.location.search);
     const businessName = params.get('nombre') || 'Tu Negocio';
@@ -1069,7 +1073,7 @@
     
     // Load custom products from admin panel (localStorage)
     try {
-        const customProducts = JSON.parse(localStorage.getItem('fgf_custom_products') || '[]');
+        const customProducts = JSON.parse(localStorage.getItem(lk('products')) || '[]');
         const myProducts = customProducts.filter(cp => !cp.businessName || cp.businessName === businessName);
         if (myProducts.length > 0) {
             const maxId = allProducts.reduce((m, p) => Math.max(m, p.id), 0);
@@ -1247,8 +1251,8 @@
     function quickAdd(id) { addToCart(id, 1); }
 
     // ===== CART =====
-    let cart = JSON.parse(localStorage.getItem('fgf_cart') || '[]');
-    function saveCart() { localStorage.setItem('fgf_cart', JSON.stringify(cart)); }
+    let cart = JSON.parse(localStorage.getItem(lk('cart')) || '[]');
+    function saveCart() { localStorage.setItem(lk('cart'), JSON.stringify(cart)); }
     function addToCart(productId, qty) {
         const product = allProducts.find(p => p.id === productId);
         const existing = cart.find(c => c.id === productId);
@@ -1342,9 +1346,9 @@
 
         // Save to localStorage (works offline, no server needed)
         try {
-            const orders = JSON.parse(localStorage.getItem('fgf_orders') || '[]');
+            const orders = JSON.parse(localStorage.getItem(lk('real_orders')) || '[]');
             orders.push(orderData);
-            localStorage.setItem('fgf_orders', JSON.stringify(orders));
+            localStorage.setItem(lk('real_orders'), JSON.stringify(orders));
             showToast('✅ Pedido ' + orderData.id + ' registrado');
         } catch(err) { console.log('Error saving order:', err); }
 
@@ -1480,9 +1484,9 @@
         
         // Save to localStorage (works offline, no server needed)
         try {
-            const bookings = JSON.parse(localStorage.getItem('fgf_bookings') || '[]');
+            const bookings = JSON.parse(localStorage.getItem(lk('bookings')) || '[]');
             bookings.push(bookingData);
-            localStorage.setItem('fgf_bookings', JSON.stringify(bookings));
+            localStorage.setItem(lk('bookings'), JSON.stringify(bookings));
             showToast('✅ Cita agendada - ID: ' + bookingData.id);
         } catch(err) { console.log('Error saving booking:', err); }
         
@@ -1496,6 +1500,15 @@
     }
 
     updateCart();
+
+    // ===== DEMO WATERMARK (no license) =====
+    if (!clientLicense) {
+        const watermark = document.createElement('div');
+        watermark.id = 'demoWatermark';
+        watermark.textContent = 'DEMO — Sin licencia activa';
+        watermark.style.cssText = 'position:fixed;bottom:0;left:0;right:0;text-align:center;padding:6px 0;font-size:0.72em;font-weight:700;letter-spacing:0.08em;color:rgba(239,68,68,0.7);background:rgba(254,226,226,0.85);backdrop-filter:blur(4px);z-index:999;pointer-events:none;';
+        document.body.appendChild(watermark);
+    }
     </script>
 </body>
 </html>

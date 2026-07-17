@@ -148,6 +148,46 @@
         }
         .toast.show { transform:translateX(-50%) translateY(0); }
 
+        /* === CLIENT LICENSE DISPLAY === */
+        .license-display-card {
+            background:linear-gradient(135deg, rgba(34,197,94,0.08), rgba(139,92,246,0.05));
+            border:1px solid rgba(34,197,94,0.25); border-radius:16px;
+            padding:18px; margin-bottom:14px; text-align:center;
+        }
+        .license-code-display {
+            font-family:monospace; font-size:1.4em; font-weight:800; letter-spacing:0.08em;
+            color:var(--success); background:rgba(34,197,94,0.1); padding:12px 18px;
+            border-radius:10px; display:inline-block; margin:10px 0;
+            border:1px dashed rgba(34,197,94,0.3);
+        }
+        .license-actions { display:flex; gap:8px; margin-top:12px; }
+
+        /* === MY CLIENTS SECTION === */
+        .clients-card {
+            background:var(--card); border:1px solid var(--border); border-radius:16px;
+            padding:18px; margin-bottom:14px;
+        }
+        .client-row {
+            display:flex; justify-content:space-between; align-items:center;
+            padding:10px 0; border-bottom:1px solid rgba(139,92,246,0.08);
+        }
+        .client-row:last-child { border-bottom:none; }
+        .client-name { font-size:0.85em; font-weight:600; color:var(--text); }
+        .client-meta { font-size:0.7em; color:var(--muted); margin-top:2px; }
+        .client-license { font-family:monospace; font-size:0.72em; color:var(--primary); font-weight:600; }
+        .client-premium-badge {
+            display:inline-block; font-size:0.6em; padding:2px 6px; border-radius:4px;
+            background:rgba(245,158,11,0.15); color:var(--warning); font-weight:700;
+        }
+        .client-actions { display:flex; gap:6px; margin-top:4px; }
+        .client-btn {
+            padding:4px 8px; border-radius:6px; border:1px solid var(--border);
+            background:var(--card2); color:var(--muted); font-size:0.68em; font-weight:600;
+            cursor:pointer; transition:0.2s;
+        }
+        .client-btn:active { transform:scale(0.95); }
+        .empty-clients { color:var(--muted); font-size:0.78em; text-align:center; padding:20px; }
+
         /* === FOOTER === */
         .footer { text-align:center; padding:20px; color:#334155; font-size:0.7em; }
     </style>
@@ -295,12 +335,33 @@
         </button>
     </div>
 
+    <!-- CLIENT LICENSE DISPLAY -->
+    <div class="results" id="clientLicenseResult">
+        <div class="license-display-card">
+            <div style="font-size:0.72em; font-weight:700; color:var(--muted); text-transform:uppercase;">Licencia del Cliente</div>
+            <div class="license-code-display" id="clientLicenseCode"></div>
+            <div style="font-size:0.75em; color:var(--muted); margin-top:4px;">
+                Esta licencia se incluye en la URL de la demo del cliente
+            </div>
+            <div class="license-actions">
+                <button class="btn-action btn-copy" onclick="copyClientLicense()"><i class="fas fa-copy"></i> Copiar Licencia</button>
+                <button class="btn-action btn-whatsapp" onclick="shareClientLicenseWhatsApp()"><i class="fab fa-whatsapp"></i> Enviar por WhatsApp</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MY CLIENTS -->
+    <div class="clients-card" id="myClientsCard">
+        <div class="card-title"><i class="fas fa-users"></i> Mis Clientes <span style="margin-left:auto; font-size:0.7em; padding:3px 8px; background:rgba(139,92,246,0.15); color:var(--primary); border-radius:20px;" id="clientCount">0</span></div>
+        <div id="clientsList"></div>
+    </div>
+
 </div>
 </div>
 
 <div class="footer" style="padding:20px; text-align:center;">
     <div style="font-size:0.85em; font-weight:700; color:var(--primary);">⚡ FGF Digital</div>
-    <div style="font-size:0.72em; color:var(--muted); margin-top:4px;">Generador de Demos v3.1</div>
+    <div style="font-size:0.72em; color:var(--muted); margin-top:4px;">Generador de Demos v3.2</div>
     <div style="font-size:0.65em; color:#475569; margin-top:6px;">Soporte: +569 4089 4579</div>
     <div style="font-size:0.6em; color:#334155; margin-top:4px;">Licencia protegida e intransferible © 2026</div>
 </div>
@@ -312,7 +373,7 @@
 // ===== CONFIG =====
 const BASE_URL = localStorage.getItem('fgf_host_url') || 'https://pcfra.github.io/fgf-demos';
 const API_BASE = '';
-const APP_VERSION = '3.1';
+const APP_VERSION = '3.2';
 const MASTER_LICENSE = 'FGF-B0SS-0000-0000-FGF0';
 const MAX_OFFLINE_DAYS = 30;
 
@@ -610,6 +671,106 @@ function updateHostStatus() {
     }
 }
 
+// ===== CLIENT LICENSE SYSTEM =====
+const CHARS = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+
+function generateClientLicenseCode() {
+    let part = '';
+    for (let i = 0; i < 4; i++) {
+        part += CHARS[Math.floor(Math.random() * CHARS.length)];
+    }
+    return part;
+}
+
+function generateClientLicense() {
+    const existing = JSON.parse(localStorage.getItem('fgf_licenses') || '[]');
+    let code;
+    let attempts = 0;
+    do {
+        code = 'FGF-CLT-' + generateClientLicenseCode() + '-' + generateClientLicenseCode();
+        attempts++;
+    } while (existing.some(l => l.code === code) && attempts < 1000);
+    return code;
+}
+
+function saveClientLicense(code, businessName, tipo) {
+    const existing = JSON.parse(localStorage.getItem('fgf_licenses') || '[]');
+    existing.push({
+        code: code,
+        businessName: businessName,
+        tipo: tipo,
+        createdAt: new Date().toISOString(),
+        premium: false
+    });
+    localStorage.setItem('fgf_licenses', JSON.stringify(existing));
+}
+
+function copyClientLicense() {
+    const code = document.getElementById('clientLicenseCode').textContent;
+    if (code) {
+        navigator.clipboard.writeText(code).then(() => {
+            showToast('Licencia copiada');
+        }).catch(() => {
+            prompt('Licencia del cliente:', code);
+        });
+    }
+}
+
+function shareClientLicenseWhatsApp() {
+    const code = document.getElementById('clientLicenseCode').textContent;
+    const name = document.getElementById('bizName').value.trim() || 'Tu Negocio';
+    if (code) {
+        const msg = `Hola! Tu demo de *${name}* está lista.\n\n🔑 Licencia: ${code}\n\nGuardá este código para futuras consultas.`;
+        window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
+    }
+}
+
+function renderClientsSection() {
+    const licenses = JSON.parse(localStorage.getItem('fgf_licenses') || '[]');
+    const countEl = document.getElementById('clientCount');
+    const listEl = document.getElementById('clientsList');
+    if (countEl) countEl.textContent = licenses.length;
+    if (!listEl) return;
+    if (licenses.length === 0) {
+        listEl.innerHTML = '<div class="empty-clients"><i class="fas fa-inbox" style="font-size:1.5em; display:block; margin-bottom:8px; color:#475569;"></i>Aún no generaste licencias para clientes.<br>Generá una demo y se guardará acá.</div>';
+        return;
+    }
+    listEl.innerHTML = licenses.slice().reverse().map((l, idx) => {
+        const date = new Date(l.createdAt).toLocaleDateString('es-CL', {day:'2-digit', month:'short', year:'numeric'});
+        const tipoLabel = businessTypes[l.tipo] || l.tipo || 'N/A';
+        return `
+        <div class="client-row">
+            <div style="flex:1; min-width:0;">
+                <div class="client-name">${l.businessName} ${l.premium ? '<span class="client-premium-badge">PREMIUM</span>' : ''}</div>
+                <div class="client-meta">${tipoLabel} — ${date}</div>
+                <div class="client-license">${l.code}</div>
+                <div class="client-actions">
+                    <button class="client-btn" onclick="navigator.clipboard.writeText('${l.code}').then(()=>showToast('Licencia copiada'))"><i class="fas fa-copy"></i> Copiar</button>
+                    <button class="client-btn" onclick="copyDemoLinkForClient('${l.code}')"><i class="fas fa-link"></i> Link</button>
+                </div>
+            </div>
+        </div>`;
+    }).join('');
+}
+
+function copyDemoLinkForClient(licenseCode) {
+    const licenses = JSON.parse(localStorage.getItem('fgf_licenses') || '[]');
+    const lic = licenses.find(l => l.code === licenseCode);
+    if (!lic) return;
+    const hostUrl = localStorage.getItem('fgf_host_url') || BASE_URL;
+    const params = new URLSearchParams({
+        nombre: lic.businessName,
+        tipo: lic.tipo,
+        licencia: lic.code
+    });
+    const url = `${hostUrl}/demo-viewer.html?${params.toString()}`;
+    navigator.clipboard.writeText(url).then(() => {
+        showToast('Link de demo copiado');
+    }).catch(() => {
+        prompt('Link de demo:', url);
+    });
+}
+
 function init() {
     // Initialize hosting status
     updateHostStatus();
@@ -630,6 +791,9 @@ function init() {
     quickBiz.forEach(b => {
         qg.innerHTML += `<div class="quick-btn" onclick="quickFill('${b.name}','${b.tipo}','${b.tel}','${b.dir}','${b.hor}','${b.color}')">${b.name}</div>`;
     });
+
+    // Render existing clients
+    renderClientsSection();
 }
 
 function selectColor(name, el) {
@@ -657,9 +821,14 @@ function generate() {
 
     if (!name) { showToast('⚠️ Ingresa el nombre del negocio'); return; }
 
+    // Generate unique client license
+    const clientLicense = generateClientLicense();
+    saveClientLicense(clientLicense, name, tipo);
+
     const params = new URLSearchParams({
         nombre: name,
         tipo: tipo,
+        licencia: clientLicense,
         telefono: phone || '56912345678',
         direccion: addr || 'Talagante',
         horario: sched || 'Lun-Sáb 9:00-19:00',
@@ -676,8 +845,16 @@ function generate() {
     document.getElementById('urlTienda').textContent = generatedUrls.tienda;
     document.getElementById('urlAdmin').textContent = generatedUrls.admin;
     document.getElementById('results').classList.add('active');
+
+    // Show client license
+    document.getElementById('clientLicenseCode').textContent = clientLicense;
+    document.getElementById('clientLicenseResult').classList.add('active');
+
+    // Refresh clients section
+    renderClientsSection();
+
     document.getElementById('results').scrollIntoView({behavior:'smooth'});
-    showToast('✅ Demos generadas');
+    showToast('✅ Demo generada con licencia ' + clientLicense);
 }
 
 // Generate autonomous HTML with embedded business data
