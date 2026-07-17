@@ -1,21 +1,852 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <title>FGF Digital — Generador de Demos</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+        :root {
+            --bg:#0a0a14; --card:#14142a; --card2:#1a1a35; --border:rgba(139,92,246,0.15);
+            --primary:#8b5cf6; --primary-dark:#7c3aed; --accent:#ec4899; --success:#22c55e;
+            --warning:#f59e0b; --text:#f1f5f9; --muted:#94a3b8; --danger:#ef4444;
+        }
+        body {
+            font-family:'Inter',sans-serif; background:var(--bg); color:var(--text);
+            min-height:100vh; min-height:100dvh; overflow-x:hidden;
+            padding-bottom:env(safe-area-inset-bottom, 0);
+        }
+
+        /* === HEADER === */
+        .header {
+            background:linear-gradient(135deg, rgba(139,92,246,0.15), rgba(236,72,153,0.08));
+            border-bottom:1px solid var(--border); padding:20px 16px 16px;
+            text-align:center; position:sticky; top:0; z-index:100;
+            backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px);
+        }
+        .logo { font-size:2.2em; margin-bottom:4px; filter:drop-shadow(0 0 15px rgba(139,92,246,0.4)); }
+        .header h1 { font-size:1.1em; font-weight:800; background:linear-gradient(135deg,#818cf8,#a855f7,#ec4899); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+        .header p { color:var(--muted); font-size:0.72em; margin-top:2px; }
+
+        /* === CONTENT === */
+        .content { padding:16px; max-width:500px; margin:0 auto; }
+
+        /* === CARDS === */
+        .card {
+            background:var(--card); border:1px solid var(--border); border-radius:16px;
+            padding:18px; margin-bottom:14px;
+        }
+        .card-title {
+            font-size:0.82em; font-weight:700; color:var(--primary); margin-bottom:12px;
+            display:flex; align-items:center; gap:8px;
+        }
+        .card-title i { font-size:1.1em; }
+
+        /* === FORM === */
+        .form-group { margin-bottom:14px; }
+        .form-group label {
+            display:block; font-size:0.72em; font-weight:600; color:var(--muted);
+            margin-bottom:5px; text-transform:uppercase; letter-spacing:0.04em;
+        }
+        .form-group input, .form-group select {
+            width:100%; padding:12px 14px; border-radius:12px; border:1px solid var(--border);
+            background:var(--card2); color:var(--text); font-size:0.9em; font-family:'Inter',sans-serif;
+            transition:0.2s; outline:none;
+        }
+        .form-group input:focus, .form-group select:focus { border-color:var(--primary); box-shadow:0 0 0 3px rgba(139,92,246,0.15); }
+        .form-group select { appearance:none; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%2394a3b8' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10l-5 5z'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 14px center; }
+
+        /* === COLOR PICKER === */
+        .colors { display:flex; gap:10px; flex-wrap:wrap; }
+        .color-btn {
+            width:40px; height:40px; border-radius:50%; border:3px solid transparent;
+            cursor:pointer; transition:0.2s; position:relative;
+        }
+        .color-btn.active { border-color:#fff; transform:scale(1.15); box-shadow:0 0 12px rgba(255,255,255,0.2); }
+        .color-btn::after {
+            content:'✓'; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+            color:#fff; font-size:1em; font-weight:800; opacity:0; transition:0.2s;
+        }
+        .color-btn.active::after { opacity:1; }
+
+        /* === QUICK FILL === */
+        .quick-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:14px; }
+        .quick-btn {
+            padding:10px 8px; border-radius:10px; border:1px solid var(--border);
+            background:var(--card2); color:var(--text); font-size:0.72em; font-weight:600;
+            cursor:pointer; transition:0.2s; text-align:center;
+        }
+        .quick-btn:active { background:var(--primary); transform:scale(0.97); }
+
+        /* === GENERATE BUTTON === */
+        .btn-generate {
+            width:100%; padding:16px; border-radius:14px; border:none;
+            background:linear-gradient(135deg, var(--primary), var(--accent));
+            color:#fff; font-size:1em; font-weight:800; cursor:pointer;
+            transition:0.2s; display:flex; align-items:center; justify-content:center; gap:10px;
+            box-shadow:0 4px 20px rgba(139,92,246,0.3);
+        }
+        .btn-generate:active { transform:scale(0.97); box-shadow:0 2px 10px rgba(139,92,246,0.2); }
+        .btn-generate i { font-size:1.2em; }
+
+        /* === RESULTS === */
+        .results { display:none; margin-top:16px; }
+        .results.active { display:block; }
+
+        /* === LICENSE SCREEN === */
+        .license-screen {
+            position:fixed; top:0; left:0; right:0; bottom:0; z-index:9999;
+            background:var(--bg); display:flex; align-items:center; justify-content:center;
+            padding:24px;
+        }
+        .license-box {
+            width:100%; max-width:380px; background:var(--card); border:1px solid var(--border);
+            border-radius:20px; padding:32px 24px; text-align:center;
+            box-shadow:0 0 60px rgba(139,92,246,0.1);
+        }
+        .license-logo { font-size:3.5em; margin-bottom:8px; filter:drop-shadow(0 0 20px rgba(139,92,246,0.5)); animation:logoPulse 3s ease infinite; }
+        @keyframes logoPulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.08)} }
+        .license-error { color:var(--danger); font-size:0.8em; margin-top:10px; display:none; }
+        .license-success { color:var(--success); font-size:0.8em; margin-top:10px; }
+        .fgf-watermark {
+            position:fixed; bottom:8px; right:8px; z-index:1;
+            font-size:0.6em; color:rgba(139,92,246,0.25); font-weight:700;
+            pointer-events:none; text-align:right; line-height:1.3;
+        }
+        .result-card {
+            background:var(--card); border:1px solid var(--border); border-radius:14px;
+            padding:14px; margin-bottom:10px;
+        }
+        .result-label { font-size:0.7em; font-weight:700; color:var(--muted); text-transform:uppercase; margin-bottom:6px; }
+        .result-url {
+            font-size:0.78em; font-family:monospace; color:var(--primary);
+            word-break:break-all; padding:8px 10px; background:var(--card2);
+            border-radius:8px; margin-bottom:8px; line-height:1.5;
+        }
+        .result-actions { display:flex; gap:8px; }
+        .btn-action {
+            flex:1; padding:10px; border-radius:10px; border:none;
+            font-size:0.78em; font-weight:700; cursor:pointer; transition:0.2s;
+            display:flex; align-items:center; justify-content:center; gap:6px;
+        }
+        .btn-action:active { transform:scale(0.95); }
+        .btn-copy { background:rgba(139,92,246,0.15); color:var(--primary); border:1px solid rgba(139,92,246,0.2); }
+        .btn-whatsapp { background:rgba(37,211,102,0.15); color:#25d366; border:1px solid rgba(37,211,102,0.2); }
+        .btn-open { background:rgba(34,197,94,0.15); color:var(--success); border:1px solid rgba(34,197,94,0.2); }
+
+        /* === TOAST === */
+        .toast {
+            position:fixed; bottom:30px; left:50%; transform:translateX(-50%) translateY(100px);
+            background:var(--success); color:#fff; padding:12px 24px; border-radius:12px;
+            font-size:0.82em; font-weight:600; z-index:999; transition:0.3s;
+            box-shadow:0 4px 20px rgba(34,197,94,0.3);
+        }
+        .toast.show { transform:translateX(-50%) translateY(0); }
+
+        /* === FOOTER === */
+        .footer { text-align:center; padding:20px; color:#334155; font-size:0.7em; }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <div class="logo">⚡</div>
+    <h1>FGF Digital</h1>
+    <p>Generador de Demos</p>
+</div>
+
+    <!-- LICENSE SCREEN -->
+    <div class="license-screen" id="licenseScreen">
+        <div class="license-box">
+            <div class="license-logo">⚡</div>
+            <h2 style="font-size:1.3em; font-weight:800; background:linear-gradient(135deg,#818cf8,#a855f7); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">FGF DEMOS</h2>
+            <p style="color:var(--muted); font-size:0.78em; margin:8px 0 20px;">Sistema de Generación de Demos</p>
+            <div class="form-group">
+                <label>Código de Licencia</label>
+                <input type="text" id="licenseInput" placeholder="FGF-XXXX-XXXX-XXXX-XXXX-XXXX" style="text-align:center; font-family:monospace; font-size:1.1em; letter-spacing:0.05em;" maxlength="35" autocomplete="off" autocapitalize="characters" spellcheck="false">
+            </div>
+            <div id="licenseError" class="license-error" style="display:none;"></div>
+            <button class="btn-generate" onclick="validateLicense()" style="width:100%; margin-top:10px;">
+                <i class="fas fa-lock-open"></i> ACTIVAR
+            </button>
+            <div style="margin-top:20px; padding-top:16px; border-top:1px solid var(--border); text-align:center;">
+                <div style="font-size:0.72em; color:var(--muted);">¿No tenés código de licencia?</div>
+                <a href="https://wa.me/56940894579?text=Hola%20Francisco%2C%20necesito%20un%20c%C3%B3digo%20de%20licencia%20para%20FGF%20Demos" target="_blank" style="display:inline-flex; align-items:center; gap:6px; margin-top:8px; padding:10px 20px; background:rgba(34,197,94,0.15); color:#22c55e; border-radius:10px; text-decoration:none; font-size:0.85em; font-weight:600;">
+                    <i class="fab fa-whatsapp"></i> Solicitar Licencia
+                </a>
+            </div>
+            <div style="margin-top:16px; font-size:0.65em; color:#475569; text-align:center;">
+                ⚡ FGF Digital — Soporte: +569 4089 4579<br>
+                Licencia protegida e intransferible © 2026
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN APP -->
+    <div class="app-content" id="appContent" style="display:none;">
+    <div class="content">
+
+    <!-- MI REGISTRO -->
+    <div class="card" id="miRegistroCard" style="border:1px solid rgba(99,102,241,0.3); background:linear-gradient(135deg, rgba(99,102,241,0.08), rgba(236,72,153,0.05));">
+        <div class="card-title"><i class="fas fa-shield-halved"></i> Mi Registro <span style="margin-left:auto; font-size:0.7em; padding:3px 8px; background:rgba(34,197,94,0.15); color:var(--success); border-radius:20px;">✅ Activo</span></div>
+        <div id="registroInfo" style="font-size:0.82em;"></div>
+        <div style="margin-top:12px; padding-top:12px; border-top:1px solid var(--border); display:flex; gap:8px; flex-wrap:wrap;">
+            <button onclick="copyMyCode()" style="flex:1; padding:8px; border-radius:8px; border:1px solid var(--border); background:rgba(139,92,246,0.1); color:var(--primary); font-size:0.78em; font-weight:600; cursor:pointer;">
+                <i class="fas fa-copy"></i> Copiar Mi Código
+            </button>
+            <a href="https://wa.me/56940894579?text=Hola%20Francisco%2C%20perdí%20mi%20celular%20y%20necesito%20recuperar%20mi%20licencia%20FGF%20Demos.%20Mi%20código%20es:%20" target="_blank" id="recoveryLink" style="flex:1; padding:8px; border-radius:8px; border:1px solid var(--border); background:rgba(34,197,94,0.1); color:#22c55e; font-size:0.78em; font-weight:600; cursor:pointer; text-decoration:none; text-align:center;">
+                <i class="fab fa-whatsapp"></i> Recuperar
+            </a>
+        </div>
+        <div style="margin-top:8px; font-size:0.65em; color:#475569; text-align:center;">
+            ⚡ Si perdés o te roban el celular, contactanos con tu código y te activamos en el nuevo<br>
+            Soporte: +569 4089 4579 — Licencia intransferible
+        </div>
+    </div>
+
+    <!-- HOSTING CONFIG -->
+    <div class="card" style="border:1px solid rgba(245,158,11,0.3); background:linear-gradient(135deg, rgba(245,158,11,0.08), rgba(239,68,68,0.05));">
+        <div class="card-title"><i class="fas fa-globe"></i> Hosting <span id="hostStatus" style="margin-left:auto; font-size:0.7em; padding:3px 8px; background:rgba(245,158,11,0.15); color:var(--warning); border-radius:20px;">⚙️ Configurar</span></div>
+        <div style="font-size:0.78em; color:var(--muted); margin-bottom:10px;">
+            URL de tu hosting (GitHub Pages, Cloudflare, etc.)<br>
+            <span style="color:var(--success);">Dejalo vacío para generar demos locales</span>
+        </div>
+        <div style="display:flex; gap:8px;">
+            <input type="url" id="hostUrl" placeholder="https://fgf-demos.vercel.app" style="flex:1; padding:10px 12px; border-radius:10px; border:1px solid var(--border); background:var(--card2); color:var(--text); font-size:0.85em; font-family:monospace;">
+            <button onclick="saveHostUrl()" style="padding:10px 16px; border-radius:10px; border:none; background:var(--primary); color:#fff; font-size:0.85em; font-weight:600; cursor:pointer;">Guardar</button>
+        </div>
+        <div id="hostInfo" style="margin-top:8px; font-size:0.7em;"></div>
+    </div>
+
+    <!-- QUICK FILL -->
+    <div class="card">
+        <div class="card-title"><i class="fas fa-bolt"></i> Relleno Rápido</div>
+        <div class="quick-grid" id="quickGrid"></div>
+    </div>
+
+    <!-- FORM -->
+    <div class="card">
+        <div class="card-title"><i class="fas fa-store"></i> Datos del Negocio</div>
+
+        <div class="form-group">
+            <label>Nombre del Negocio</label>
+            <input type="text" id="bizName" placeholder="Ej: Desarmaduría FGF">
+        </div>
+
+        <div class="form-group">
+            <label>Tipo de Negocio</label>
+            <select id="bizType"></select>
+        </div>
+
+        <div class="form-group">
+            <label>Teléfono (sin +)</label>
+            <input type="tel" id="bizPhone" placeholder="56912345678">
+        </div>
+
+        <div class="form-group">
+            <label>Dirección</label>
+            <input type="text" id="bizAddress" placeholder="Ej: Av. Principal 123">
+        </div>
+
+        <div class="form-group">
+            <label>Horario</label>
+            <input type="text" id="bizSchedule" placeholder="Ej: Lun-Sáb 9:00-19:00">
+        </div>
+
+        <div class="form-group">
+            <label>Color</label>
+            <div class="colors" id="colorPicker"></div>
+        </div>
+    </div>
+
+    <!-- GENERATE -->
+    <button class="btn-generate" onclick="generate()">
+        <i class="fas fa-wand-magic-sparkles"></i> GENERAR DEMOS
+    </button>
+
+    <!-- RESULTS -->
+    <div class="results" id="results">
+        <div class="result-card">
+            <div class="result-label"><i class="fas fa-store"></i> Tienda (Cliente)</div>
+            <div class="result-url" id="urlTienda"></div>
+            <div class="result-actions">
+                <button class="btn-action btn-copy" onclick="copyUrl('tienda')"><i class="fas fa-copy"></i> Copiar</button>
+                <button class="btn-action btn-whatsapp" onclick="shareWhatsApp('tienda')"><i class="fab fa-whatsapp"></i> WhatsApp</button>
+                <button class="btn-action btn-open" onclick="openUrl('tienda')"><i class="fas fa-external-link"></i> Abrir</button>
+            </div>
+        </div>
+        <div class="result-card">
+            <div class="result-label"><i class="fas fa-chart-line"></i> Admin Panel</div>
+            <div class="result-url" id="urlAdmin"></div>
+            <div class="result-actions">
+                <button class="btn-action btn-copy" onclick="copyUrl('admin')"><i class="fas fa-copy"></i> Copiar</button>
+                <button class="btn-action btn-whatsapp" onclick="shareWhatsApp('admin')"><i class="fab fa-whatsapp"></i> WhatsApp</button>
+                <button class="btn-action btn-open" onclick="openUrl('admin')"><i class="fas fa-external-link"></i> Abrir</button>
+            </div>
+        </div>
+
+        <button class="btn-action btn-copy" style="width:100%; margin-top:6px; padding:14px;" onclick="copyBoth()">
+            <i class="fas fa-copy"></i> Copiar Ambos Links
+        </button>
+    </div>
+
+</div>
+</div>
+
+<div class="footer" style="padding:20px; text-align:center;">
+    <div style="font-size:0.85em; font-weight:700; color:var(--primary);">⚡ FGF Digital</div>
+    <div style="font-size:0.72em; color:var(--muted); margin-top:4px;">Generador de Demos v3.1</div>
+    <div style="font-size:0.65em; color:#475569; margin-top:6px;">Soporte: +569 4089 4579</div>
+    <div style="font-size:0.6em; color:#334155; margin-top:4px;">Licencia protegida e intransferible © 2026</div>
+</div>
+
+<div class="toast" id="toast"></div>
+<div class="fgf-watermark">⚡ FGF Digital<br>+569 4089 4579<br>Licencia Protegida ©</div>
+
+<script>
+// ===== CONFIG =====
+const BASE_URL = localStorage.getItem('fgf_host_url') || 'https://pcfra.github.io/fgf-demos';
+const API_BASE = '';
+const APP_VERSION = '3.1';
+const MASTER_LICENSE = 'FGF-B0SS-0000-0000-FGF0';
+const MAX_OFFLINE_DAYS = 30;
+
+// ===== LICENSE SYSTEM =====
+function getDeviceId() {
+    let id = localStorage.getItem('fgf_device_id');
+    if (!id) {
+        id = 'DEV-' + Date.now().toString(36).toUpperCase() + '-' + Math.random().toString(36).substring(2,8).toUpperCase();
+        localStorage.setItem('fgf_device_id', id);
+    }
+    return id;
+}
+
+function validateLicenseFormat(code) {
+    if (!code) return false;
+    const clean = code.toUpperCase().trim();
+    if (clean === MASTER_LICENSE) return true;
+    const parts = clean.split('-');
+    if (parts.length < 2 || parts.length > 6) return false;
+    if (parts[0] !== 'FGF') return false;
+    for (let i = 1; i < parts.length; i++) {
+        if (!/^[A-Z0-9]+$/i.test(parts[i])) return false;
+    }
+    return true;
+}
+
+function autoFormatLicenseInput() {
+    const input = document.getElementById('licenseInput');
+    if (!input) return;
+    input.addEventListener('input', function(e) {
+        let val = this.value.replace(/[^A-Za-z0-9]/g, '').toUpperCase();
+        if (val.length > 3) val = val.substring(0, 3) + '-' + val.substring(3);
+        if (val.length > 8) val = val.substring(0, 8) + '-' + val.substring(8);
+        if (val.length > 13) val = val.substring(0, 13) + '-' + val.substring(13);
+        if (val.length > 18) val = val.substring(0, 18) + '-' + val.substring(18);
+        this.value = val;
+    });
+}
+
+async function validateLicense() {
+    const rawCode = document.getElementById('licenseInput').value.trim();
+    const code = rawCode.toUpperCase();
+    const cleanCode = code.replace(/[^A-Z0-9]/g, '');
+    const masterClean = MASTER_LICENSE.replace(/[^A-Z0-9]/g, '');
+    if (!code) { showLicenseError('Ingresá tu código de licencia'); return; }
+    if (!validateLicenseFormat(code)) {
+        showLicenseError('Formato inválido. Usá: FGF-XXXX-XXXX-XXXX-XXXX-XXXX');
+        return;
+    }
+    if (cleanCode === masterClean) {
+        localStorage.setItem('fgf_license', code);
+        localStorage.setItem('fgf_license_type', 'master');
+        localStorage.setItem('fgf_activated_at', new Date().toISOString());
+        showLicenseSuccess('Licencia maestra activada ✓');
+        setTimeout(() => showApp(), 800);
+        return;
+    }
+    showLicenseError('Validando...');
+    try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 8000);
+        const res = await fetch(`${API_BASE}/api/validate-license`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                code: code,
+                device: getDeviceId(),
+                businessName: 'FGF Demos App'
+            }),
+            signal: controller.signal
+        });
+        clearTimeout(timeoutId);
+        const data = await res.json();
+        if (data.valid) {
+            localStorage.setItem('fgf_license', code);
+            localStorage.setItem('fgf_license_type', data.type || 'standard');
+            localStorage.setItem('fgf_activated_at', new Date().toISOString());
+            localStorage.setItem('fgf_last_validation', new Date().toISOString());
+            showLicenseSuccess(data.message + ' ✓');
+            setTimeout(() => showApp(), 800);
+        } else {
+            showLicenseError(data.message || 'Licencia inválida');
+        }
+    } catch (e) {
+        if (e.name === 'AbortError') {
+            showLicenseError('Tiempo de espera agotado. Verificá tu conexión.');
+        } else {
+            const saved = localStorage.getItem('fgf_license');
+            if (saved) {
+                showLicenseSuccess('Modo offline — licencia local verificada ✓');
+                setTimeout(() => showApp(), 800);
+            } else {
+                showLicenseError('Sin internet. Conectate una vez para activar.');
+            }
+        }
+    }
+}
+
+function showLicenseError(msg) {
+    const el = document.getElementById('licenseError');
+    if (!el) return;
+    el.textContent = '❌ ' + msg;
+    el.style.display = 'block';
+    el.className = 'license-error';
+    el.style.color = 'var(--danger)';
+}
+
+function showLicenseSuccess(msg) {
+    const el = document.getElementById('licenseError');
+    if (!el) return;
+    el.textContent = '✅ ' + msg;
+    el.style.display = 'block';
+    el.className = 'license-success';
+    el.style.color = 'var(--success)';
+}
+
+function showApp() {
+    document.getElementById('licenseScreen').style.display = 'none';
+    document.getElementById('appContent').style.display = 'block';
+    populateRegistration();
+}
+
+function populateRegistration() {
+    const code = localStorage.getItem('fgf_license') || 'N/A';
+    const deviceId = getDeviceId();
+    const activatedAt = localStorage.getItem('fgf_activated_at');
+    const activated = activatedAt ? new Date(activatedAt).toLocaleString('es-CL') : new Date().toLocaleString('es-CL');
+    if (!activatedAt) localStorage.setItem('fgf_activated_at', new Date().toISOString());
+    const isMaster = code === MASTER_LICENSE;
+
+    const el = document.getElementById('registroInfo');
+    if (el) {
+        el.innerHTML = `
+            <div style="display:grid; gap:8px;">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <span style="color:var(--muted);">Tu Código:</span>
+                    <code style="font-family:monospace; color:var(--primary); font-weight:700; font-size:0.9em; background:rgba(139,92,246,0.1); padding:4px 10px; border-radius:6px;">${isMaster ? 'MASTER' : code}</code>
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <span style="color:var(--muted);">Dispositivo:</span>
+                    <span style="font-family:monospace; font-size:0.75em;">${deviceId}</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <span style="color:var(--muted);">Activado:</span>
+                    <span style="font-size:0.82em;">${activated}</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <span style="color:var(--muted);">Versión:</span>
+                    <span style="font-size:0.82em;">v${APP_VERSION}</span>
+                </div>
+            </div>
+        `;
+    }
+    const recLink = document.getElementById('recoveryLink');
+    if (recLink && code !== 'N/A') {
+        recLink.href = `https://wa.me/56940894579?text=${encodeURIComponent('Hola Francisco, necesito recuperar mi licencia FGF Demos.\n\nMi código: ' + code + '\nMotivo: Perdí o me robaron el celular')}`;
+    }
+}
+
+function copyMyCode() {
+    const code = localStorage.getItem('fgf_license');
+    if (code) {
+        const display = code === MASTER_LICENSE ? 'MASTER (FGF-B0SS-0000-0000-FGF0)' : code;
+        navigator.clipboard.writeText(code).then(() => {
+            showToast('📋 Código copiado');
+        }).catch(() => {
+            prompt('Tu código de licencia:', display);
+        });
+    }
+}
+
+function isOfflineGracePeriodValid() {
+    const lastValidation = localStorage.getItem('fgf_last_validation');
+    if (!lastValidation) return false;
+    const diff = Date.now() - new Date(lastValidation).getTime();
+    return diff < MAX_OFFLINE_DAYS * 24 * 60 * 60 * 1000;
+}
+
+function checkExistingLicense() {
+    const saved = localStorage.getItem('fgf_license');
+    if (!saved) return;
+    if (saved === MASTER_LICENSE) {
+        showApp();
+        return;
+    }
+    const lastValidation = localStorage.getItem('fgf_last_validation');
+    if (lastValidation && isOfflineGracePeriodValid()) {
+        showApp();
+    } else {
+        showApp();
+    }
+    fetch(`${API_BASE}/api/validate-license`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code: saved, device: getDeviceId() })
+    }).then(r => r.json()).then(d => {
+        if (!d.valid) {
+            localStorage.setItem('fgf_last_validation', new Date().toISOString());
+        } else {
+            localStorage.setItem('fgf_last_validation', new Date().toISOString());
+        }
+    }).catch(() => {
+        if (!isOfflineGracePeriodValid()) {
+            document.getElementById('licenseScreen').style.display = 'flex';
+            document.getElementById('appContent').style.display = 'none';
+            showLicenseError('Sin conexión por mucho tiempo. Conectate a internet para revalidar.');
+        }
+    });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    const li = document.getElementById('licenseInput');
+    if (li) {
+        li.addEventListener('keypress', e => { if (e.key === 'Enter') validateLicense(); });
+        autoFormatLicenseInput();
+    }
+    checkExistingLicense();
+});
+
+const businessTypes = {
+    // 🛒 Productos
+    taller:'🔧 Taller Mecánico', desarmaduria:'🚗 Desarmaduría', ferreteria:'🔩 Ferretería',
+    panaderia:'🍪 Panadería', restaurante:'🍕 Restaurante', boutique:'👗 Boutique',
+    minimarket:'🛒 Minimarket', libreria:'📚 Librería',
+    // 📅 Servicios
+    peluqueria:'💇 Peluquería', barberia:'💈 Barbería', spa:'💆 Spa',
+    clinica:'🏥 Clínica', mascotas:'🐕 Mascotas/Veterinaria', gimnasio:'💪 Gimnasio',
+    psicologo:'🧠 Psicólogo', nutricionista:'🥗 Nutricionista', kinesiologo:'💆 Kinesiólogo',
+    tatuador:'🎨 Tatuador', profesor:'📚 Profesor', fotografo:'📸 Fotógrafo',
+    abogado:'⚖️ Abogado', otro:'📦 Otro'
+};
+
+const colors = [
+    {name:'purple', bg:'#8b5cf6'}, {name:'blue', bg:'#3b82f6'},
+    {name:'green', bg:'#22c55e'}, {name:'orange', bg:'#f59e0b'},
+    {name:'red', bg:'#ef4444'}, {name:'pink', bg:'#ec4899'},
+    {name:'cyan', bg:'#06b6d4'}, {name:'indigo', bg:'#6366f1'}
+];
+
+const quickBiz = [
+    {name:'Desarmaduría FGF', tipo:'desarmaduria', tel:'56912345678', dir:'Av. San Martín 456, Talagante', hor:'Lun-Vie 8:30-18:00', color:'purple'},
+    {name:'La Pepita', tipo:'panaderia', tel:'56955667788', dir:'Av. Libertador 321, Talagante', hor:'Mar-Dom 7:00-20:00', color:'orange'},
+    {name:'Don Carlo', tipo:'restaurante', tel:'56999887766', dir:'Calle San Martín 654, Talagante', hor:'Mié-Dom 12:00-23:00', color:'red'},
+    {name:'Boutique Enkantos', tipo:'boutique', tel:'56944332211', dir:'Av. Providencia 987, Santiago', hor:'Lun-Sáb 10:00-20:00', color:'pink'},
+    {name:'Mecánica Juan', tipo:'taller', tel:'56912345678', dir:'Av. Principal 123, Talagante', hor:'Lun-Sáb 9:00-19:00', color:'blue'},
+    {name:'Ferretería Los Andes', tipo:'ferreteria', tel:'56911223344', dir:"Calle O'Higgins 789, Talagante", hor:'Lun-Sáb 8:30-18:00', color:'green'},
+    {name:'Spa Nirvana', tipo:'spa', tel:'56981285000', dir:'Av. Los Leones 234, Santiago', hor:'Lun-Dom 9:00-21:00', color:'cyan'},
+    {name:'Barbería Old School', tipo:'barberia', tel:'56977665544', dir:'Calle Arauco 567, Talagante', hor:'Mar-Sáb 10:00-20:00', color:'indigo'},
+    {name:'Educa Total', tipo:'profesor', tel:'56962812877', dir:'Calle Isidora Goyenechea 206, San Ramón', hor:'Mar-Dom 8:00-19:00', color:'pink'},
+    {name:'Studio Foto', tipo:'fotografo', tel:'56933445566', dir:'Providencia 1234, Santiago', hor:'Lun-Sáb 9:00-19:00', color:'indigo'}
+];
+
+let selectedColor = 'purple';
+let generatedUrls = {};
+
+// ===== INIT =====
+// ===== HOSTING CONFIG =====
+function saveHostUrl() {
+    const url = document.getElementById('hostUrl').value.trim();
+    if (url) {
+        // Validate URL
+        try {
+            new URL(url);
+            localStorage.setItem('fgf_host_url', url);
+            updateHostStatus();
+            showToast('✅ Hosting configurado');
+        } catch(e) {
+            showToast('⚠️ URL inválida');
+        }
+    } else {
+        localStorage.removeItem('fgf_host_url');
+        updateHostStatus();
+        showToast('✅ Modo local activado');
+    }
+}
+
+function updateHostStatus() {
+    const url = localStorage.getItem('fgf_host_url');
+    const statusEl = document.getElementById('hostStatus');
+    const infoEl = document.getElementById('hostInfo');
+    const inputEl = document.getElementById('hostUrl');
+    
+    if (url) {
+        statusEl.textContent = '✅ Activo';
+        statusEl.style.background = 'rgba(34,197,94,0.15)';
+        statusEl.style.color = 'var(--success)';
+        infoEl.innerHTML = `<span style="color:var(--success);">Host:</span> <span style="color:var(--text);">${url}</span>`;
+        inputEl.value = url;
+    } else {
+        statusEl.textContent = '⚙️ Local';
+        statusEl.style.background = 'rgba(245,158,11,0.15)';
+        statusEl.style.color = 'var(--warning)';
+        infoEl.innerHTML = `<span style="color:var(--warning);">Modo local:</span> <span style="color:var(--text);">Las demos se generan para previsualizar en tu celular</span>`;
+        inputEl.value = '';
+    }
+}
+
+function init() {
+    // Initialize hosting status
+    updateHostStatus();
+    // Populate type select
+    const sel = document.getElementById('bizType');
+    Object.entries(businessTypes).forEach(([k,v]) => {
+        sel.innerHTML += `<option value="${k}">${v}</option>`;
+    });
+
+    // Color picker
+    const cp = document.getElementById('colorPicker');
+    colors.forEach(c => {
+        cp.innerHTML += `<div class="color-btn ${c.name===selectedColor?'active':''}" style="background:${c.bg}" data-color="${c.name}" onclick="selectColor('${c.name}', this)"></div>`;
+    });
+
+    // Quick buttons
+    const qg = document.getElementById('quickGrid');
+    quickBiz.forEach(b => {
+        qg.innerHTML += `<div class="quick-btn" onclick="quickFill('${b.name}','${b.tipo}','${b.tel}','${b.dir}','${b.hor}','${b.color}')">${b.name}</div>`;
+    });
+}
+
+function selectColor(name, el) {
+    selectedColor = name;
+    document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('active'));
+    el.classList.add('active');
+}
+
+function quickFill(name, tipo, tel, dir, hor, color) {
+    document.getElementById('bizName').value = name;
+    document.getElementById('bizType').value = tipo;
+    document.getElementById('bizPhone').value = tel;
+    document.getElementById('bizAddress').value = dir;
+    document.getElementById('bizSchedule').value = hor;
+    selectColor(color, document.querySelector(`[data-color="${color}"]`));
+    showToast('Datos cargados ✓');
+}
+
+function generate() {
+    const name = document.getElementById('bizName').value.trim();
+    const tipo = document.getElementById('bizType').value;
+    const phone = document.getElementById('bizPhone').value.trim();
+    const addr = document.getElementById('bizAddress').value.trim();
+    const sched = document.getElementById('bizSchedule').value.trim();
+
+    if (!name) { showToast('⚠️ Ingresa el nombre del negocio'); return; }
+
+    const params = new URLSearchParams({
+        nombre: name,
+        tipo: tipo,
+        telefono: phone || '56912345678',
+        direccion: addr || 'Talagante',
+        horario: sched || 'Lun-Sáb 9:00-19:00',
+        color: selectedColor
+    });
+
+    const hostUrl = localStorage.getItem('fgf_host_url') || BASE_URL;
+    
+    generatedUrls = {
+        tienda: `${hostUrl}/demo-viewer.html?${params.toString()}`,
+        admin: `${hostUrl}/admin-panel.html?${params.toString()}`
+    };
+
+    document.getElementById('urlTienda').textContent = generatedUrls.tienda;
+    document.getElementById('urlAdmin').textContent = generatedUrls.admin;
+    document.getElementById('results').classList.add('active');
+    document.getElementById('results').scrollIntoView({behavior:'smooth'});
+    showToast('✅ Demos generadas');
+}
+
+// Generate autonomous HTML with embedded business data
+function generateAutonomousHtml(type, params) {
+    const nombre = params.get('nombre') || 'Tu Negocio';
+    const tipo = params.get('tipo') || 'taller';
+    const telefono = params.get('telefono') || '56912345678';
+    const direccion = params.get('direccion') || 'Talagante';
+    const horario = params.get('horario') || 'Lun-Sáb 9:00-19:00';
+    const color = params.get('color') || 'blue';
+    const colorMap = {blue:'#2563eb',purple:'#7c3aed',green:'#059669',orange:'#ea580c',red:'#dc2626',pink:'#db2777',cyan:'#0891b2',indigo:'#4f46e5'};
+    const primaryColor = colorMap[color] || '#2563eb';
+    const emojis = {taller:'🔧',desarmaduria:'🚗',ferreteria:'🔩',panaderia:'🍪',restaurante:'🍕',boutique:'👗',clinica:'🏥',peluqueria:'💇',mascotas:'🐕',minimarket:'🛒',libreria:'📚',spa:'💆',barberia:'💈',gimnasio:'💪',psicologo:'🧠',nutricionista:'🥗',kinesiologo:'💆',tatuador:'🎨',profesor:'📚',fotografo:'📸',abogado:'⚖️',otro:'📦'};
+    const emoji = emojis[tipo] || '📦';
+    
+    if (type === 'tienda') {
+        return `<!DOCTYPE html>
+<html lang="es">
+<head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FGF Digital - Demos</title>
+<title>${nombre} | Tienda Online</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0a0a14;color:#f1f5f9;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
-.card{background:#14142a;border:1px solid rgba(139,92,246,0.15);border-radius:20px;padding:40px 30px;text-align:center;max-width:400px}
-h1{font-size:1.5em;margin-bottom:8px;background:linear-gradient(135deg,#818cf8,#a855f7);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-p{color:#94a3b8;font-size:0.9em}
+body{font-family:'Inter',sans-serif;background:#f8fafc;color:#1e293b;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+.card{background:#fff;border-radius:20px;padding:40px 30px;text-align:center;max-width:420px;width:100%;box-shadow:0 4px 24px rgba(0,0,0,0.08)}
+.emoji{font-size:4em;margin-bottom:16px}
+h1{font-size:1.6em;margin-bottom:8px;font-weight:800}
+.sub{color:#64748b;font-size:0.9em;margin-bottom:24px}
+.info{background:#f1f5f9;border-radius:14px;padding:18px;margin-bottom:24px;text-align:left;font-size:0.88em;line-height:2}
+.info span{color:#64748b}
+.badge{display:inline-block;background:${primaryColor}15;color:${primaryColor};padding:4px 12px;border-radius:20px;font-size:0.78em;font-weight:600;margin-top:8px}
+.btn{display:block;width:100%;padding:16px;border-radius:14px;border:none;font-size:1em;font-weight:700;cursor:pointer;margin-bottom:12px;font-family:inherit;text-decoration:none;text-align:center}
+.btn-primary{background:${primaryColor};color:#fff}
+.btn-whatsapp{background:#dcfce7;color:#16a34a;border:1px solid #bbf7d0}
+.btn-outline{background:#f1f5f9;color:#475569;border:1px solid #e2e8f0}
+.footer{margin-top:24px;font-size:0.72em;color:#94a3b8}
+.powered{color:${primaryColor};font-weight:700}
+.actions{display:flex;gap:10px;margin-top:16px}
+.actions .btn{flex:1}
 </style>
 </head>
 <body>
 <div class="card">
-<h1>⚡ FGF Digital</h1>
-<p>Servidor de demos activo</p>
+<div class="emoji">${emoji}</div>
+<h1>${nombre}</h1>
+<p class="sub">Demo de Tienda Online — FGF Digital</p>
+<div class="info">
+<span>Tipo:</span> ${tipo}<br>
+<span>Teléfono:</span> ${telefono}<br>
+<span>Dirección:</span> ${direccion}<br>
+<span>Horario:</span> ${horario}
 </div>
+<div class="badge">⚡ Demo interactiva — FGF Digital v3.1</div>
+<p style="color:#64748b;font-size:0.85em;margin:20px 0 16px">
+Esta es una demostración de cómo se vería tu tienda online.<br>
+Para la versión completa, contactá a FGF Digital.
+</p>
+<a href="https://wa.me/${telefono}?text=${encodeURIComponent('Hola! Vi la demo de ' + nombre + ' y me interesa tener mi propia tienda online')}" class="btn btn-whatsapp" target="_blank">
+📱 Contactar por WhatsApp
+</a>
+<div class="actions">
+<a href="https://wa.me/56940894579?text=${encodeURIComponent('Hola Francisco, vi la demo de ' + nombre + ' y quiero mi tienda igual')}" class="btn btn-outline" target="_blank" style="font-size:0.85em;">
+⚡ Quiero mi tienda
+</a>
+</div>
+<div class="footer">Powerd by <span class="powered">FGF Digital</span> — v3.1</div>
+</div>
+</body>
+</html>`;
+    } else {
+        return `<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>${nombre} | Panel Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',sans-serif;background:#0f172a;color:#f1f5f9;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+.card{background:#1e293b;border-radius:20px;padding:40px 30px;text-align:center;max-width:420px;width:100%;box-shadow:0 4px 24px rgba(0,0,0,0.3)}
+.emoji{font-size:4em;margin-bottom:16px}
+h1{font-size:1.6em;margin-bottom:8px;font-weight:800}
+.sub{color:#94a3b8;font-size:0.9em;margin-bottom:24px}
+.info{background:rgba(255,255,255,0.05);border-radius:14px;padding:18px;margin-bottom:24px;text-align:left;font-size:0.88em;line-height:2}
+.info span{color:#94a3b8}
+.badge{display:inline-block;background:rgba(99,102,241,0.15);color:#818cf8;padding:4px 12px;border-radius:20px;font-size:0.78em;font-weight:600;margin-top:8px}
+.btn{display:block;width:100%;padding:16px;border-radius:14px;border:none;font-size:1em;font-weight:700;cursor:pointer;margin-bottom:12px;font-family:inherit;text-decoration:none;text-align:center}
+.btn-primary{background:#6366f1;color:#fff}
+.btn-outline{background:rgba(255,255,255,0.05);color:#94a3b8;border:1px solid rgba(255,255,255,0.1)}
+.footer{margin-top:24px;font-size:0.72em;color:#475569}
+.powered{color:#818cf8;font-weight:700}
+</style>
+</head>
+<body>
+<div class="card">
+<div class="emoji">📊</div>
+<h1>${nombre}</h1>
+<p class="sub">Panel de Administración — Demo</p>
+<div class="info">
+<span>Tipo:</span> ${tipo}<br>
+<span>Teléfono:</span> ${telefono}<br>
+<span>Dirección:</span> ${direccion}<br>
+<span>Horario:</span> ${horario}
+</div>
+<div class="badge">📊 Panel Admin — FGF Digital v3.1</div>
+<p style="color:#94a3b8;font-size:0.85em;margin:20px 0 16px">
+El panel de administración incluye: dashboard, pedidos, productos, clientes, reportes y exportación Excel.<br>
+Contactá para la versión completa.
+</p>
+<a href="https://wa.me/56940894579?text=${encodeURIComponent('Hola Francisco, vi el panel admin de ' + nombre + ' y quiero el mío')}" class="btn btn-primary" target="_blank">
+📱 Solicitar Panel Admin
+</a>
+<div class="footer">Powerd by <span class="powered">FGF Digital</span> — v3.1</div>
+</div>
+</body>
+</html>`;
+    }
+}
+
+function copyUrl(type) {
+    navigator.clipboard.writeText(generatedUrls[type]).then(() => {
+        showToast('📋 Link copiado');
+    }).catch(() => {
+        // Fallback
+        const ta = document.createElement('textarea');
+        ta.value = generatedUrls[type];
+        document.body.appendChild(ta); ta.select();
+        document.execCommand('copy'); document.body.removeChild(ta);
+        showToast('📋 Link copiado');
+    });
+}
+
+function copyBoth() {
+    const text = `🔗 *Demo Tienda:*\n${generatedUrls.tienda}\n\n📊 *Admin Panel:*\n${generatedUrls.admin}`;
+    navigator.clipboard.writeText(text).then(() => {
+        showToast('📋 Ambos links copiados');
+    }).catch(() => {
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        document.body.appendChild(ta); ta.select();
+        document.execCommand('copy'); document.body.removeChild(ta);
+        showToast('📋 Ambos links copiados');
+    });
+}
+
+function shareWhatsApp(type) {
+    const msg = type === 'both'
+        ? `¡Hola! Te envío las demos:\n\nTienda: ${generatedUrls.tienda}\nAdmin: ${generatedUrls.admin}`
+        : `¡Hola! Te envío la demo:\n\n${generatedUrls[type]}`;
+    window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
+}
+
+function openUrl(type) {
+    window.open(generatedUrls[type], '_blank');
+}
+
+function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2000);
+}
+
+init();
+</script>
 </body>
 </html>

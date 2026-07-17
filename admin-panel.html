@@ -172,11 +172,29 @@
         .export-option .info p { font-size:0.78em; color:var(--muted); }
         .modal-close { margin-top:16px; width:100%; }
         
+        /* Hamburger */
+        .hamburger { display:none; position:fixed; top:16px; left:16px; z-index:500; background:var(--card); border:1px solid var(--border); border-radius:10px; padding:10px 12px; cursor:pointer; color:var(--text); font-size:1.2em; }
+        .sidebar-overlay { display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); z-index:399; }
+        .sidebar-overlay.active { display:block; }
+
+        /* Edit/Delete Product Modal */
+        .edit-modal-overlay { position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.6); z-index:1000; display:none; align-items:center; justify-content:center; }
+        .edit-modal-overlay.active { display:flex; }
+        .edit-modal-box { background:var(--card); border:1px solid var(--border); border-radius:20px; padding:30px; width:90%; max-width:500px; max-height:90vh; overflow-y:auto; }
+
         /* Responsive */
         @media (max-width:900px) {
-            .sidebar { display:none; }
-            .main { margin-left:0; }
             .charts-row { grid-template-columns:1fr; }
+        }
+        @media (max-width:768px) {
+            .hamburger { display:block; }
+            .sidebar { transform:translateX(-100%); transition:0.3s ease; z-index:400; }
+            .sidebar.open { transform:translateX(0); }
+            .main { margin-left:0; padding-top:60px; }
+            .stats-grid { grid-template-columns:1fr 1fr; }
+        }
+        @media (max-width:480px) {
+            .stats-grid { grid-template-columns:1fr; }
         }
         
         /* Page sections (hidden by default) */
@@ -191,6 +209,10 @@
 </head>
 <body>
 <div class="layout">
+    <!-- HAMBURGER -->
+    <button class="hamburger" id="hamburgerBtn" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+    
     <!-- SIDEBAR -->
     <aside class="sidebar">
         <div class="sidebar-brand">
@@ -670,7 +692,7 @@
                     <div><label style="display:block; font-size:0.82em; color:var(--muted); margin-bottom:6px;">Dirección</label><input id="cfgDir" style="width:100%; padding:12px; background:rgba(255,255,255,0.05); border:1px solid var(--border); border-radius:10px; color:#fff; font-family:inherit; font-size:0.95em;"></div>
                     <div><label style="display:block; font-size:0.82em; color:var(--muted); margin-bottom:6px;">Teléfono WhatsApp</label><input id="cfgTel" style="width:100%; padding:12px; background:rgba(255,255,255,0.05); border:1px solid var(--border); border-radius:10px; color:#fff; font-family:inherit; font-size:0.95em;"></div>
                     <div><label style="display:block; font-size:0.82em; color:var(--muted); margin-bottom:6px;">Horario</label><input id="cfgHorario" style="width:100%; padding:12px; background:rgba(255,255,255,0.05); border:1px solid var(--border); border-radius:10px; color:#fff; font-family:inherit; font-size:0.95em;"></div>
-                    <button class="btn btn-primary" style="align-self:flex-start;"><i class="fas fa-save"></i> Guardar Cambios</button>
+                    <button class="btn btn-primary" style="align-self:flex-start;" onclick="saveConfig()"><i class="fas fa-save"></i> Guardar Cambios</button>
                 </div>
             </div>
         </div>
@@ -876,6 +898,30 @@ document.addEventListener('click', function(e) {
     </div>
 </div>
 
+<!-- EDIT PRODUCT MODAL -->
+<div class="edit-modal-overlay" id="editProductModal" onclick="closeEditProductModal(event)">
+    <div class="edit-modal-box" onclick="event.stopPropagation()">
+        <h2 style="font-size:1.2em; font-weight:700; margin-bottom:20px; display:flex; align-items:center; gap:10px;"><i class="fas fa-edit" style="color:var(--primary);"></i> Editar Producto</h2>
+        <input type="hidden" id="editProductId">
+        <div style="display:flex; flex-direction:column; gap:14px;">
+            <div><label style="display:block; font-size:0.82em; color:var(--muted); margin-bottom:6px;">Nombre *</label><input id="editProductName" style="width:100%; padding:12px; background:rgba(255,255,255,0.05); border:1px solid var(--border); border-radius:10px; color:#fff; font-family:inherit;"></div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+                <div><label style="display:block; font-size:0.82em; color:var(--muted); margin-bottom:6px;">Precio *</label><input id="editProductPrice" type="number" style="width:100%; padding:12px; background:rgba(255,255,255,0.05); border:1px solid var(--border); border-radius:10px; color:#fff; font-family:inherit;"></div>
+                <div><label style="display:block; font-size:0.82em; color:var(--muted); margin-bottom:6px;">Categoría</label><input id="editProductCat" style="width:100%; padding:12px; background:rgba(255,255,255,0.05); border:1px solid var(--border); border-radius:10px; color:#fff; font-family:inherit;"></div>
+            </div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+                <div><label style="display:block; font-size:0.82em; color:var(--muted); margin-bottom:6px;">Stock</label><input id="editProductStock" type="number" style="width:100%; padding:12px; background:rgba(255,255,255,0.05); border:1px solid var(--border); border-radius:10px; color:#fff; font-family:inherit;"></div>
+                <div><label style="display:block; font-size:0.82em; color:var(--muted); margin-bottom:6px;">Emoji</label><input id="editProductEmoji" style="width:100%; padding:12px; background:rgba(255,255,255,0.05); border:1px solid var(--border); border-radius:10px; color:#fff; font-family:inherit;"></div>
+            </div>
+            <div><label style="display:block; font-size:0.82em; color:var(--muted); margin-bottom:6px;">Descripción</label><textarea id="editProductDesc" rows="2" style="width:100%; padding:12px; background:rgba(255,255,255,0.05); border:1px solid var(--border); border-radius:10px; color:#fff; font-family:inherit; resize:none;"></textarea></div>
+        </div>
+        <div style="display:flex; gap:10px; margin-top:20px;">
+            <button class="btn btn-primary" onclick="saveProductEdit()"><i class="fas fa-save"></i> Guardar Cambios</button>
+            <button class="btn btn-outline" onclick="document.getElementById('editProductModal').classList.remove('active')">Cancelar</button>
+        </div>
+    </div>
+</div>
+
 <script>
 // ===== CONFIG =====
 const params = new URLSearchParams(window.location.search);
@@ -886,10 +932,10 @@ const bizDir = params.get('direccion') || 'Talagante';
 const bizHorario = params.get('horario') || 'Lun-Sáb 9:00-19:00';
 
 document.getElementById('sideName').textContent = bizName;
-document.getElementById('cfgName').value = bizName;
-document.getElementById('cfgDir').value = bizDir;
-document.getElementById('cfgTel').value = bizTel;
-document.getElementById('cfgHorario').value = bizHorario;
+document.getElementById('cfgName').value = localStorage.getItem('fgf_config_name') || bizName;
+document.getElementById('cfgDir').value = localStorage.getItem('fgf_config_dir') || bizDir;
+document.getElementById('cfgTel').value = localStorage.getItem('fgf_config_tel') || bizTel;
+document.getElementById('cfgHorario').value = localStorage.getItem('fgf_config_horario') || bizHorario;
 
 // ===== BUSINESS TYPE DETECTION =====
 const serviceTypes = ['peluqueria','barberia','spa','clinica','mascotas','gimnasio','psicologo','nutricionista','kinesiologo','tatuador','profesor','fotografo','abogado'];
@@ -1548,10 +1594,91 @@ function renderProductosTable() {
             <td>${p.sold} uds</td>
             <td><span class="badge ${p.stock < 20 ? 'badge-danger' : 'badge-success'}">${p.stock === 999 ? '∞' : p.stock}</span></td>
             <td>
-                <button class="btn btn-outline btn-sm" style="margin-right:4px;"><i class="fas fa-edit"></i></button>
+                <button class="btn btn-outline btn-sm" style="margin-right:4px; padding:4px 10px; font-size:0.75em;" onclick='editProduct(${JSON.stringify(p).replace(/'/g, "&#39;")})'><i class="fas fa-edit"></i></button>
+                <button class="btn btn-danger btn-sm" style="padding:4px 10px; font-size:0.75em;" onclick="deleteProduct(${p.id})"><i class="fas fa-trash"></i></button>
             </td>
         </tr>
     `).join('');
+}
+
+function editProduct(p) {
+    document.getElementById('editProductId').value = p.id;
+    document.getElementById('editProductName').value = p.name;
+    document.getElementById('editProductPrice').value = p.price;
+    document.getElementById('editProductCat').value = p.cat || '';
+    document.getElementById('editProductStock').value = p.stock === 999 ? 999 : p.stock;
+    document.getElementById('editProductDesc').value = p.desc || '';
+    document.getElementById('editProductEmoji').value = p.emoji || '📦';
+    document.getElementById('editProductModal').classList.add('active');
+}
+
+function saveProductEdit() {
+    const id = parseInt(document.getElementById('editProductId').value);
+    const name = document.getElementById('editProductName').value.trim();
+    const price = parseInt(document.getElementById('editProductPrice').value);
+    if (!name || !price) { showToast('Nombre y precio son obligatorios'); return; }
+
+    const idx = products.findIndex(p => p.id === id);
+    if (idx !== -1) {
+        products[idx].name = name;
+        products[idx].price = price;
+        products[idx].cat = document.getElementById('editProductCat').value || 'General';
+        products[idx].stock = parseInt(document.getElementById('editProductStock').value) || 0;
+        products[idx].desc = document.getElementById('editProductDesc').value || '';
+        products[idx].emoji = document.getElementById('editProductEmoji').value || '📦';
+
+        // Persist custom products to localStorage
+        const customProducts = JSON.parse(localStorage.getItem('fgf_custom_products') || '[]');
+        const cidx = customProducts.findIndex(p => p.id === id);
+        if (cidx !== -1) {
+            customProducts[cidx] = { ...customProducts[cidx], name, price, cat: products[idx].cat, stock: products[idx].stock, desc: products[idx].desc, emoji: products[idx].emoji };
+            localStorage.setItem('fgf_custom_products', JSON.stringify(customProducts));
+        }
+
+        document.getElementById('editProductModal').classList.remove('active');
+        renderProductosTable();
+        showToast('Producto actualizado: ' + name);
+    }
+}
+
+function deleteProduct(id) {
+    if (!confirm('¿Eliminar este producto?')) return;
+    const idx = products.findIndex(p => p.id === id);
+    if (idx !== -1) {
+        const name = products[idx].name;
+        products.splice(idx, 1);
+
+        // Remove from localStorage custom products
+        const customProducts = JSON.parse(localStorage.getItem('fgf_custom_products') || '[]');
+        const cidx = customProducts.findIndex(p => p.id === id);
+        if (cidx !== -1) {
+            customProducts.splice(cidx, 1);
+            localStorage.setItem('fgf_custom_products', JSON.stringify(customProducts));
+        }
+
+        renderProductosTable();
+        showToast('Producto eliminado: ' + name);
+    }
+}
+
+function closeEditProductModal(e) {
+    if (e.target === e.currentTarget) e.currentTarget.classList.remove('active');
+}
+
+function saveConfig() {
+    const name = document.getElementById('cfgName').value.trim();
+    const dir = document.getElementById('cfgDir').value.trim();
+    const tel = document.getElementById('cfgTel').value.trim();
+    const horario = document.getElementById('cfgHorario').value.trim();
+    if (!name) { showToast('El nombre del negocio es obligatorio'); return; }
+
+    localStorage.setItem('fgf_config_name', name);
+    localStorage.setItem('fgf_config_dir', dir);
+    localStorage.setItem('fgf_config_tel', tel);
+    localStorage.setItem('fgf_config_horario', horario);
+
+    document.getElementById('sideName').textContent = name;
+    showToast('Configuración guardada correctamente');
 }
 
 // ===== RENDER CLIENTES TABLE =====
@@ -1857,6 +1984,26 @@ function showToast(msg) {
     container.appendChild(toast);
     setTimeout(() => { if (toast.parentNode) toast.remove(); }, 4000);
 }
+
+// ===== MOBILE SIDEBAR TOGGLE =====
+function toggleSidebar() {
+    const sidebar = document.querySelector('.sidebar');
+    const overlay = document.getElementById('sidebarOverlay');
+    sidebar.classList.toggle('open');
+    overlay.classList.toggle('active');
+}
+
+// Close sidebar on nav click (mobile)
+document.querySelectorAll('.nav-item').forEach(item => {
+    item.addEventListener('click', () => {
+        if (window.innerWidth <= 768) {
+            const sidebar = document.querySelector('.sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            sidebar.classList.remove('open');
+            overlay.classList.remove('active');
+        }
+    });
+});
 
 // ===== AUTONOMOUS MODE =====
 // No server needed - everything runs locally

@@ -459,7 +459,7 @@
             </div>
         </div>
         <div class="nav-right">
-            <button class="nav-admin-btn" onclick="openAdmin()" style="display:none;" id="adminBtn">
+            <button class="nav-admin-btn" onclick="openAdmin()" id="adminBtn">
                 <i class="fas fa-cog"></i> Admin
             </button>
             <button class="nav-link" id="cartBtn" onclick="openCart()" style="display:none;">
@@ -683,7 +683,7 @@
 
     <!-- FOOTER -->
     <div class="footer">
-        <p>Powerd by <span class="brand">FGF Digital</span> — Tu negocio en internet</p>
+        <p>Powered by <span class="brand">FGF Digital</span> — Tu negocio en internet</p>
     </div>
 
     <script>
@@ -1066,7 +1066,19 @@
 
     // Start with hardcoded products immediately — page ALWAYS works
     let allProducts = [...defaultProducts];
-    initStore(); // <-- THIS WAS MISSING, causing blank page
+    
+    // Load custom products from admin panel (localStorage)
+    try {
+        const customProducts = JSON.parse(localStorage.getItem('fgf_custom_products') || '[]');
+        if (customProducts.length > 0) {
+            const maxId = allProducts.reduce((m, p) => Math.max(m, p.id), 0);
+            customProducts.forEach((cp, i) => {
+                allProducts.push({ ...cp, id: maxId + i + 1 });
+            });
+        }
+    } catch(e) {}
+    
+    initStore();
 
     function initStore() {
         document.title = `${businessName} | Tienda Online`;
@@ -1234,13 +1246,14 @@
     function quickAdd(id) { addToCart(id, 1); }
 
     // ===== CART =====
-    let cart = [];
+    let cart = JSON.parse(localStorage.getItem('fgf_cart') || '[]');
+    function saveCart() { localStorage.setItem('fgf_cart', JSON.stringify(cart)); }
     function addToCart(productId, qty) {
         const product = allProducts.find(p => p.id === productId);
         const existing = cart.find(c => c.id === productId);
         if (existing) existing.qty += qty;
         else cart.push({ ...product, qty });
-        updateCart();
+        saveCart(); updateCart();
         showToast(`${product.name} agregado al carro`);
     }
     function updateCart() {
@@ -1258,7 +1271,7 @@
         footerDiv.style.display = 'block';
         itemsDiv.innerHTML = cart.map(c => `
             <div class="cart-item">
-                <div class="cart-item-img">${c.emoji || '📦'}</div>
+                <div class="cart-item-img">${c.image ? '<img src="'+c.image+'" style="width:100%;height:100%;object-fit:cover;border-radius:10px;">' : (c.emoji || '📦')}</div>
                 <div class="cart-item-info">
                     <div class="cart-item-name">${c.name}</div>
                     <div class="cart-item-price">$${(c.price * c.qty).toLocaleString('es-CL')}</div>
@@ -1277,9 +1290,9 @@
     function changeCartQty(id, d) {
         const item = cart.find(c => c.id === id);
         if (item) { item.qty += d; if (item.qty <= 0) cart = cart.filter(c => c.id !== id); }
-        updateCart();
+        saveCart(); updateCart();
     }
-    function removeFromCart(id) { cart = cart.filter(c => c.id !== id); updateCart(); }
+    function removeFromCart(id) { cart = cart.filter(c => c.id !== id); saveCart(); updateCart(); }
     function openCart() {
         document.getElementById('cartOverlay').classList.add('active');
         document.getElementById('cartDrawer').classList.add('active');
@@ -1342,7 +1355,7 @@
             window.open(`https://wa.me/${businessTel}?text=${encodeURIComponent(msg)}`, '_blank');
         }
 
-        cart = []; updateCart(); closeCheckoutModal();
+        cart = []; saveCart(); updateCart(); closeCheckoutModal();
         showToast('🛒 ¡Pedido enviado! Te contactaremos pronto.');
     }
 
