@@ -1365,7 +1365,9 @@
     }
 
     // ===== ADMIN (inline simple) =====
-    function openAdmin() { window.open('admin-panel.html' + window.location.search, '_blank'); }
+    function openAdmin() {
+        window.location.href = window.location.origin + '/fgf-demos/admin-panel.html' + window.location.search;
+    }
 
     // ===== TOAST =====
     function showToast(msg) {
