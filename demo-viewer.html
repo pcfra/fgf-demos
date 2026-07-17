@@ -1086,6 +1086,10 @@
     initStore();
 
     function initStore() {
+        // Show admin button if there's a license (business owner)
+        if (clientLicense) {
+            document.getElementById('adminBtn').style.display = 'flex';
+        }
         document.title = `${businessName} | Tienda Online`;
         document.getElementById('navLogo').textContent = businessName.substring(0,2).toUpperCase();
         document.getElementById('navName').textContent = businessName;
