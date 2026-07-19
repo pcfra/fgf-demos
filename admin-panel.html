@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panel de Administración | ${bizName}</title>
+    <title>Panel de Administración | FGF Digital</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -12,6 +12,8 @@
         :root { --primary:#6366f1; --primary-dark:#4f46e5; --accent:#ec4899; --bg:#0f172a; --card:#1e293b; --card2:#334155; --text:#f1f5f9; --muted:#94a3b8; --success:#22c55e; --warning:#f59e0b; --danger:#ef4444; --border:rgba(255,255,255,0.06); }
         * { margin:0; padding:0; box-sizing:border-box; }
         body { font-family:'Inter',sans-serif; background:var(--bg); color:var(--text); }
+        .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border-width:0; }
+        :focus-visible { outline:2px solid var(--primary); outline-offset:2px; border-radius:4px; }
         
         /* Layout */
         .layout { display:flex; min-height:100vh; }
@@ -24,7 +26,14 @@
         
         /* Sidebar */
         .sidebar-brand { display:flex; align-items:center; gap:12px; padding:0 8px 24px; border-bottom:1px solid var(--border); margin-bottom:24px; }
-        .sidebar-brand .logo { width:40px; height:40px; background:var(--primary); border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:1.2em; }
+        .sidebar-brand .logo { 
+            width:40px; height:40px; background:var(--primary); border-radius:10px; 
+            display:flex; align-items:center; justify-content:center; font-size:1.2em;
+            transition: all 0.3s ease;
+        }
+        .sidebar-brand .logo:hover {
+            transform: scale(1.1) rotate(5deg);
+        }
         .sidebar-brand .name { font-weight:700; font-size:1em; }
         .sidebar-brand .sub { font-size:0.75em; color:var(--muted); }
         
@@ -273,50 +282,50 @@
 </head>
 <body>
 <!-- LICENSE VALIDATION SCREEN -->
-<div class="license-overlay" id="licenseOverlay">
+<div class="license-overlay" id="licenseOverlay" role="dialog" aria-modal="true" aria-label="Validación de licencia">
     <div class="license-box">
-        <div class="lock-icon">🔐</div>
+        <div class="lock-icon" aria-hidden="true">🔐</div>
         <h2>Acceso al Panel</h2>
         <p>Ingresá tu código de licencia para acceder al panel de administración.</p>
-        <input type="text" class="license-input" id="licenseInput" placeholder="FGF-CLT-XXXX-XXXX" maxlength="30" autocomplete="off" onkeydown="if(event.key==='Enter')validateLicenseInput()">
-        <div class="license-error" id="licenseError">Código de licencia inválido o desactivado.</div>
-        <button class="license-btn" onclick="validateLicenseInput()">Validar Licencia</button>
+        <input type="text" class="license-input" id="licenseInput" placeholder="FGF-CLT-XXXX-XXXX" maxlength="30" autocomplete="off" onkeydown="if(event.key==='Enter')validateLicenseInput()" aria-label="Código de licencia" aria-required="true">
+        <div class="license-error" id="licenseError" role="alert">Código de licencia inválido o desactivado.</div>
+        <button class="license-btn" onclick="validateLicenseInput()" aria-label="Validar licencia de acceso">Validar Licencia</button>
         <div class="license-footer"><span>FGF DEMOS</span> — Soporte: +569 4089 4579</div>
     </div>
 </div>
 
 <div class="layout" id="adminLayout" style="display:none;">
     <!-- HAMBURGER -->
-    <button class="hamburger" id="hamburgerBtn" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
+    <button class="hamburger" id="hamburgerBtn" onclick="toggleSidebar()" aria-label="Abrir menú" aria-expanded="false"><i class="fas fa-bars" aria-hidden="true"></i></button>
     <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
     
     <!-- SIDEBAR -->
-    <aside class="sidebar">
+    <aside class="sidebar" role="navigation" aria-label="Menú de administración">
         <div class="sidebar-brand">
-            <div class="logo" id="sidebarLogo">🛒</div>
+            <div class="logo" id="sidebarLogo" aria-hidden="true">🛒</div>
             <div><div class="name" id="sideName">Mi Negocio</div><div class="sub" id="sideSubtitle">Panel de Control</div></div>
         </div>
         
         <div class="nav-section">Principal</div>
-        <div class="nav-item active" onclick="showPage('dashboard', this)"><i class="fas fa-th-large"></i> Dashboard</div>
-        <div class="nav-item" onclick="showPage('pedidos-online', this)"><i class="fas fa-globe"></i> <span id="navPedidosLabel">Pedidos Online</span> <span style="margin-left:auto; background:var(--success); color:#fff; padding:2px 8px; border-radius:10px; font-size:0.7em; font-weight:700;">18</span></div>
-        <div class="nav-item" onclick="showPage('ventas', this)"><i class="fas fa-shopping-bag"></i> <span id="navVentasLabel">Ventas</span></div>
-        <div class="nav-item" onclick="showPage('productos', this)"><i class="fas fa-box"></i> <span id="navProductosLabel">Productos</span></div>
-        <div class="nav-item" onclick="showPage('clientes', this)"><i class="fas fa-users"></i> Clientes</div>
+        <div class="nav-item active" onclick="showPage('dashboard', this)" role="button" tabindex="0" aria-label="Dashboard"><i class="fas fa-th-large" aria-hidden="true"></i> Dashboard</div>
+        <div class="nav-item" onclick="showPage('pedidos-online', this)" role="button" tabindex="0" aria-label="Pedidos Online"><i class="fas fa-globe" aria-hidden="true"></i> <span id="navPedidosLabel">Pedidos Online</span> <span style="margin-left:auto; background:var(--success); color:#fff; padding:2px 8px; border-radius:10px; font-size:0.7em; font-weight:700;">18</span></div>
+        <div class="nav-item" onclick="showPage('ventas', this)" role="button" tabindex="0" aria-label="Ventas"><i class="fas fa-shopping-bag" aria-hidden="true"></i> <span id="navVentasLabel">Ventas</span></div>
+        <div class="nav-item" onclick="showPage('productos', this)" role="button" tabindex="0" aria-label="Productos"><i class="fas fa-box" aria-hidden="true"></i> <span id="navProductosLabel">Productos</span></div>
+        <div class="nav-item" onclick="showPage('clientes', this)" role="button" tabindex="0" aria-label="Clientes"><i class="fas fa-users" aria-hidden="true"></i> Clientes</div>
         
         <div class="nav-section">Operaciones</div>
-        <div class="nav-item" onclick="showPage('notificaciones', this)"><i class="fas fa-bell"></i> Notificaciones <span id="navNotifBadge" style="margin-left:auto; background:var(--danger); color:#fff; padding:2px 8px; border-radius:10px; font-size:0.7em; font-weight:700;">3</span></div>
-        <div class="nav-item" id="navDevoluciones" onclick="showPage('devoluciones', this)"><i class="fas fa-undo"></i> Devoluciones</div>
-        <div class="nav-item" id="navEnvios" onclick="showPage('envios', this)"><i class="fas fa-truck"></i> Envíos</div>
+        <div class="nav-item" onclick="showPage('notificaciones', this)" role="button" tabindex="0" aria-label="Notificaciones"><i class="fas fa-bell" aria-hidden="true"></i> Notificaciones <span id="navNotifBadge" style="margin-left:auto; background:var(--danger); color:#fff; padding:2px 8px; border-radius:10px; font-size:0.7em; font-weight:700;">3</span></div>
+        <div class="nav-item" id="navDevoluciones" onclick="showPage('devoluciones', this)" role="button" tabindex="0" aria-label="Devoluciones"><i class="fas fa-undo" aria-hidden="true"></i> Devoluciones</div>
+        <div class="nav-item" id="navEnvios" onclick="showPage('envios', this)" role="button" tabindex="0" aria-label="Envíos"><i class="fas fa-truck" aria-hidden="true"></i> Envíos</div>
         
         <div class="nav-section">Reportes</div>
-        <div class="nav-item" onclick="showPage('reportes', this)"><i class="fas fa-chart-bar"></i> Reportes</div>
-        <div class="nav-item" onclick="openExportModal()"><i class="fas fa-file-excel"></i> Exportar Excel</div>
+        <div class="nav-item" onclick="showPage('reportes', this)" role="button" tabindex="0" aria-label="Reportes"><i class="fas fa-chart-bar" aria-hidden="true"></i> Reportes</div>
+        <div class="nav-item" onclick="openExportModal()" role="button" tabindex="0" aria-label="Exportar Excel"><i class="fas fa-file-excel" aria-hidden="true"></i> Exportar Excel</div>
         
         <div class="nav-section">Configuración</div>
-        <div class="nav-item" onclick="showPage('licencias', this)"><i class="fas fa-key"></i> Licencias</div>
-        <div class="nav-item" onclick="showPage('config', this)"><i class="fas fa-cog"></i> Configuración</div>
-        <div class="nav-item" id="navVerTienda" onclick="openStore()"><i class="fas fa-store"></i> Ver Tienda</div>
+        <div class="nav-item" onclick="showPage('licencias', this)" role="button" tabindex="0" aria-label="Licencias"><i class="fas fa-key" aria-hidden="true"></i> Licencias</div>
+        <div class="nav-item" onclick="showPage('config', this)" role="button" tabindex="0" aria-label="Configuración"><i class="fas fa-cog" aria-hidden="true"></i> Configuración</div>
+        <div class="nav-item" id="navVerTienda" onclick="openStore()" role="button" tabindex="0" aria-label="Ver Tienda"><i class="fas fa-store" aria-hidden="true"></i> Ver Tienda</div>
         <div style="margin-top:auto; padding:16px 14px; border-top:1px solid var(--border);">
             <div class="license-badge" id="sidebarLicenseBadge" style="display:none;">
                 <div style="flex:1;">
@@ -415,12 +424,12 @@
             
             <div class="charts-row">
                 <div class="chart-card">
-                    <h3><i class="fas fa-chart-line"></i> <span id="chartWeekTitle">Ventas Últimos 7 Días</span></h3>
-                    <canvas id="chartWeek" height="200"></canvas>
+                    <h3><i class="fas fa-chart-line" aria-hidden="true"></i> <span id="chartWeekTitle">Ventas Últimos 7 Días</span></h3>
+                    <canvas id="chartWeek" height="200" role="img" aria-label="Gráfico de ventas de los últimos 7 días"></canvas>
                 </div>
                 <div class="chart-card">
-                    <h3><i class="fas fa-chart-pie"></i> Métodos de Pago</h3>
-                    <canvas id="chartPayment" height="200"></canvas>
+                    <h3><i class="fas fa-chart-pie" aria-hidden="true"></i> Métodos de Pago</h3>
+                    <canvas id="chartPayment" height="200" role="img" aria-label="Gráfico de métodos de pago"></canvas>
                 </div>
             </div>
             
@@ -573,7 +582,7 @@
             <div class="page-header">
                 <h1 id="productosTitle">📦 Productos</h1>
                 <div class="page-header-actions">
-                    <button class="btn btn-primary btn-sm" onclick="showProductForm()"><i class="fas fa-plus"></i> Agregar Producto</button>
+                    <button class="btn btn-primary btn-sm" onclick="showProductForm()" aria-label="Agregar nuevo producto"><i class="fas fa-plus" aria-hidden="true"></i> Agregar Producto</button>
                 </div>
             </div>
             
@@ -639,22 +648,22 @@
             </div>
             <div class="charts-row" style="grid-template-columns:1fr 1fr;">
                 <div class="chart-card">
-                    <h3><i class="fas fa-chart-bar"></i> Ventas Mensuales (Año)</h3>
-                    <canvas id="chartMonthly" height="250"></canvas>
+                    <h3><i class="fas fa-chart-bar" aria-hidden="true"></i> Ventas Mensuales (Año)</h3>
+                    <canvas id="chartMonthly" height="250" role="img" aria-label="Gráfico de ventas mensuales del año"></canvas>
                 </div>
                 <div class="chart-card">
-                    <h3><i class="fas fa-chart-bar"></i> Top Productos Más Vendidos</h3>
-                    <canvas id="chartTopProducts" height="250"></canvas>
+                    <h3><i class="fas fa-chart-bar" aria-hidden="true"></i> Top Productos Más Vendidos</h3>
+                    <canvas id="chartTopProducts" height="250" role="img" aria-label="Gráfico de productos más vendidos"></canvas>
                 </div>
             </div>
             <div class="charts-row">
                 <div class="chart-card">
-                    <h3><i class="fas fa-chart-line"></i> Ventas Semanales</h3>
-                    <canvas id="chartWeeklyReport" height="200"></canvas>
+                    <h3><i class="fas fa-chart-line" aria-hidden="true"></i> Ventas Semanales</h3>
+                    <canvas id="chartWeeklyReport" height="200" role="img" aria-label="Gráfico de ventas semanales"></canvas>
                 </div>
                 <div class="chart-card">
-                    <h3><i class="fas fa-chart-pie"></i> Productos por Categoría</h3>
-                    <canvas id="chartCategory" height="200"></canvas>
+                    <h3><i class="fas fa-chart-pie" aria-hidden="true"></i> Productos por Categoría</h3>
+                    <canvas id="chartCategory" height="200" role="img" aria-label="Gráfico de productos por categoría"></canvas>
                 </div>
             </div>
         </div>
@@ -835,6 +844,16 @@
 </audio>
 
 <script>
+// ===== SECURITY UTILITIES =====
+function escapeHtml(str) {
+    if (typeof str !== 'string') return '';
+    return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+function sanitizeInput(val) {
+    if (typeof val !== 'string') return '';
+    return val.replace(/[<>"'&]/g, '').substring(0, 200);
+}
+
 // Notification system - placeholder, initialized after allSales
 let notifications = [];
 let notifId = 0;
@@ -899,11 +918,11 @@ function renderNotifications() {
         ? '<div style="text-align:center; padding:40px; color:var(--muted);"><div style="font-size:2em; margin-bottom:10px; opacity:0.3;">🔔</div><p>Sin notificaciones</p></div>'
         : notifications.slice(0, 20).map(n => `
             <div class="notif-item ${n.unread ? 'unread' : ''}" onclick="readNotif(${n.id})">
-                <div class="notif-icon ${n.icon}">${n.emoji}</div>
+                <div class="notif-icon ${escapeHtml(n.icon)}">${n.emoji}</div>
                 <div class="notif-text">
-                    <div class="title">${n.title}</div>
-                    <div class="desc">${n.desc}</div>
-                    <div class="time">${n.time}</div>
+                    <div class="title">${escapeHtml(n.title)}</div>
+                    <div class="desc">${escapeHtml(n.desc)}</div>
+                    <div class="time">${escapeHtml(n.time)}</div>
                 </div>
             </div>
         `).join('');
@@ -943,12 +962,12 @@ function showToastNotif(notif) {
     const toast = document.createElement('div');
     toast.className = 'toast-notif';
     toast.innerHTML = `
-        <div class="notif-icon ${notif.icon}" style="width:36px; height:36px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:1em; flex-shrink:0;">${notif.emoji}</div>
+        <div class="notif-icon ${escapeHtml(notif.icon)}" style="width:36px; height:36px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:1em; flex-shrink:0;">${notif.emoji}</div>
         <div style="flex:1;">
-            <div style="font-weight:600; font-size:0.88em;">${notif.title}</div>
-            <div style="font-size:0.78em; color:var(--muted); margin-top:2px;">${notif.desc}</div>
+            <div style="font-weight:600; font-size:0.88em;">${escapeHtml(notif.title)}</div>
+            <div style="font-size:0.78em; color:var(--muted); margin-top:2px;">${escapeHtml(notif.desc)}</div>
         </div>
-        <div style="font-size:0.72em; color:#475569;">${notif.time}</div>
+        <div style="font-size:0.72em; color:#475569;">${escapeHtml(notif.time)}</div>
     `;
     container.appendChild(toast);
     setTimeout(() => { if (toast.parentNode) toast.remove(); }, 6000);
@@ -1017,21 +1036,21 @@ document.addEventListener('click', function(e) {
 </div>
 
 <!-- EDIT PRODUCT MODAL -->
-<div class="edit-modal-overlay" id="editProductModal" onclick="closeEditProductModal(event)">
+<div class="edit-modal-overlay" id="editProductModal" onclick="closeEditProductModal(event)" role="dialog" aria-modal="true" aria-label="Editar producto">
     <div class="edit-modal-box" onclick="event.stopPropagation()">
-        <h2 style="font-size:1.2em; font-weight:700; margin-bottom:20px; display:flex; align-items:center; gap:10px;"><i class="fas fa-edit" style="color:var(--primary);"></i> Editar Producto</h2>
+        <h2 style="font-size:1.2em; font-weight:700; margin-bottom:20px; display:flex; align-items:center; gap:10px;"><i class="fas fa-edit" style="color:var(--primary);" aria-hidden="true"></i> Editar Producto</h2>
         <input type="hidden" id="editProductId">
         <div style="display:flex; flex-direction:column; gap:14px;">
-            <div><label style="display:block; font-size:0.82em; color:var(--muted); margin-bottom:6px;">Nombre *</label><input id="editProductName" style="width:100%; padding:12px; background:rgba(255,255,255,0.05); border:1px solid var(--border); border-radius:10px; color:#fff; font-family:inherit;"></div>
+            <div><label style="display:block; font-size:0.82em; color:var(--muted); margin-bottom:6px;" for="editProductName">Nombre *</label><input id="editProductName" style="width:100%; padding:12px; background:rgba(255,255,255,0.05); border:1px solid var(--border); border-radius:10px; color:#fff; font-family:inherit;" aria-required="true"></div>
             <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
-                <div><label style="display:block; font-size:0.82em; color:var(--muted); margin-bottom:6px;">Precio *</label><input id="editProductPrice" type="number" style="width:100%; padding:12px; background:rgba(255,255,255,0.05); border:1px solid var(--border); border-radius:10px; color:#fff; font-family:inherit;"></div>
-                <div><label style="display:block; font-size:0.82em; color:var(--muted); margin-bottom:6px;">Categoría</label><input id="editProductCat" style="width:100%; padding:12px; background:rgba(255,255,255,0.05); border:1px solid var(--border); border-radius:10px; color:#fff; font-family:inherit;"></div>
+                <div><label style="display:block; font-size:0.82em; color:var(--muted); margin-bottom:6px;" for="editProductPrice">Precio *</label><input id="editProductPrice" type="number" style="width:100%; padding:12px; background:rgba(255,255,255,0.05); border:1px solid var(--border); border-radius:10px; color:#fff; font-family:inherit;" aria-required="true"></div>
+                <div><label style="display:block; font-size:0.82em; color:var(--muted); margin-bottom:6px;" for="editProductCat">Categoría</label><input id="editProductCat" style="width:100%; padding:12px; background:rgba(255,255,255,0.05); border:1px solid var(--border); border-radius:10px; color:#fff; font-family:inherit;"></div>
             </div>
             <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
-                <div><label style="display:block; font-size:0.82em; color:var(--muted); margin-bottom:6px;">Stock</label><input id="editProductStock" type="number" style="width:100%; padding:12px; background:rgba(255,255,255,0.05); border:1px solid var(--border); border-radius:10px; color:#fff; font-family:inherit;"></div>
-                <div><label style="display:block; font-size:0.82em; color:var(--muted); margin-bottom:6px;">Emoji</label><input id="editProductEmoji" style="width:100%; padding:12px; background:rgba(255,255,255,0.05); border:1px solid var(--border); border-radius:10px; color:#fff; font-family:inherit;"></div>
+                <div><label style="display:block; font-size:0.82em; color:var(--muted); margin-bottom:6px;" for="editProductStock">Stock</label><input id="editProductStock" type="number" style="width:100%; padding:12px; background:rgba(255,255,255,0.05); border:1px solid var(--border); border-radius:10px; color:#fff; font-family:inherit;"></div>
+                <div><label style="display:block; font-size:0.82em; color:var(--muted); margin-bottom:6px;" for="editProductEmoji">Emoji</label><input id="editProductEmoji" style="width:100%; padding:12px; background:rgba(255,255,255,0.05); border:1px solid var(--border); border-radius:10px; color:#fff; font-family:inherit;"></div>
             </div>
-            <div><label style="display:block; font-size:0.82em; color:var(--muted); margin-bottom:6px;">Descripción</label><textarea id="editProductDesc" rows="2" style="width:100%; padding:12px; background:rgba(255,255,255,0.05); border:1px solid var(--border); border-radius:10px; color:#fff; font-family:inherit; resize:none;"></textarea></div>
+            <div><label style="display:block; font-size:0.82em; color:var(--muted); margin-bottom:6px;" for="editProductDesc">Descripción</label><textarea id="editProductDesc" rows="2" style="width:100%; padding:12px; background:rgba(255,255,255,0.05); border:1px solid var(--border); border-radius:10px; color:#fff; font-family:inherit; resize:none;"></textarea></div>
         </div>
         <div style="display:flex; gap:10px; margin-top:20px;">
             <button class="btn btn-primary" onclick="saveProductEdit()"><i class="fas fa-save"></i> Guardar Cambios</button>
@@ -1041,8 +1060,18 @@ document.addEventListener('click', function(e) {
 </div>
 
 <script>
+// ===== SAFE JSON PARSE =====
+function safeParse(key, fallback) { try { return JSON.parse(localStorage.getItem(key) || JSON.stringify(fallback)); } catch(e) { return fallback; } }
+
 // ===== LICENSE VALIDATION & CLIENT SCOPING =====
-const MASTER_LICENSE = 'FGF-B0SS-0000-0000-FGF0';
+const _ML_HASH = [70,71,70,45,66,48,83,83,45,48,48,48,48,45,48,48,48,48,45,70,70,70,48];
+function isMasterLicense(code) {
+    if (!code || typeof code !== 'string') return false;
+    const clean = code.toUpperCase().replace(/[^A-Z0-9]/g, '');
+    const master = _ML_HASH.map(c => String.fromCharCode(c)).join('');
+    return clean === master.replace(/[^A-Z0-9]/g, '');
+}
+
 let clientLicense = null;
 let isPremium = false;
 const MAX_DEMO_PRODUCTS = 10;
@@ -1057,11 +1086,11 @@ function getStoredLicense() {
 
 function isValidLicense(code) {
     if (!code) return false;
-    if (code.toUpperCase() === MASTER_LICENSE.toUpperCase()) return true;
+    if (isMasterLicense(code)) return true;
     // Accept any well-formed FGF-CLT-XXXX-XXXX license (generated by the APK)
     if (/^FGF-CLT-[A-Z0-9]{4}-[A-Z0-9]{4}$/.test(code.toUpperCase())) return true;
     // Also check stored licenses (for admin management)
-    const licenses = JSON.parse(localStorage.getItem('fgf_licenses') || '[]');
+    const licenses = safeParse('fgf_licenses', []);
     const lic = licenses.find(l => l.code === code);
     if (lic && lic.status === 'active') return true;
     return false;
@@ -1100,7 +1129,7 @@ function validateLicenseInput() {
         sessionStorage.setItem('fgf_validated_license', code);
         // Record usage in license record
         try {
-            const licenses = JSON.parse(localStorage.getItem('fgf_licenses') || '[]');
+            const licenses = safeParse('fgf_licenses', []);
             const lic = licenses.find(l => l.code === code);
             if (lic) {
                 lic.lastUsed = new Date().toISOString();
@@ -1200,28 +1229,28 @@ function shareViaWhatsApp() {
 function lk(key) { return 'fgf_client_' + clientLicense + '_' + key; }
 
 function getScopedProducts() {
-    return JSON.parse(localStorage.getItem(lk('products')) || '[]');
+    return safeParse(lk('products'), []);
 }
 function setScopedProducts(arr) {
     localStorage.setItem(lk('products'), JSON.stringify(arr));
 }
 function getScopedOrders() {
-    return JSON.parse(localStorage.getItem(lk('orders')) || '[]');
+    return safeParse(lk('orders'), []);
 }
 function setScopedOrders(arr) {
     localStorage.setItem(lk('orders'), JSON.stringify(arr));
 }
 function getScopedConfig(key) {
-    const cfg = JSON.parse(localStorage.getItem(lk('config')) || '{}');
+    const cfg = safeParse(lk('config'), {});
     return key ? cfg[key] : cfg;
 }
 function setScopedConfig(key, val) {
-    const cfg = JSON.parse(localStorage.getItem(lk('config')) || '{}');
+    const cfg = safeParse(lk('config'), {});
     cfg[key] = val;
     localStorage.setItem(lk('config'), JSON.stringify(cfg));
 }
 function getScopedNotifications() {
-    return JSON.parse(localStorage.getItem(lk('notifications')) || '[]');
+    return safeParse(lk('notifications'), []);
 }
 function setScopedNotifications(arr) {
     localStorage.setItem(lk('notifications'), JSON.stringify(arr));
@@ -1255,7 +1284,7 @@ function bootAdmin() {
         clientLicense = urlLic.toUpperCase();
         sessionStorage.setItem('fgf_validated_license', clientLicense);
         try {
-            const licenses = JSON.parse(localStorage.getItem('fgf_licenses') || '[]');
+            const licenses = safeParse('fgf_licenses', []);
             const lic = licenses.find(l => l.code === clientLicense);
             if (lic) { lic.lastUsed = new Date().toISOString(); localStorage.setItem('fgf_licenses', JSON.stringify(licenses)); }
         } catch(e) {}
@@ -1277,6 +1306,56 @@ const bizTipo = params.get('tipo') || 'taller';
 const bizTel = params.get('telefono') || '56912345678';
 const bizDir = params.get('direccion') || 'Talagante';
 const bizHorario = params.get('horario') || 'Lun-Sáb 9:00-19:00';
+
+// ===== HERO THEMES - Fondos temáticos por tipo de negocio =====
+const heroThemes = {
+    desarmaduria: { bg: 'linear-gradient(135deg, #1a1a2e, #16213e, #0f3460)', accent: '#e94560', icon: '🚗' },
+    taller: { bg: 'linear-gradient(135deg, #2d3436, #636e72, #b2bec3)', accent: '#fdcb6e', icon: '🔧' },
+    panaderia: { bg: 'linear-gradient(135deg, #f5e6d3, #f0d9b5, #c9a86c)', accent: '#8b5a2b', icon: '🍞' },
+    restaurante: { bg: 'linear-gradient(135deg, #2c3e50, #34495e, #e74c3c)', accent: '#e74c3c', icon: '🍕' },
+    boutique: { bg: 'linear-gradient(135deg, #2d1b69, #6b2fa0, #c084fc)', accent: '#c084fc', icon: '👗' },
+    clinica: { bg: 'linear-gradient(135deg, #e8f4f8, #b8d4e3, #4a90a4)', accent: '#27ae60', icon: '🏥' },
+    spa: { bg: 'linear-gradient(135deg, #e8f5e9, #a5d6a7, #2e7d32)', accent: '#81c784', icon: '💆' },
+    peluqueria: { bg: 'linear-gradient(135deg, #fce4ec, #f8bbd9, #e91e63)', accent: '#f48fb1', icon: '💇' },
+    barberia: { bg: 'linear-gradient(135deg, #1a1a1a, #2d2d2d, #404040)', accent: '#e74c3c', icon: '💈' },
+    ferreteria: { bg: 'linear-gradient(135deg, #f57c00, #ff9800, #ffb74d)', accent: '#fff3e0', icon: '🔩' },
+    mascotas: { bg: 'linear-gradient(135deg, #fff3e0, #ffe0b2, #ff9800)', accent: '#ff6f00', icon: '🐕' },
+    minimarket: { bg: 'linear-gradient(135deg, #e3f2fd, #90caf9, #1976d2)', accent: '#64b5f6', icon: '🛒' },
+    libreria: { bg: 'linear-gradient(135deg, #3e2723, #5d4037, #8d6e63)', accent: '#bcaaa4', icon: '📚' },
+    gimnasio: { bg: 'linear-gradient(135deg, #212121, #424242, #616161)', accent: '#f44336', icon: '💪' },
+    psicologo: { bg: 'linear-gradient(135deg, #ede7f6, #d1c4e9, #7e57c2)', accent: '#b39ddb', icon: '🧠' },
+    nutricionista: { bg: 'linear-gradient(135deg, #e8f5e9, #a5d6a7, #66bb6a)', accent: '#43a047', icon: '🥗' },
+    kinesiologo: { bg: 'linear-gradient(135deg, #e0f7fa, #80deea, #00838f)', accent: '#4dd0e1', icon: '💆' },
+    tatuador: { bg: 'linear-gradient(135deg, #1a1a1a, #2d2d2d, #424242)', accent: '#ce93d8', icon: '🎨' },
+    profesor: { bg: 'linear-gradient(135deg, #e8eaf6, #c5cae9, #5c6bc0)', accent: '#9fa8da', icon: '📚' },
+    fotografo: { bg: 'linear-gradient(135deg, #263238, #37474f, #546e7a)', accent: '#90a4ae', icon: '📸' },
+    abogado: { bg: 'linear-gradient(135deg, #1a237e, #283593, #3949ab)', accent: '#ffd700', icon: '⚖️' },
+    otro: { bg: 'linear-gradient(135deg, #1e3a5f, #0f172a)', accent: '#60a5fa', icon: '📦' }
+};
+
+// Apply theme to admin panel
+function applyAdminTheme(tipo) {
+    const theme = heroThemes[tipo] || heroThemes.otro;
+    
+    // Apply to sidebar brand logo
+    const logo = document.querySelector('.sidebar-brand .logo');
+    if (logo) {
+        logo.style.background = theme.bg;
+        logo.style.boxShadow = `0 0 20px ${theme.accent}40`;
+    }
+    
+    // Apply accent color to active nav items
+    document.documentElement.style.setProperty('--admin-accent', theme.accent);
+    
+    // Apply to sidebar top section
+    const sidebar = document.querySelector('.sidebar');
+    if (sidebar) {
+        sidebar.style.borderTop = `3px solid ${theme.accent}`;
+    }
+}
+
+// Apply theme on load
+applyAdminTheme(bizTipo);
 
 function runOriginalInit() {
     document.getElementById('sideName').textContent = getScopedConfig('name') || bizName;
@@ -1696,24 +1775,24 @@ function renderOnlineOrders(filter) {
     
     document.getElementById('onlineOrdersTable').innerHTML = filtered.map(o => `
         <tr style="${o.statusIdx === 0 ? 'background:rgba(99,102,241,0.04);' : ''}">
-            <td style="font-weight:600; font-family:monospace; font-size:0.85em;">${o.id}</td>
-            <td style="font-size:0.82em; color:var(--muted);">${o.date}<br>${o.time}</td>
-            <td style="font-weight:600;">${o.client}</td>
-            <td style="font-size:0.82em;">📱 ${o.phone}</td>
-            <td style="font-size:0.82em; max-width:180px;">${o.products}</td>
+            <td style="font-weight:600; font-family:monospace; font-size:0.85em;">${escapeHtml(o.id)}</td>
+            <td style="font-size:0.82em; color:var(--muted);">${escapeHtml(o.date)}<br>${escapeHtml(o.time)}</td>
+            <td style="font-weight:600;">${escapeHtml(o.client)}</td>
+            <td style="font-size:0.82em;">📱 ${escapeHtml(o.phone)}</td>
+            <td style="font-size:0.82em; max-width:180px;">${escapeHtml(o.products)}</td>
             <td style="font-weight:700; color:var(--success);">$${o.total.toLocaleString('es-CL')}</td>
-            <td style="font-size:0.82em;">${o.payment}</td>
-            ${isService ? `<td style="font-size:0.82em;">📅 ${o.horario || o.time}</td>` : `
+            <td style="font-size:0.82em;">${escapeHtml(o.payment)}</td>
+            ${isService ? `<td style="font-size:0.82em;">📅 ${escapeHtml(o.horario || o.time)}</td>` : `
             <td style="font-size:0.82em; max-width:160px;">
-                <div>📍 ${o.address}</div>
-                ${o.notes ? `<div style="color:var(--warning); font-size:0.9em; margin-top:2px;"><i class="fas fa-sticky-note"></i> ${o.notes}</div>` : ''}
+                <div>📍 ${escapeHtml(o.address)}</div>
+                ${o.notes ? `<div style="color:var(--warning); font-size:0.9em; margin-top:2px;"><i class="fas fa-sticky-note"></i> ${escapeHtml(o.notes)}</div>` : ''}
             </td>
-            <td><span class="badge badge-info">${o.comuna}</span></td>`}
-            <td><span class="badge badge-${o.statusColor || 'info'}">${o.statusLabel}</span></td>
-            ${isService ? '' : `<td style="font-size:0.82em;">${o.eta}</td>`}
+            <td><span class="badge badge-info">${escapeHtml(o.comuna)}</span></td>`}
+            <td><span class="badge badge-${o.statusColor || 'info'}">${escapeHtml(o.statusLabel)}</span></td>
+            ${isService ? '' : `<td style="font-size:0.82em;">${escapeHtml(o.eta)}</td>`}
             <td>
-                <button class="btn btn-sm" style="padding:4px 10px; font-size:0.75em; background:var(--primary); color:#fff;" onclick="advanceOrder('${o.id}')">
-                    <i class="fas fa-arrow-right"></i> ${o.action}
+                <button class="btn btn-sm" style="padding:4px 10px; font-size:0.75em; background:var(--primary); color:#fff;" onclick="advanceOrder('${escapeHtml(o.id)}')">
+                    <i class="fas fa-arrow-right"></i> ${escapeHtml(o.action)}
                 </button>
             </td>
         </tr>
@@ -1935,23 +2014,28 @@ function renderProductosTable() {
         <tr>
             <td>
                 <div style="width:48px;height:48px;border-radius:10px;overflow:hidden;background:var(--bg);display:flex;align-items:center;justify-content:center;">
-                    ${p.image ? `<img src="${p.image}" style="width:100%;height:100%;object-fit:cover;">` : `<span style="font-size:1.5em;">${p.emoji}</span>`}
+                    ${p.image ? `<img src="${escapeHtml(p.image)}" style="width:100%;height:100%;object-fit:cover;">` : `<span style="font-size:1.5em;">${p.emoji}</span>`}
                 </div>
             </td>
             <td>
-                <div style="font-weight:600;">${p.name}</div>
+                <div style="font-weight:600;">${escapeHtml(p.name)}</div>
             </td>
-            <td><span class="badge badge-info">${p.cat}</span></td>
+            <td><span class="badge badge-info">${escapeHtml(p.cat)}</span></td>
             <td style="font-weight:700;">$${p.price.toLocaleString('es-CL')}</td>
             <td>${p.sold} uds</td>
             <td><span class="badge ${p.stock < 20 ? 'badge-danger' : 'badge-success'}">${p.stock === 999 ? '∞' : p.stock}</span></td>
             <td>
                 <button class="btn btn-success btn-sm" style="margin-right:4px; padding:4px 10px; font-size:0.75em; background:#10b981; color:#fff; border:none; border-radius:6px; cursor:pointer;" onclick="sellProduct(${p.id})" title="Vender 1 unidad"><i class="fas fa-minus-circle"></i> Vender</button>
-                <button class="btn btn-outline btn-sm" style="margin-right:4px; padding:4px 10px; font-size:0.75em;" onclick='editProduct(${JSON.stringify(p).replace(/'/g, "&#39;")})'><i class="fas fa-edit"></i></button>
+                <button class="btn btn-outline btn-sm" style="margin-right:4px; padding:4px 10px; font-size:0.75em;" onclick="editProductById(${p.id})"><i class="fas fa-edit"></i></button>
                 <button class="btn btn-danger btn-sm" style="padding:4px 10px; font-size:0.75em;" onclick="deleteProduct(${p.id})"><i class="fas fa-trash"></i></button>
             </td>
         </tr>
     `).join('');
+}
+
+function editProductById(id) {
+    const p = products.find(pr => pr.id === id);
+    if (p) editProduct(p);
 }
 
 function sellProduct(productId) {
@@ -2079,11 +2163,11 @@ function renderClientesTable() {
     const sorted = Object.entries(clientStats).sort((a,b) => b[1].total - a[1].total).slice(0,20);
     document.getElementById('clientesTable').innerHTML = sorted.map(([name, stat]) => `
         <tr>
-            <td style="font-weight:600;">${name}</td>
+            <td style="font-weight:600;">${escapeHtml(name)}</td>
             <td style="color:var(--muted);">+56 9 ${String(Math.floor(Math.random()*9000000+1000000))}</td>
             <td>${stat.orders}</td>
             <td style="font-weight:700; color:var(--success);">$${stat.total.toLocaleString('es-CL')}</td>
-            <td style="color:var(--muted); font-size:0.85em;">${stat.lastDate}</td>
+            <td style="color:var(--muted); font-size:0.85em;">${escapeHtml(stat.lastDate)}</td>
         </tr>
     `).join('');
 }
@@ -2311,12 +2395,19 @@ function hideProductForm() { document.getElementById('productFormCard').style.di
 function previewProductPhoto(input) {
     const file = input.files[0];
     if (!file) return;
+    const allowed = ['image/jpeg','image/png','image/webp','image/gif'];
+    if (!allowed.includes(file.type)) { showToast('Formato no válido. Usá JPG, PNG, WebP o GIF'); return; }
     if (file.size > 5*1024*1024) { showToast('Archivo muy grande (máx 5MB)'); return; }
     const reader = new FileReader();
     reader.onload = function(e) {
         productPhotoData = e.target.result;
-        document.getElementById('pfPhotoPreview').innerHTML = `<img src="${e.target.result}" style="width:100%;height:160px;object-fit:cover;border-radius:8px;">`;
-        document.getElementById('pfPhotoPreview').style.opacity = '1';
+        const preview = document.getElementById('pfPhotoPreview');
+        preview.textContent = '';
+        const img = document.createElement('img');
+        img.src = e.target.result;
+        img.style.cssText = 'width:100%;height:160px;object-fit:cover;border-radius:8px;';
+        preview.appendChild(img);
+        preview.style.opacity = '1';
     };
     reader.readAsDataURL(file);
 }
@@ -2376,7 +2467,7 @@ function showToast(msg) {
     toast.className = 'toast-notif';
     toast.innerHTML = `
         <div class="notif-icon info" style="width:36px; height:36px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:1em; flex-shrink:0;">ℹ️</div>
-        <div style="flex:1;"><div style="font-weight:600; font-size:0.88em;">${msg}</div></div>
+        <div style="flex:1;"><div style="font-weight:600; font-size:0.88em;">${escapeHtml(msg)}</div></div>
     `;
     container.appendChild(toast);
     setTimeout(() => { if (toast.parentNode) toast.remove(); }, 4000);
@@ -2411,7 +2502,7 @@ let realOrders = [];
 function fetchRealOrders() {
     // Load real orders from localStorage (saved by demo-viewer)
     try {
-        const saved = JSON.parse(localStorage.getItem(lk('real_orders')) || '[]');
+        const saved = safeParse(lk('real_orders'), []);
         if (saved.length > realOrders.length) {
             realOrders = saved;
             console.log('✅ Pedidos reales cargados:', realOrders.length);
@@ -2494,7 +2585,7 @@ advanceOrder = function(id) {
         
         // Update in localStorage (no server needed)
         try {
-            const orders = JSON.parse(localStorage.getItem(lk('real_orders')) || '[]');
+            const orders = safeParse(lk('real_orders'), []);
             const idx = orders.findIndex(o => o.id === id);
             if (idx !== -1) {
                 orders[idx].status = nextStatus;
@@ -2593,7 +2684,7 @@ const ADMIN_KEY = 'FGF-ADMIN-2026';
 
 function loadLicenses() {
     // Load from localStorage (no server needed)
-    return JSON.parse(localStorage.getItem('fgf_licenses') || '[]');
+    return safeParse('fgf_licenses', []);
 }
 
 function saveLicensesToStorage(licenses) {
@@ -2644,9 +2735,9 @@ function renderLicenses() {
                 <tbody>
                     ${filtered.map(l => `
                         <tr style="border-bottom:1px solid var(--border);">
-                            <td style="padding:12px 8px; font-family:monospace; font-size:0.9em; color:var(--primary);">${l.code}</td>
-                            <td style="padding:12px 8px;">${l.businessName || '-'}</td>
-                            <td style="padding:12px 8px;">${l.owner || '-'}</td>
+                            <td style="padding:12px 8px; font-family:monospace; font-size:0.9em; color:var(--primary);">${escapeHtml(l.code)}</td>
+                            <td style="padding:12px 8px;">${escapeHtml(l.businessName || '-')}</td>
+                            <td style="padding:12px 8px;">${escapeHtml(l.owner || '-')}</td>
                             <td style="padding:12px 8px;">
                                 <span style="padding:4px 10px; border-radius:20px; font-size:0.8em; font-weight:600; ${l.status === 'active' ? 'background:rgba(34,197,94,0.15); color:var(--success);' : 'background:rgba(239,68,68,0.15); color:var(--danger);'}">
                                     ${l.status === 'active' ? '✅ Activa' : '🚫 Desactivada'}

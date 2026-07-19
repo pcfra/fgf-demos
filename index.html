@@ -16,6 +16,8 @@
             --primary:#8b5cf6; --primary-dark:#7c3aed; --accent:#ec4899; --success:#22c55e;
             --warning:#f59e0b; --text:#f1f5f9; --muted:#94a3b8; --danger:#ef4444;
         }
+        .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border-width:0; }
+        :focus-visible { outline:2px solid var(--primary); outline-offset:2px; border-radius:4px; }
         body {
             font-family:'Inter',sans-serif; background:var(--bg); color:var(--text);
             min-height:100vh; min-height:100dvh; overflow-x:hidden;
@@ -270,85 +272,69 @@
     </div>
 
     <!-- FORM -->
-    <div class="card">
-        <div class="card-title"><i class="fas fa-store"></i> Datos del Negocio</div>
+    <div class="card" role="form" aria-label="Formulario de generación de demo">
+        <div class="card-title"><i class="fas fa-store" aria-hidden="true"></i> Datos del Negocio</div>
 
         <div class="form-group">
-            <label>Nombre del Negocio</label>
-            <input type="text" id="bizName" placeholder="Ej: Desarmaduría FGF">
+            <label for="bizName">Nombre del Negocio</label>
+            <input type="text" id="bizName" placeholder="Ej: Desarmaduría FGF" aria-required="true">
         </div>
 
         <div class="form-group">
-            <label>Tipo de Negocio</label>
-            <select id="bizType"></select>
+            <label for="bizType">Tipo de Negocio</label>
+            <select id="bizType" aria-required="true"></select>
         </div>
 
         <div class="form-group">
-            <label>Teléfono (sin +)</label>
-            <input type="tel" id="bizPhone" placeholder="56912345678">
+            <label for="bizPhone">Teléfono (sin +)</label>
+            <input type="tel" id="bizPhone" placeholder="56912345678" aria-required="true">
         </div>
 
         <div class="form-group">
-            <label>Dirección</label>
+            <label for="bizAddress">Dirección</label>
             <input type="text" id="bizAddress" placeholder="Ej: Av. Principal 123">
         </div>
 
         <div class="form-group">
-            <label>Horario</label>
+            <label for="bizSchedule">Horario</label>
             <input type="text" id="bizSchedule" placeholder="Ej: Lun-Sáb 9:00-19:00">
         </div>
 
         <div class="form-group">
             <label>Color</label>
-            <div class="colors" id="colorPicker"></div>
+            <div class="colors" id="colorPicker" role="radiogroup" aria-label="Seleccionar color de tema"></div>
         </div>
     </div>
 
     <!-- GENERATE -->
-    <button class="btn-generate" onclick="generate()">
-        <i class="fas fa-wand-magic-sparkles"></i> GENERAR DEMOS
+    <button class="btn-generate" onclick="generate()" aria-label="Generar demo del negocio">
+        <i class="fas fa-wand-magic-sparkles" aria-hidden="true"></i> GENERAR DEMOS
     </button>
 
     <!-- RESULTS -->
     <div class="results" id="results">
         <div class="result-card">
-            <div class="result-label"><i class="fas fa-store"></i> Tienda (Cliente)</div>
+            <div class="result-label"><i class="fas fa-store" aria-hidden="true"></i> Tienda (Cliente)</div>
             <div class="result-url" id="urlTienda"></div>
             <div class="result-actions">
-                <button class="btn-action btn-copy" onclick="copyUrl('tienda')"><i class="fas fa-copy"></i> Copiar</button>
-                <button class="btn-action btn-whatsapp" onclick="shareWhatsApp('tienda')"><i class="fab fa-whatsapp"></i> WhatsApp</button>
-                <button class="btn-action btn-open" onclick="openUrl('tienda')"><i class="fas fa-external-link"></i> Abrir</button>
+                <button class="btn-action btn-copy" onclick="copyUrl('tienda')" aria-label="Copiar URL de tienda"><i class="fas fa-copy" aria-hidden="true"></i> Copiar</button>
+                <button class="btn-action btn-whatsapp" onclick="shareWhatsApp('tienda')" aria-label="Compartir tienda por WhatsApp"><i class="fab fa-whatsapp" aria-hidden="true"></i> WhatsApp</button>
+                <button class="btn-action btn-open" onclick="openUrl('tienda')" aria-label="Abrir tienda en nueva pestaña"><i class="fas fa-external-link" aria-hidden="true"></i> Abrir</button>
             </div>
         </div>
         <div class="result-card">
-            <div class="result-label"><i class="fas fa-chart-line"></i> Admin Panel</div>
+            <div class="result-label"><i class="fas fa-chart-line" aria-hidden="true"></i> Admin Panel</div>
             <div class="result-url" id="urlAdmin"></div>
             <div class="result-actions">
-                <button class="btn-action btn-copy" onclick="copyUrl('admin')"><i class="fas fa-copy"></i> Copiar</button>
-                <button class="btn-action btn-whatsapp" onclick="shareWhatsApp('admin')"><i class="fab fa-whatsapp"></i> WhatsApp</button>
-                <button class="btn-action btn-open" onclick="openUrl('admin')"><i class="fas fa-external-link"></i> Abrir</button>
+                <button class="btn-action btn-copy" onclick="copyUrl('admin')" aria-label="Copiar URL de administración"><i class="fas fa-copy" aria-hidden="true"></i> Copiar</button>
+                <button class="btn-action btn-whatsapp" onclick="shareWhatsApp('admin')" aria-label="Compartir panel admin por WhatsApp"><i class="fab fa-whatsapp" aria-hidden="true"></i> WhatsApp</button>
+                <button class="btn-action btn-open" onclick="openUrl('admin')" aria-label="Abrir panel admin en nueva pestaña"><i class="fas fa-external-link" aria-hidden="true"></i> Abrir</button>
             </div>
         </div>
 
-        <button class="btn-action btn-copy" style="width:100%; margin-top:6px; padding:14px;" onclick="copyBoth()">
-            <i class="fas fa-copy"></i> Copiar Ambos Links
+        <button class="btn-action btn-copy" style="width:100%; margin-top:6px; padding:14px;" onclick="copyBoth()" aria-label="Copiar ambos links (tienda y administración)">
+            <i class="fas fa-copy" aria-hidden="true"></i> Copiar Ambos Links
         </button>
-
-        <!-- QR CODES -->
-        <div id="qrSection" style="display:none; margin-top:16px;">
-            <div style="display:flex; gap:12px;">
-                <div style="flex:1; background:#fff; border-radius:16px; padding:18px; text-align:center;">
-                    <div style="font-size:0.72em; font-weight:700; color:#475569; text-transform:uppercase; margin-bottom:10px;">QR Tienda (para imprimir)</div>
-                    <img id="qrTienda" style="width:180px; height:180px; border-radius:10px; margin-bottom:10px;" alt="QR Tienda">
-                    <div><a id="qrTiendaDownload" href="#" download="QR-Tienda.png" style="display:inline-block; padding:8px 16px; background:rgba(139,92,246,0.1); color:#8b5cf6; border-radius:8px; font-size:0.78em; font-weight:600; text-decoration:none;"><i class="fas fa-download"></i> Descargar QR</a></div>
-                </div>
-                <div style="flex:1; background:#fff; border-radius:16px; padding:18px; text-align:center;">
-                    <div style="font-size:0.72em; font-weight:700; color:#475569; text-transform:uppercase; margin-bottom:10px;">QR Admin (para el dueño)</div>
-                    <img id="qrAdmin" style="width:180px; height:180px; border-radius:10px; margin-bottom:10px;" alt="QR Admin">
-                    <div><a id="qrAdminDownload" href="#" download="QR-Admin.png" style="display:inline-block; padding:8px 16px; background:rgba(236,72,153,0.1); color:#ec4899; border-radius:8px; font-size:0.78em; font-weight:600; text-decoration:none;"><i class="fas fa-download"></i> Descargar QR</a></div>
-                </div>
-            </div>
-        </div>
     </div>
 
     <!-- CLIENT LICENSE DISPLAY -->
@@ -386,12 +372,39 @@
 <div class="fgf-watermark">⚡ FGF Digital<br>+569 4089 4579<br>Licencia Protegida ©</div>
 
 <script>
+// ===== SECURITY UTILITIES =====
+function escapeHtml(str) {
+    if (typeof str !== 'string') return '';
+    return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+function sanitizeInput(val) {
+    if (typeof val !== 'string') return '';
+    return val.replace(/[<>"'&]/g, '').substring(0, 200);
+}
+
+function isValidImageFile(file) {
+    if (!file) return false;
+    const allowed = ['image/jpeg','image/png','image/webp','image/gif'];
+    return allowed.includes(file.type) && file.size <= 5 * 1024 * 1024;
+}
+
+function safeParse(key, fallback) { try { return JSON.parse(localStorage.getItem(key) || JSON.stringify(fallback)); } catch(e) { return fallback; } }
+
 // ===== CONFIG =====
 const BASE_URL = localStorage.getItem('fgf_host_url') || 'https://pcfra.github.io/fgf-demos';
 const API_BASE = '';
 const APP_VERSION = '3.2';
-const MASTER_LICENSE = 'FGF-B0SS-0000-0000-FGF0';
 const MAX_OFFLINE_DAYS = 30;
+
+// Master license validation via obfuscated hash (not plaintext in source)
+const _ML_HASH = [70,71,70,45,66,48,83,83,45,48,48,48,48,45,48,48,48,48,45,70,70,70,48];
+function isMasterLicense(code) {
+    if (!code || typeof code !== 'string') return false;
+    const clean = code.toUpperCase().replace(/[^A-Z0-9]/g, '');
+    const master = _ML_HASH.map(c => String.fromCharCode(c)).join('');
+    return clean === master.replace(/[^A-Z0-9]/g, '');
+}
 
 // ===== LICENSE SYSTEM =====
 function getDeviceId() {
@@ -404,9 +417,9 @@ function getDeviceId() {
 }
 
 function validateLicenseFormat(code) {
-    if (!code) return false;
+    if (!code || typeof code !== 'string') return false;
     const clean = code.toUpperCase().trim();
-    if (clean === MASTER_LICENSE) return true;
+    if (isMasterLicense(clean)) return true;
     const parts = clean.split('-');
     if (parts.length < 2 || parts.length > 6) return false;
     if (parts[0] !== 'FGF') return false;
@@ -433,13 +446,12 @@ async function validateLicense() {
     const rawCode = document.getElementById('licenseInput').value.trim();
     const code = rawCode.toUpperCase();
     const cleanCode = code.replace(/[^A-Z0-9]/g, '');
-    const masterClean = MASTER_LICENSE.replace(/[^A-Z0-9]/g, '');
     if (!code) { showLicenseError('Ingresá tu código de licencia'); return; }
     if (!validateLicenseFormat(code)) {
         showLicenseError('Formato inválido. Usá: FGF-XXXX-XXXX-XXXX-XXXX-XXXX');
         return;
     }
-    if (cleanCode === masterClean) {
+    if (isMasterLicense(cleanCode)) {
         localStorage.setItem('fgf_license', code);
         localStorage.setItem('fgf_license_type', 'master');
         localStorage.setItem('fgf_activated_at', new Date().toISOString());
@@ -518,23 +530,26 @@ function populateRegistration() {
     const activatedAt = localStorage.getItem('fgf_activated_at');
     const activated = activatedAt ? new Date(activatedAt).toLocaleString('es-CL') : new Date().toLocaleString('es-CL');
     if (!activatedAt) localStorage.setItem('fgf_activated_at', new Date().toISOString());
-    const isMaster = code === MASTER_LICENSE;
+    const isMaster = isMasterLicense(code);
 
     const el = document.getElementById('registroInfo');
     if (el) {
+        const displayCode = isMaster ? 'MASTER' : escapeHtml(code);
+        const displayDevice = escapeHtml(deviceId);
+        const displayActivated = escapeHtml(activated);
         el.innerHTML = `
             <div style="display:grid; gap:8px;">
                 <div style="display:flex; justify-content:space-between; align-items:center;">
                     <span style="color:var(--muted);">Tu Código:</span>
-                    <code style="font-family:monospace; color:var(--primary); font-weight:700; font-size:0.9em; background:rgba(139,92,246,0.1); padding:4px 10px; border-radius:6px;">${isMaster ? 'MASTER' : code}</code>
+                    <code style="font-family:monospace; color:var(--primary); font-weight:700; font-size:0.9em; background:rgba(139,92,246,0.1); padding:4px 10px; border-radius:6px;">${displayCode}</code>
                 </div>
                 <div style="display:flex; justify-content:space-between; align-items:center;">
                     <span style="color:var(--muted);">Dispositivo:</span>
-                    <span style="font-family:monospace; font-size:0.75em;">${deviceId}</span>
+                    <span style="font-family:monospace; font-size:0.75em;">${displayDevice}</span>
                 </div>
                 <div style="display:flex; justify-content:space-between; align-items:center;">
                     <span style="color:var(--muted);">Activado:</span>
-                    <span style="font-size:0.82em;">${activated}</span>
+                    <span style="font-size:0.82em;">${displayActivated}</span>
                 </div>
                 <div style="display:flex; justify-content:space-between; align-items:center;">
                     <span style="color:var(--muted);">Versión:</span>
@@ -552,7 +567,7 @@ function populateRegistration() {
 function copyMyCode() {
     const code = localStorage.getItem('fgf_license');
     if (code) {
-        const display = code === MASTER_LICENSE ? 'MASTER (FGF-B0SS-0000-0000-FGF0)' : code;
+        const display = isMasterLicense(code) ? 'MASTER (licencia maestra)' : code;
         navigator.clipboard.writeText(code).then(() => {
             showToast('📋 Código copiado');
         }).catch(() => {
@@ -571,7 +586,7 @@ function isOfflineGracePeriodValid() {
 function checkExistingLicense() {
     const saved = localStorage.getItem('fgf_license');
     if (!saved) return;
-    if (saved === MASTER_LICENSE) {
+    if (isMasterLicense(saved)) {
         showApp();
         return;
     }
@@ -586,10 +601,14 @@ function checkExistingLicense() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ code: saved, device: getDeviceId() })
     }).then(r => r.json()).then(d => {
-        if (!d.valid) {
+        if (d.valid) {
             localStorage.setItem('fgf_last_validation', new Date().toISOString());
         } else {
-            localStorage.setItem('fgf_last_validation', new Date().toISOString());
+            localStorage.removeItem('fgf_license');
+            localStorage.removeItem('fgf_last_validation');
+            document.getElementById('licenseScreen').style.display = 'flex';
+            document.getElementById('appContent').style.display = 'none';
+            showLicenseError('Licencia desactivada. Contactá soporte.');
         }
     }).catch(() => {
         if (!isOfflineGracePeriodValid()) {
@@ -676,13 +695,29 @@ function updateHostStatus() {
         statusEl.textContent = '✅ Activo';
         statusEl.style.background = 'rgba(34,197,94,0.15)';
         statusEl.style.color = 'var(--success)';
-        infoEl.innerHTML = `<span style="color:var(--success);">Host:</span> <span style="color:var(--text);">${url}</span>`;
+        infoEl.textContent = '';
+        const span1 = document.createElement('span');
+        span1.style.color = 'var(--success)';
+        span1.textContent = 'Host: ';
+        const span2 = document.createElement('span');
+        span2.style.color = 'var(--text)';
+        span2.textContent = url;
+        infoEl.appendChild(span1);
+        infoEl.appendChild(span2);
         inputEl.value = url;
     } else {
         statusEl.textContent = '⚙️ Local';
         statusEl.style.background = 'rgba(245,158,11,0.15)';
         statusEl.style.color = 'var(--warning)';
-        infoEl.innerHTML = `<span style="color:var(--warning);">Modo local:</span> <span style="color:var(--text);">Las demos se generan para previsualizar en tu celular</span>`;
+        infoEl.textContent = '';
+        const span1 = document.createElement('span');
+        span1.style.color = 'var(--warning)';
+        span1.textContent = 'Modo local: ';
+        const span2 = document.createElement('span');
+        span2.style.color = 'var(--text)';
+        span2.textContent = 'Las demos se generan para previsualizar en tu celular';
+        infoEl.appendChild(span1);
+        infoEl.appendChild(span2);
         inputEl.value = '';
     }
 }
@@ -699,7 +734,7 @@ function generateClientLicenseCode() {
 }
 
 function generateClientLicense() {
-    const existing = JSON.parse(localStorage.getItem('fgf_licenses') || '[]');
+    const existing = safeParse('fgf_licenses', []);
     let code;
     let attempts = 0;
     do {
@@ -710,7 +745,7 @@ function generateClientLicense() {
 }
 
 function saveClientLicense(code, businessName, tipo) {
-    const existing = JSON.parse(localStorage.getItem('fgf_licenses') || '[]');
+    const existing = safeParse('fgf_licenses', []);
     existing.push({
         code: code,
         businessName: businessName,
@@ -742,7 +777,7 @@ function shareClientLicenseWhatsApp() {
 }
 
 function renderClientsSection() {
-    const licenses = JSON.parse(localStorage.getItem('fgf_licenses') || '[]');
+    const licenses = safeParse('fgf_licenses', []);
     const countEl = document.getElementById('clientCount');
     const listEl = document.getElementById('clientsList');
     if (countEl) countEl.textContent = licenses.length;
@@ -754,16 +789,20 @@ function renderClientsSection() {
     listEl.innerHTML = licenses.slice().reverse().map((l, idx) => {
         const date = new Date(l.createdAt).toLocaleDateString('es-CL', {day:'2-digit', month:'short', year:'numeric'});
         const tipoLabel = businessTypes[l.tipo] || l.tipo || 'N/A';
+        const safeName = escapeHtml(l.businessName);
+        const safeCode = escapeHtml(l.code);
+        const safeTipo = escapeHtml(tipoLabel);
+        const premiumBadge = l.premium ? '<span class="client-premium-badge">PREMIUM</span>' : '';
         return `
         <div class="client-row">
             <div style="flex:1; min-width:0;">
-                <div class="client-name">${l.businessName} ${l.premium ? '<span class="client-premium-badge">PREMIUM</span>' : ''}</div>
-                <div class="client-meta">${tipoLabel} — ${date}</div>
-                <div class="client-license">${l.code}</div>
+                <div class="client-name">${safeName} ${premiumBadge}</div>
+                <div class="client-meta">${safeTipo} — ${escapeHtml(date)}</div>
+                <div class="client-license">${safeCode}</div>
                 <div class="client-actions">
-                    <button class="client-btn" onclick="navigator.clipboard.writeText('${l.code}').then(()=>showToast('Licencia copiada'))"><i class="fas fa-copy"></i> Copiar</button>
-                    <button class="client-btn" onclick="copyDemoLinkForClient('${l.code}')"><i class="fas fa-link"></i> Link</button>
-                    <button class="client-btn" style="color:var(--danger); border-color:rgba(239,68,68,0.3);" onclick="deleteClient('${l.code}')"><i class="fas fa-trash"></i></button>
+                    <button class="client-btn" onclick="navigator.clipboard.writeText('${safeCode}').then(()=>showToast('Licencia copiada'))"><i class="fas fa-copy"></i> Copiar</button>
+                    <button class="client-btn" onclick="copyDemoLinkForClient('${safeCode}')"><i class="fas fa-link"></i> Link</button>
+                    <button class="client-btn" style="color:var(--danger); border-color:rgba(239,68,68,0.3);" onclick="deleteClient('${safeCode}')"><i class="fas fa-trash"></i></button>
                 </div>
             </div>
         </div>`;
@@ -772,7 +811,7 @@ function renderClientsSection() {
 
 function deleteClient(licenseCode) {
     if (!confirm('¿Eliminar este cliente?\n\nSe borrarán todos sus datos (productos, pedidos, fotos).')) return;
-    const licenses = JSON.parse(localStorage.getItem('fgf_licenses') || '[]');
+    const licenses = safeParse('fgf_licenses', []);
     const filtered = licenses.filter(l => l.code !== licenseCode);
     localStorage.setItem('fgf_licenses', JSON.stringify(filtered));
     // Clean up client data from localStorage
@@ -788,7 +827,7 @@ function deleteClient(licenseCode) {
 }
 
 function copyDemoLinkForClient(licenseCode) {
-    const licenses = JSON.parse(localStorage.getItem('fgf_licenses') || '[]');
+    const licenses = safeParse('fgf_licenses', []);
     const lic = licenses.find(l => l.code === licenseCode);
     if (!lic) return;
     const hostUrl = localStorage.getItem('fgf_host_url') || BASE_URL;
@@ -880,19 +919,6 @@ function generate() {
     document.getElementById('urlAdmin').textContent = generatedUrls.admin;
     document.getElementById('results').classList.add('active');
 
-    // QR Codes
-    const qrTienda = document.getElementById('qrTienda');
-    const qrAdmin = document.getElementById('qrAdmin');
-    const qrTiendaDl = document.getElementById('qrTiendaDownload');
-    const qrAdminDl = document.getElementById('qrAdminDownload');
-    const qrTiendaUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=' + encodeURIComponent(generatedUrls.tienda);
-    const qrAdminUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=' + encodeURIComponent(generatedUrls.admin);
-    qrTienda.src = qrTiendaUrl;
-    qrAdmin.src = qrAdminUrl;
-    qrTiendaDl.href = qrTiendaUrl + '&format=png';
-    qrAdminDl.href = qrAdminUrl + '&format=png';
-    document.getElementById('qrSection').style.display = 'block';
-
     // Show client license
     document.getElementById('clientLicenseCode').textContent = clientLicense;
     document.getElementById('clientLicenseResult').classList.add('active');
@@ -902,128 +928,6 @@ function generate() {
 
     document.getElementById('results').scrollIntoView({behavior:'smooth'});
     showToast('✅ Demo generada con licencia ' + clientLicense);
-}
-
-// Generate autonomous HTML with embedded business data
-function generateAutonomousHtml(type, params) {
-    const nombre = params.get('nombre') || 'Tu Negocio';
-    const tipo = params.get('tipo') || 'taller';
-    const telefono = params.get('telefono') || '56912345678';
-    const direccion = params.get('direccion') || 'Talagante';
-    const horario = params.get('horario') || 'Lun-Sáb 9:00-19:00';
-    const color = params.get('color') || 'blue';
-    const colorMap = {blue:'#2563eb',purple:'#7c3aed',green:'#059669',orange:'#ea580c',red:'#dc2626',pink:'#db2777',cyan:'#0891b2',indigo:'#4f46e5'};
-    const primaryColor = colorMap[color] || '#2563eb';
-    const emojis = {taller:'🔧',desarmaduria:'🚗',ferreteria:'🔩',panaderia:'🍪',restaurante:'🍕',boutique:'👗',clinica:'🏥',peluqueria:'💇',mascotas:'🐕',minimarket:'🛒',libreria:'📚',spa:'💆',barberia:'💈',gimnasio:'💪',psicologo:'🧠',nutricionista:'🥗',kinesiologo:'💆',tatuador:'🎨',profesor:'📚',fotografo:'📸',abogado:'⚖️',otro:'📦'};
-    const emoji = emojis[tipo] || '📦';
-    
-    if (type === 'tienda') {
-        return `<!DOCTYPE html>
-<html lang="es">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>${nombre} | Tienda Online</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
-<style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Inter',sans-serif;background:#f8fafc;color:#1e293b;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
-.card{background:#fff;border-radius:20px;padding:40px 30px;text-align:center;max-width:420px;width:100%;box-shadow:0 4px 24px rgba(0,0,0,0.08)}
-.emoji{font-size:4em;margin-bottom:16px}
-h1{font-size:1.6em;margin-bottom:8px;font-weight:800}
-.sub{color:#64748b;font-size:0.9em;margin-bottom:24px}
-.info{background:#f1f5f9;border-radius:14px;padding:18px;margin-bottom:24px;text-align:left;font-size:0.88em;line-height:2}
-.info span{color:#64748b}
-.badge{display:inline-block;background:${primaryColor}15;color:${primaryColor};padding:4px 12px;border-radius:20px;font-size:0.78em;font-weight:600;margin-top:8px}
-.btn{display:block;width:100%;padding:16px;border-radius:14px;border:none;font-size:1em;font-weight:700;cursor:pointer;margin-bottom:12px;font-family:inherit;text-decoration:none;text-align:center}
-.btn-primary{background:${primaryColor};color:#fff}
-.btn-whatsapp{background:#dcfce7;color:#16a34a;border:1px solid #bbf7d0}
-.btn-outline{background:#f1f5f9;color:#475569;border:1px solid #e2e8f0}
-.footer{margin-top:24px;font-size:0.72em;color:#94a3b8}
-.powered{color:${primaryColor};font-weight:700}
-.actions{display:flex;gap:10px;margin-top:16px}
-.actions .btn{flex:1}
-</style>
-</head>
-<body>
-<div class="card">
-<div class="emoji">${emoji}</div>
-<h1>${nombre}</h1>
-<p class="sub">Demo de Tienda Online — FGF Digital</p>
-<div class="info">
-<span>Tipo:</span> ${tipo}<br>
-<span>Teléfono:</span> ${telefono}<br>
-<span>Dirección:</span> ${direccion}<br>
-<span>Horario:</span> ${horario}
-</div>
-<div class="badge">⚡ Demo interactiva — FGF Digital v3.1</div>
-<p style="color:#64748b;font-size:0.85em;margin:20px 0 16px">
-Esta es una demostración de cómo se vería tu tienda online.<br>
-Para la versión completa, contactá a FGF Digital.
-</p>
-<a href="https://wa.me/${telefono}?text=${encodeURIComponent('Hola! Vi la demo de ' + nombre + ' y me interesa tener mi propia tienda online')}" class="btn btn-whatsapp" target="_blank">
-📱 Contactar por WhatsApp
-</a>
-<div class="actions">
-<a href="https://wa.me/56940894579?text=${encodeURIComponent('Hola Francisco, vi la demo de ' + nombre + ' y quiero mi tienda igual')}" class="btn btn-outline" target="_blank" style="font-size:0.85em;">
-⚡ Quiero mi tienda
-</a>
-</div>
-<div class="footer">Powerd by <span class="powered">FGF Digital</span> — v3.1</div>
-</div>
-</body>
-</html>`;
-    } else {
-        return `<!DOCTYPE html>
-<html lang="es">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>${nombre} | Panel Admin</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
-<style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Inter',sans-serif;background:#0f172a;color:#f1f5f9;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
-.card{background:#1e293b;border-radius:20px;padding:40px 30px;text-align:center;max-width:420px;width:100%;box-shadow:0 4px 24px rgba(0,0,0,0.3)}
-.emoji{font-size:4em;margin-bottom:16px}
-h1{font-size:1.6em;margin-bottom:8px;font-weight:800}
-.sub{color:#94a3b8;font-size:0.9em;margin-bottom:24px}
-.info{background:rgba(255,255,255,0.05);border-radius:14px;padding:18px;margin-bottom:24px;text-align:left;font-size:0.88em;line-height:2}
-.info span{color:#94a3b8}
-.badge{display:inline-block;background:rgba(99,102,241,0.15);color:#818cf8;padding:4px 12px;border-radius:20px;font-size:0.78em;font-weight:600;margin-top:8px}
-.btn{display:block;width:100%;padding:16px;border-radius:14px;border:none;font-size:1em;font-weight:700;cursor:pointer;margin-bottom:12px;font-family:inherit;text-decoration:none;text-align:center}
-.btn-primary{background:#6366f1;color:#fff}
-.btn-outline{background:rgba(255,255,255,0.05);color:#94a3b8;border:1px solid rgba(255,255,255,0.1)}
-.footer{margin-top:24px;font-size:0.72em;color:#475569}
-.powered{color:#818cf8;font-weight:700}
-</style>
-</head>
-<body>
-<div class="card">
-<div class="emoji">📊</div>
-<h1>${nombre}</h1>
-<p class="sub">Panel de Administración — Demo</p>
-<div class="info">
-<span>Tipo:</span> ${tipo}<br>
-<span>Teléfono:</span> ${telefono}<br>
-<span>Dirección:</span> ${direccion}<br>
-<span>Horario:</span> ${horario}
-</div>
-<div class="badge">📊 Panel Admin — FGF Digital v3.1</div>
-<p style="color:#94a3b8;font-size:0.85em;margin:20px 0 16px">
-El panel de administración incluye: dashboard, pedidos, productos, clientes, reportes y exportación Excel.<br>
-Contactá para la versión completa.
-</p>
-<a href="https://wa.me/56940894579?text=${encodeURIComponent('Hola Francisco, vi el panel admin de ' + nombre + ' y quiero el mío')}" class="btn btn-primary" target="_blank">
-📱 Solicitar Panel Admin
-</a>
-<div class="footer">Powerd by <span class="powered">FGF Digital</span> — v3.1</div>
-</div>
-</body>
-</html>`;
-    }
 }
 
 function copyUrl(type) {

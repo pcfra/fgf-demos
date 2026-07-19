@@ -81,21 +81,34 @@
             margin-top: 64px; padding: 60px 24px 50px;
             background: var(--bg-hero); color: #fff; text-align: center;
             position: relative; overflow: hidden;
+            transition: background 0.5s ease;
         }
         .hero::before {
             content: ''; position: absolute; top: -50%; right: -20%; width: 500px; height: 500px;
             background: radial-gradient(circle, rgba(37,99,235,0.15) 0%, transparent 70%);
+            animation: float 8s ease-in-out infinite;
         }
         .hero::after {
             content: ''; position: absolute; bottom: -30%; left: -10%; width: 400px; height: 400px;
             background: radial-gradient(circle, rgba(245,158,11,0.1) 0%, transparent 70%);
+            animation: float 10s ease-in-out infinite reverse;
         }
-        .hero-content { position: relative; z-index: 1; max-width: 700px; margin: 0 auto; }
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(5deg); }
+        }
+        .hero-content { position: relative; z-index: 2; max-width: 700px; margin: 0 auto; }
         .hero-icon {
             width: 72px; height: 72px; border-radius: 20px; margin: 0 auto 20px;
             display: flex; align-items: center; justify-content: center;
-            font-size: 1.8em; background: rgba(255,255,255,0.1); backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.15);
+            font-size: 1.8em; background: rgba(255,255,255,0.15); backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+            box-shadow: 0 0 30px rgba(255,255,255,0.1);
+            transition: all 0.3s ease;
+        }
+        .hero-icon:hover {
+            transform: scale(1.1) rotate(5deg);
+            box-shadow: 0 0 40px rgba(255,255,255,0.2);
         }
         .hero h1 { font-size: 2.6em; font-weight: 900; margin-bottom: 10px; letter-spacing: -0.02em; }
         .hero .subtitle { color: rgba(255,255,255,0.7); font-size: 1.1em; margin-bottom: 6px; }
@@ -410,11 +423,33 @@
         }
         .footer p { font-size: 0.82em; color: var(--text-light); }
         .footer .brand { color: var(--primary); font-weight: 700; }
+        .footer-links { display: flex; justify-content: center; gap: 20px; margin-top: 12px; flex-wrap: wrap; }
+        .footer-links a { font-size: 0.78em; color: var(--text-muted); text-decoration: none; transition: 0.2s; }
+        .footer-links a:hover { color: var(--primary); }
+
+        /* ===== SKELETON LOADING ===== */
+        .skeleton { background: linear-gradient(90deg, var(--border) 25%, #f1f5f9 50%, var(--border) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 8px; }
+        @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+        /* ===== CATEGORY SCROLL INDICATOR ===== */
+        .categories { position: relative; }
+        .categories::after {
+            content: ''; position: absolute; right: 0; top: 0; bottom: 0; width: 40px;
+            background: linear-gradient(to right, transparent, var(--bg));
+            pointer-events: none; z-index: 1;
+        }
+
+        /* ===== ACCESSIBILITY ===== */
+        .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border-width: 0; }
+        :focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; border-radius: 4px; }
+
+        /* ===== MOBILE SEARCH (hidden on desktop) ===== */
+        .mobile-search { display: none; }
 
         /* ===== RESPONSIVE ===== */
         @media (max-width: 640px) {
             .nav-center { display: none; }
-            .mobile-search { padding: 0 16px 12px; max-width: 1100px; margin: 0 auto; }
+            .mobile-search { display: block; padding: 0 16px 12px; max-width: 1100px; margin: 0 auto; }
             .mobile-search .search-box { display: block; }
             .hero { padding: 44px 20px 36px; }
             .hero h1 { font-size: 1.8em; }
@@ -447,27 +482,27 @@
 </head>
 <body>
     <!-- NAVBAR -->
-    <nav class="navbar">
+    <nav class="navbar" role="navigation" aria-label="Navegación principal">
         <div class="nav-left">
-            <div class="nav-logo" id="navLogo">FGF</div>
+            <div class="nav-logo" id="navLogo" aria-hidden="true">FGF</div>
             <span class="nav-name" id="navName">Mi Negocio</span>
         </div>
         <div class="nav-center">
             <div class="search-box">
-                <i class="fas fa-search"></i>
-                <input type="text" id="searchInput" placeholder="${isServiceBusiness ? 'Buscar servicios...' : 'Buscar productos...'}" oninput="filterProducts()">
+                <i class="fas fa-search" aria-hidden="true"></i>
+                <input type="text" id="searchInput" placeholder="Buscar productos..." oninput="filterProducts()" aria-label="Buscar productos">
             </div>
         </div>
         <div class="nav-right">
-            <button class="nav-link" onclick="openAdmin()" id="adminBtn" style="display:none;" title="Panel de Administración">
-                <i class="fas fa-cog"></i>
+            <button class="nav-link" onclick="openAdmin()" id="adminBtn" style="display:none;" title="Panel de Administración" aria-label="Abrir panel de administración">
+                <i class="fas fa-cog" aria-hidden="true"></i>
             </button>
-            <button class="nav-link" id="cartBtn" onclick="openCart()" style="display:none;">
-                <i class="fas fa-shopping-cart"></i>
-                <span class="cart-badge" id="cartBadge">0</span>
+            <button class="nav-link" id="cartBtn" onclick="openCart()" style="display:none;" aria-label="Abrir carrito de compras">
+                <i class="fas fa-shopping-cart" aria-hidden="true"></i>
+                <span class="cart-badge" id="cartBadge" aria-live="polite">0</span>
             </button>
-            <button class="nav-link" id="bookingBtn" onclick="openBookingModal()" style="display:none;">
-                <i class="fas fa-calendar-check"></i>
+            <button class="nav-link" id="bookingBtn" onclick="openBookingModal()" style="display:none;" aria-label="Agendar hora">
+                <i class="fas fa-calendar-check" aria-hidden="true"></i>
             </button>
         </div>
     </nav>
@@ -513,26 +548,26 @@
         <h2 id="sectionTitle">Nuestros Productos</h2>
         <span class="count" id="productsCount">0 productos</span>
     </div>
-    <div class="products-grid" id="productsGrid"></div>
+    <div class="products-grid" id="productsGrid" role="list" aria-label="Lista de productos"></div>
 
     <!-- PRODUCT DETAIL MODAL -->
-    <div class="modal-overlay" id="productModal" onclick="closeModal(event)">
+    <div class="modal-overlay" id="productModal" onclick="closeModal(event)" role="dialog" aria-modal="true" aria-label="Detalle de producto">
         <div class="modal" onclick="event.stopPropagation()">
             <div class="modal-img" id="modalImg">
-                <button class="modal-close" onclick="closeProductModal()"><i class="fas fa-times"></i></button>
+                <button class="modal-close" onclick="closeProductModal()" aria-label="Cerrar"><i class="fas fa-times" aria-hidden="true"></i></button>
             </div>
             <div class="modal-body">
                 <div class="modal-cat" id="modalCat"></div>
                 <div class="modal-name" id="modalName"></div>
                 <div class="modal-desc" id="modalDesc"></div>
                 <div class="modal-price" id="modalPrice"></div>
-                <div class="modal-qty">
-                    <button class="qty-btn" onclick="changeQty(-1)"><i class="fas fa-minus"></i></button>
-                    <span class="qty-val" id="modalQty">1</span>
-                    <button class="qty-btn" onclick="changeQty(1)"><i class="fas fa-plus"></i></button>
+                <div class="modal-qty" role="group" aria-label="Cantidad">
+                    <button class="qty-btn" onclick="changeQty(-1)" aria-label="Reducir cantidad"><i class="fas fa-minus" aria-hidden="true"></i></button>
+                    <span class="qty-val" id="modalQty" aria-live="polite">1</span>
+                    <button class="qty-btn" onclick="changeQty(1)" aria-label="Aumentar cantidad"><i class="fas fa-plus" aria-hidden="true"></i></button>
                 </div>
-                <button class="modal-add" onclick="addToCartFromModal()">
-                    <i class="fas fa-cart-plus"></i>
+                <button class="modal-add" onclick="addToCartFromModal()" aria-label="Agregar al carrito">
+                    <i class="fas fa-cart-plus" aria-hidden="true"></i>
                     <span>Agregar al carro</span>
                     <span class="total-label" id="modalTotal">$0</span>
                 </button>
@@ -542,10 +577,10 @@
 
     <!-- CART DRAWER -->
     <div class="cart-overlay" id="cartOverlay" onclick="closeCart()"></div>
-    <div class="cart-drawer" id="cartDrawer">
+    <div class="cart-drawer" id="cartDrawer" role="dialog" aria-modal="true" aria-label="Carrito de compras">
         <div class="cart-header">
-            <h3><i class="fas fa-shopping-cart" style="color:var(--primary); margin-right:8px;"></i> Mi Carro</h3>
-            <button class="cart-close" onclick="closeCart()"><i class="fas fa-times"></i></button>
+            <h3><i class="fas fa-shopping-cart" style="color:var(--primary); margin-right:8px;" aria-hidden="true"></i> Mi Carro</h3>
+            <button class="cart-close" onclick="closeCart()" aria-label="Cerrar carrito"><i class="fas fa-times" aria-hidden="true"></i></button>
         </div>
         <div class="cart-items" id="cartItems">
             <div class="cart-empty">
@@ -566,37 +601,37 @@
     </div>
 
     <!-- CHECKOUT MODAL -->
-    <div class="checkout-modal" id="checkoutModal" onclick="closeCheckout(event)">
+    <div class="checkout-modal" id="checkoutModal" onclick="closeCheckout(event)" role="dialog" aria-modal="true" aria-label="Finalizar pedido">
         <div class="checkout-box" onclick="event.stopPropagation()">
             <div class="checkout-header">
-                <h2><i class="fas fa-clipboard-check" style="color:var(--primary); margin-right:8px;"></i> Finalizar Pedido</h2>
-                <button class="checkout-close" onclick="closeCheckoutModal()"><i class="fas fa-times"></i></button>
+                <h2><i class="fas fa-clipboard-check" style="color:var(--primary); margin-right:8px;" aria-hidden="true"></i> Finalizar Pedido</h2>
+                <button class="checkout-close" onclick="closeCheckoutModal()" aria-label="Cerrar checkout"><i class="fas fa-times" aria-hidden="true"></i></button>
             </div>
             <div class="checkout-body">
-                <div class="checkout-summary" id="checkoutSummary"></div>
+                <div class="checkout-summary" id="checkoutSummary" aria-live="polite"></div>
                 <form id="checkoutForm" onsubmit="submitOrder(event)">
                     <div class="form-row">
                         <div class="form-group">
-                            <label>Tu nombre *</label>
-                            <input id="checkName" required placeholder="Carlos Mendoza">
+                            <label for="checkName">Tu nombre *</label>
+                            <input id="checkName" required placeholder="Carlos Mendoza" aria-required="true">
                         </div>
                         <div class="form-group">
-                            <label>Teléfono *</label>
-                            <input id="checkPhone" required placeholder="+56 9 1234 5678">
+                            <label for="checkPhone">Teléfono *</label>
+                            <input id="checkPhone" required placeholder="+56 9 1234 5678" aria-required="true">
                         </div>
                     </div>
                     <div class="form-group">
-                        <label>Dirección de despacho *</label>
-                        <input id="checkAddress" required placeholder="Av. San Martín 1234">
+                        <label for="checkAddress">Dirección de despacho *</label>
+                        <input id="checkAddress" required placeholder="Av. San Martín 1234" aria-required="true">
                     </div>
                     <div class="form-row">
                         <div class="form-group">
-                            <label>Comuna</label>
+                            <label for="checkComuna">Comuna</label>
                             <input id="checkComuna" placeholder="Talagante" value="Talagante">
                         </div>
                         <div class="form-group">
-                            <label>Método de pago</label>
-                            <select id="checkPayment">
+                            <label for="checkPayment">Método de pago</label>
+                            <select id="checkPayment" aria-label="Método de pago">
                                 <option value="WhatsApp">📱 WhatsApp</option>
                                 <option value="tarjeta">💳 Tarjeta</option>
                                 <option value="transferencia">🏦 Transferencia</option>
@@ -778,11 +813,30 @@
     </div>
 
     <!-- FOOTER -->
-    <div class="footer">
-        <p>Powered by <span class="brand">FGF Digital</span> — Tu negocio en internet</p>
+    <div class="footer" id="appFooter">
+        <p style="font-size: 0.92em; font-weight: 600; color: var(--text); margin-bottom: 8px;" id="footerName">Tu Negocio</p>
+        <p style="margin-bottom: 4px;" id="footerAddress"></p>
+        <p style="margin-bottom: 12px;" id="footerSchedule"></p>
+        <div class="footer-links" id="footerLinks"></div>
+        <p style="margin-top: 20px; font-size: 0.75em; color: var(--text-light);">Powered by <span class="brand">FGF Digital</span> — Tu negocio en internet</p>
     </div>
 
     <script>
+    // ===== SECURITY UTILITIES =====
+    function escapeHtml(str) {
+        if (typeof str !== 'string') return '';
+        return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+    }
+    function isValidImageFile(file) {
+        if (!file) return false;
+        const allowed = ['image/jpeg','image/png','image/webp','image/gif'];
+        return allowed.includes(file.type) && file.size <= 5 * 1024 * 1024;
+    }
+    function sanitizeInput(val) {
+        if (typeof val !== 'string') return '';
+        return val.replace(/[<>"'&]/g, '').substring(0, 200);
+    }
+
     // ===== AUTONOMOUS MODE =====
     // No server needed - everything runs locally
     // Orders & bookings saved to localStorage
@@ -790,6 +844,7 @@
     // ===== CLIENT LICENSE (data scoping) =====
     const clientLicense = new URLSearchParams(window.location.search).get('licencia') || '';
     const lk = (key) => clientLicense ? `fgf_client_${clientLicense}_${key}` : key;
+    function safeParse(key, fallback) { try { return JSON.parse(localStorage.getItem(key) || JSON.stringify(fallback)); } catch(e) { return fallback; } }
 
     // ===== URL PARAMS =====
     const params = new URLSearchParams(window.location.search);
@@ -812,6 +867,185 @@
         blue:['#2563eb','#1d4ed8'], purple:['#7c3aed','#6d28d9'],
         green:['#059669','#047857'], orange:['#ea580c','#c2410c'],
         red:['#dc2626','#b91c1c'], pink:['#db2777','#be185d']
+    };
+
+    // ===== HERO THEMES - Fondos temáticos por tipo de negocio =====
+    const heroThemes = {
+        // 🚗 Taller y Desarmaduría
+        desarmaduria: {
+            bg: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)',
+            overlay: 'rgba(15, 52, 96, 0.85)',
+            pattern: 'repeating-linear-gradient(45deg, transparent, transparent 20px, rgba(255,255,255,0.02) 20px, rgba(255,255,255,0.02) 40px)',
+            accent: '#e94560',
+            icon: '🔧'
+        },
+        taller: {
+            bg: 'linear-gradient(135deg, #2d3436 0%, #636e72 50%, #b2bec3 100%)',
+            overlay: 'rgba(45, 52, 54, 0.9)',
+            pattern: 'repeating-linear-gradient(90deg, transparent, transparent 30px, rgba(255,255,255,0.03) 30px, rgba(255,255,255,0.03) 60px)',
+            accent: '#fdcb6e',
+            icon: '⚙️'
+        },
+        // 🍞 Panadería
+        panaderia: {
+            bg: 'linear-gradient(135deg, #f5e6d3 0%, #f0d9b5 50%, #c9a86c 100%)',
+            overlay: 'rgba(201, 168, 108, 0.85)',
+            pattern: 'repeating-linear-gradient(45deg, transparent, transparent 15px, rgba(139,90,43,0.08) 15px, rgba(139,90,43,0.08) 30px)',
+            accent: '#8b5a2b',
+            icon: '🍞'
+        },
+        // 🍕 Restaurante
+        restaurante: {
+            bg: 'linear-gradient(135deg, #2c3e50 0%, #34495e 50%, #e74c3c 100%)',
+            overlay: 'rgba(44, 62, 80, 0.88)',
+            pattern: 'repeating-linear-gradient(45deg, transparent, transparent 25px, rgba(231,76,60,0.08) 25px, rgba(231,76,60,0.08) 50px)',
+            accent: '#e74c3c',
+            icon: '🍕'
+        },
+        // 👗 Boutique
+        boutique: {
+            bg: 'linear-gradient(135deg, #2d1b69 0%, #6b2fa0 50%, #c084fc 100%)',
+            overlay: 'rgba(45, 27, 105, 0.88)',
+            pattern: 'repeating-linear-gradient(45deg, transparent, transparent 20px, rgba(192,132,252,0.06) 20px, rgba(192,132,252,0.06) 40px)',
+            accent: '#c084fc',
+            icon: '👗'
+        },
+        // 🏥 Clínica
+        clinica: {
+            bg: 'linear-gradient(135deg, #e8f4f8 0%, #b8d4e3 50%, #4a90a4 100%)',
+            overlay: 'rgba(74, 144, 164, 0.88)',
+            pattern: 'repeating-linear-gradient(90deg, transparent, transparent 40px, rgba(255,255,255,0.1) 40px, rgba(255,255,255,0.1) 80px)',
+            accent: '#27ae60',
+            icon: '🏥'
+        },
+        // 💆 Spa
+        spa: {
+            bg: 'linear-gradient(135deg, #e8f5e9 0%, #a5d6a7 50%, #2e7d32 100%)',
+            overlay: 'rgba(46, 125, 50, 0.85)',
+            pattern: 'repeating-linear-gradient(45deg, transparent, transparent 20px, rgba(255,255,255,0.05) 20px, rgba(255,255,255,0.05) 40px)',
+            accent: '#81c784',
+            icon: '💆'
+        },
+        // 💈 Peluquería
+        peluqueria: {
+            bg: 'linear-gradient(135deg, #fce4ec 0%, #f8bbd9 50%, #e91e63 100%)',
+            overlay: 'rgba(233, 30, 99, 0.85)',
+            pattern: 'repeating-linear-gradient(45deg, transparent, transparent 18px, rgba(255,255,255,0.06) 18px, rgba(255,255,255,0.06) 36px)',
+            accent: '#f48fb1',
+            icon: '💇'
+        },
+        // 💈 Barbería
+        barberia: {
+            bg: 'linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 50%, #404040 100%)',
+            overlay: 'rgba(26, 26, 26, 0.9)',
+            pattern: 'repeating-linear-gradient(45deg, transparent, transparent 25px, rgba(231,76,60,0.1) 25px, rgba(231,76,60,0.1) 50px)',
+            accent: '#e74c3c',
+            icon: '💈'
+        },
+        // 🔩 Ferretería
+        ferreteria: {
+            bg: 'linear-gradient(135deg, #f57c00 0%, #ff9800 50%, #ffb74d 100%)',
+            overlay: 'rgba(245, 124, 0, 0.88)',
+            pattern: 'repeating-linear-gradient(90deg, transparent, transparent 30px, rgba(0,0,0,0.05) 30px, rgba(0,0,0,0.05) 60px)',
+            accent: '#fff3e0',
+            icon: '🔩'
+        },
+        // 🐕 Mascotas
+        mascotas: {
+            bg: 'linear-gradient(135deg, #fff3e0 0%, #ffe0b2 50%, #ff9800 100%)',
+            overlay: 'rgba(255, 152, 0, 0.85)',
+            pattern: 'repeating-linear-gradient(45deg, transparent, transparent 20px, rgba(255,255,255,0.08) 20px, rgba(255,255,255,0.08) 40px)',
+            accent: '#ff6f00',
+            icon: '🐕'
+        },
+        // 🛒 Minimarket
+        minimarket: {
+            bg: 'linear-gradient(135deg, #e3f2fd 0%, #90caf9 50%, #1976d2 100%)',
+            overlay: 'rgba(25, 118, 210, 0.88)',
+            pattern: 'repeating-linear-gradient(90deg, transparent, transparent 35px, rgba(255,255,255,0.06) 35px, rgba(255,255,255,0.06) 70px)',
+            accent: '#64b5f6',
+            icon: '🛒'
+        },
+        // 📚 Librería
+        libreria: {
+            bg: 'linear-gradient(135deg, #3e2723 0%, #5d4037 50%, #8d6e63 100%)',
+            overlay: 'rgba(62, 39, 35, 0.88)',
+            pattern: 'repeating-linear-gradient(45deg, transparent, transparent 22px, rgba(255,255,255,0.04) 22px, rgba(255,255,255,0.04) 44px)',
+            accent: '#bcaaa4',
+            icon: '📚'
+        },
+        // 🏋️ Gimnasio
+        gimnasio: {
+            bg: 'linear-gradient(135deg, #212121 0%, #424242 50%, #616161 100%)',
+            overlay: 'rgba(33, 33, 33, 0.92)',
+            pattern: 'repeating-linear-gradient(45deg, transparent, transparent 30px, rgba(244,67,54,0.08) 30px, rgba(244,67,54,0.08) 60px)',
+            accent: '#f44336',
+            icon: '💪'
+        },
+        // 🧠 Psicólogo
+        psicologo: {
+            bg: 'linear-gradient(135deg, #ede7f6 0%, #d1c4e9 50%, #7e57c2 100%)',
+            overlay: 'rgba(126, 87, 194, 0.88)',
+            pattern: 'repeating-linear-gradient(45deg, transparent, transparent 20px, rgba(255,255,255,0.06) 20px, rgba(255,255,255,0.06) 40px)',
+            accent: '#b39ddb',
+            icon: '🧠'
+        },
+        // 🥗 Nutricionista
+        nutricionista: {
+            bg: 'linear-gradient(135deg, #e8f5e9 0%, #a5d6a7 50%, #66bb6a 100%)',
+            overlay: 'rgba(102, 187, 106, 0.88)',
+            pattern: 'repeating-linear-gradient(45deg, transparent, transparent 18px, rgba(255,255,255,0.07) 18px, rgba(255,255,255,0.07) 36px)',
+            accent: '#43a047',
+            icon: '🥗'
+        },
+        // 💆 Kinesiólogo
+        kinesiologo: {
+            bg: 'linear-gradient(135deg, #e0f7fa 0%, #80deea 50%, #00838f 100%)',
+            overlay: 'rgba(0, 131, 143, 0.88)',
+            pattern: 'repeating-linear-gradient(90deg, transparent, transparent 25px, rgba(255,255,255,0.05) 25px, rgba(255,255,255,0.05) 50px)',
+            accent: '#4dd0e1',
+            icon: '💆'
+        },
+        // 🎨 Tatuador
+        tatuador: {
+            bg: 'linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 50%, #424242 100%)',
+            overlay: 'rgba(26, 26, 26, 0.9)',
+            pattern: 'repeating-linear-gradient(45deg, transparent, transparent 15px, rgba(156,39,176,0.1) 15px, rgba(156,39,176,0.1) 30px)',
+            accent: '#ce93d8',
+            icon: '🎨'
+        },
+        // 📚 Profesor
+        profesor: {
+            bg: 'linear-gradient(135deg, #e8eaf6 0%, #c5cae9 50%, #5c6bc0 100%)',
+            overlay: 'rgba(92, 107, 192, 0.88)',
+            pattern: 'repeating-linear-gradient(45deg, transparent, transparent 20px, rgba(255,255,255,0.06) 20px, rgba(255,255,255,0.06) 40px)',
+            accent: '#9fa8da',
+            icon: '📚'
+        },
+        // 📸 Fotógrafo
+        fotografo: {
+            bg: 'linear-gradient(135deg, #263238 0%, #37474f 50%, #546e7a 100%)',
+            overlay: 'rgba(38, 50, 56, 0.9)',
+            pattern: 'repeating-linear-gradient(45deg, transparent, transparent 25px, rgba(255,255,255,0.04) 25px, rgba(255,255,255,0.04) 50px)',
+            accent: '#90a4ae',
+            icon: '📸'
+        },
+        // ⚖️ Abogado
+        abogado: {
+            bg: 'linear-gradient(135deg, #1a237e 0%, #283593 50%, #3949ab 100%)',
+            overlay: 'rgba(26, 35, 126, 0.9)',
+            pattern: 'repeating-linear-gradient(90deg, transparent, transparent 30px, rgba(255,215,0,0.06) 30px, rgba(255,215,0,0.06) 60px)',
+            accent: '#ffd700',
+            icon: '⚖️'
+        },
+        // 📦 Otro (default)
+        otro: {
+            bg: 'linear-gradient(135deg, #1e3a5f 0%, #0f172a 100%)',
+            overlay: 'rgba(15, 23, 42, 0.88)',
+            pattern: 'repeating-linear-gradient(45deg, transparent, transparent 20px, rgba(255,255,255,0.03) 20px, rgba(255,255,255,0.03) 40px)',
+            accent: '#60a5fa',
+            icon: '📦'
+        }
     };
 
     // Service-based business types (need appointment booking)
@@ -1169,7 +1403,7 @@
     
     // Load custom products from admin panel (localStorage)
     try {
-        const customProducts = JSON.parse(localStorage.getItem(lk('products')) || '[]');
+        const customProducts = safeParse(lk('products'), []);
         const myProducts = customProducts.filter(cp => !cp.businessName || cp.businessName === businessName);
         if (myProducts.length > 0) {
             const maxId = allProducts.reduce((m, p) => Math.max(m, p.id), 0);
@@ -1185,6 +1419,43 @@
     let editPhotoData = null;
 
     initStore();
+
+    // ===== APPLY HERO THEME =====
+    function applyHeroTheme(tipo) {
+        const theme = heroThemes[tipo] || heroThemes.otro;
+        const hero = document.querySelector('.hero');
+        if (!hero) return;
+        
+        // Apply background
+        hero.style.background = theme.bg;
+        hero.style.position = 'relative';
+        
+        // Create or update overlay pattern
+        let overlay = hero.querySelector('.hero-overlay');
+        if (!overlay) {
+            overlay = document.createElement('div');
+            overlay.className = 'hero-overlay';
+            overlay.style.cssText = `
+                position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+                pointer-events: none; z-index: 0;
+            `;
+            hero.insertBefore(overlay, hero.firstChild);
+        }
+        overlay.style.background = theme.pattern;
+        
+        // Update hero icon with theme accent
+        const heroIcon = document.getElementById('heroIcon');
+        if (heroIcon) {
+            heroIcon.style.background = `rgba(255,255,255,0.15)`;
+            heroIcon.style.boxShadow = `0 0 30px ${theme.accent}40`;
+        }
+        
+        // Update accent color for tags
+        document.documentElement.style.setProperty('--hero-accent', theme.accent);
+    }
+    
+    // Apply theme on load
+    applyHeroTheme(businessTipo);
 
     function initStore() {
         // Check premium status
@@ -1204,6 +1475,9 @@
         document.getElementById('heroIcon').textContent = emoji;
         document.getElementById('heroName').textContent = businessName + crown;
         
+        // Apply hero theme based on business type
+        applyHeroTheme(businessTipo);
+        
         // Dynamic subtitle per type
         const subtitles = {
             peluqueria:'Tu salón de belleza de confianza', barberia:'Estilo masculino premium',
@@ -1220,8 +1494,19 @@
             otro:'Tu negocio al alcance de todos'
         };
         document.getElementById('heroSubtitle').textContent = subtitles[businessTipo] || 'Tu negocio al alcance de todos';
-        document.getElementById('heroAddress').innerHTML = `<i class="fas fa-map-marker-alt"></i> ${businessDir}`;
-        document.getElementById('heroHorario').innerHTML = `<i class="fas fa-clock"></i> ${businessHorario}`;
+        const heroAddrEl = document.getElementById('heroAddress');
+        heroAddrEl.textContent = '';
+        const addrIcon = document.createElement('i');
+        addrIcon.className = 'fas fa-map-marker-alt';
+        heroAddrEl.appendChild(addrIcon);
+        heroAddrEl.appendChild(document.createTextNode(' ' + businessDir));
+
+        const heroHorEl = document.getElementById('heroHorario');
+        heroHorEl.textContent = '';
+        const horIcon = document.createElement('i');
+        horIcon.className = 'fas fa-clock';
+        heroHorEl.appendChild(horIcon);
+        heroHorEl.appendChild(document.createTextNode(' ' + businessHorario));
 
         const [c1, c2] = colors[businessColor] || colors.blue;
         document.documentElement.style.setProperty('--primary', c1);
@@ -1256,13 +1541,32 @@
 
         const categories = [...new Set(allProducts.map(p => p.category))];
         const catBar = document.getElementById('categoriesBar');
-        catBar.innerHTML = `<button class="cat-btn active" onclick="filterCategory('Todos', this)">Todos</button>` +
-            categories.map(c => `<button class="cat-btn" onclick="filterCategory('${c}', this)">${c}</button>`).join('');
+        catBar.setAttribute('role', 'tablist');
+        catBar.setAttribute('aria-label', 'Filtrar por categoría');
+        catBar.innerHTML = `<button class="cat-btn active" onclick="filterCategory('Todos', this)" role="tab" aria-selected="true" tabindex="0">Todos</button>` +
+            categories.map(c => `<button class="cat-btn" onclick="filterCategory('${escapeHtml(c)}', this)" role="tab" aria-selected="false" tabindex="-1">${escapeHtml(c)}</button>`).join('');
 
         renderProducts(allProducts);
         
         document.getElementById('sectionTitle').textContent = isServiceBusiness ? 'Nuestros Servicios' : 'Nuestros Productos';
         document.getElementById('searchInputMobile').placeholder = isServiceBusiness ? 'Buscar servicios...' : 'Buscar productos...';
+
+        // Populate footer
+        const footerName = document.getElementById('footerName');
+        const footerAddr = document.getElementById('footerAddress');
+        const footerSched = document.getElementById('footerSchedule');
+        if (footerName) footerName.textContent = businessName;
+        if (footerAddr) footerAddr.innerHTML = '<i class="fas fa-map-marker-alt" aria-hidden="true" style="color:var(--primary); margin-right:4px;"></i>' + escapeHtml(businessDir);
+        if (footerSched) footerSched.innerHTML = '<i class="fas fa-clock" aria-hidden="true" style="color:var(--accent); margin-right:4px;"></i>' + escapeHtml(businessHorario);
+        const footerLinks = document.getElementById('footerLinks');
+        if (footerLinks) {
+            const waLink = document.createElement('a');
+            waLink.href = 'https://wa.me/' + businessTel;
+            waLink.target = '_blank';
+            waLink.rel = 'noopener';
+            waLink.innerHTML = '<i class="fab fa-whatsapp" aria-hidden="true"></i> WhatsApp';
+            footerLinks.appendChild(waLink);
+        }
     }
 
     // ===== EDIT MODE =====
@@ -1287,30 +1591,48 @@
 
     function previewProductPhoto(input) {
         if (input.files && input.files[0]) {
+            const file = input.files[0];
+            const allowed = ['image/jpeg','image/png','image/webp','image/gif'];
+            if (!allowed.includes(file.type)) { showToast('Formato no válido. Usá JPG, PNG, WebP o GIF'); return; }
+            if (file.size > 5*1024*1024) { showToast('Archivo muy grande (máx 5MB)'); return; }
             const reader = new FileReader();
             reader.onload = function(e) {
-                document.getElementById('productPhotoPreview').innerHTML = `<img src="${e.target.result}" style="max-width:100%;max-height:150px;border-radius:8px;">`;
+                const preview = document.getElementById('productPhotoPreview');
+                preview.textContent = '';
+                const img = document.createElement('img');
+                img.src = e.target.result;
+                img.style.cssText = 'max-width:100%;max-height:150px;border-radius:8px;';
+                preview.appendChild(img);
                 productPhotoData = e.target.result;
             };
-            reader.readAsDataURL(input.files[0]);
+            reader.readAsDataURL(file);
         }
     }
 
     function previewEditPhoto(input) {
         if (input.files && input.files[0]) {
+            const file = input.files[0];
+            const allowed = ['image/jpeg','image/png','image/webp','image/gif'];
+            if (!allowed.includes(file.type)) { showToast('Formato no válido. Usá JPG, PNG, WebP o GIF'); return; }
+            if (file.size > 5*1024*1024) { showToast('Archivo muy grande (máx 5MB)'); return; }
             const reader = new FileReader();
             reader.onload = function(e) {
-                document.getElementById('editPhotoPreview').innerHTML = `<img src="${e.target.result}" style="max-width:100%;max-height:150px;border-radius:8px;">`;
+                const preview = document.getElementById('editPhotoPreview');
+                preview.textContent = '';
+                const img = document.createElement('img');
+                img.src = e.target.result;
+                img.style.cssText = 'max-width:100%;max-height:150px;border-radius:8px;';
+                preview.appendChild(img);
                 editPhotoData = e.target.result;
             };
-            reader.readAsDataURL(input.files[0]);
+            reader.readAsDataURL(file);
         }
     }
 
     function openAddProductModal() {
         document.getElementById('addProductModal').classList.add('active');
         document.getElementById('addProductForm').reset();
-        document.getElementById('productPhotoPreview').innerHTML = '📷';
+        document.getElementById('productPhotoPreview').textContent = '📷';
         productPhotoData = null;
     }
 
@@ -1362,10 +1684,15 @@
         document.getElementById('editProductDesc').value = product.desc;
         
         if (product.image) {
-            document.getElementById('editPhotoPreview').innerHTML = `<img src="${product.image}" style="max-width:100%;max-height:150px;border-radius:8px;">`;
+            const preview = document.getElementById('editPhotoPreview');
+            preview.textContent = '';
+            const img = document.createElement('img');
+            img.src = product.image;
+            img.style.cssText = 'max-width:100%;max-height:150px;border-radius:8px;';
+            preview.appendChild(img);
             editPhotoData = product.image;
         } else {
-            document.getElementById('editPhotoPreview').innerHTML = '📷';
+            document.getElementById('editPhotoPreview').textContent = '📷';
             editPhotoData = null;
         }
         
@@ -1424,9 +1751,9 @@
         let addBtn = '';
         if (editMode) {
             addBtn = `
-                <div class="product-card" onclick="openAddProductModal()" style="border:2px dashed var(--primary);background:rgba(124,58,237,0.05);cursor:pointer;">
+                <div class="product-card" onclick="openAddProductModal()" style="border:2px dashed var(--primary);background:rgba(124,58,237,0.05);cursor:pointer;" role="button" aria-label="Agregar nuevo producto">
                     <div class="product-img" style="background:rgba(124,58,237,0.1);display:flex;align-items:center;justify-content:center;">
-                        <div style="font-size:3em;color:var(--primary);">➕</div>
+                        <div style="font-size:3em;color:var(--primary);" aria-hidden="true">➕</div>
                     </div>
                     <div class="product-body" style="text-align:center;">
                         <div class="product-name" style="color:var(--primary);">Agregar Producto</div>
@@ -1441,24 +1768,24 @@
             return;
         }
         grid.innerHTML = addBtn + products.map(p => `
-            <div class="product-card" onclick="${editMode ? '' : `openProductModal(${p.id})`}">
+            <div class="product-card" onclick="${editMode ? '' : `openProductModal(${p.id})`}" role="article" aria-label="${escapeHtml(p.name)}">
                 <div class="product-img ${p.image ? '' : getCatBg(p.category)}" style="${p.image ? 'background:linear-gradient(135deg,#f1f5f9,#e2e8f0);' : ''}">
                     ${p.image 
-                        ? `<img src="${p.image}" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.innerHTML='<div class=\\'product-visual\\'>${p.emoji||'📦'}</div>'">`
-                        : `<div class="product-visual">${p.emoji || '📦'}</div>`
+                        ? `<img src="${escapeHtml(p.image)}" alt="${escapeHtml(p.name)}" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.innerHTML='<div class=\\'product-visual\\'>${escapeHtml(p.emoji||'📦')}</div>'">`
+                        : `<div class="product-visual" aria-hidden="true">${p.emoji || '📦'}</div>`
                     }
-                    ${p.stock < 10 && p.stock > 0 ? `<span class="product-stock">¡Últimas!</span>` : ''}
+                    ${p.stock < 10 && p.stock > 0 ? `<span class="product-stock" aria-label="Últimas unidades disponibles">¡Últimas!</span>` : ''}
                     ${editMode ? `
                         <div style="position:absolute;top:8px;right:8px;display:flex;gap:6px;">
-                            <button onclick="event.stopPropagation(); openEditProductModal(${p.id})" style="width:32px;height:32px;border-radius:8px;background:rgba(59,130,246,0.9);color:#fff;border:none;cursor:pointer;font-size:0.8em;"><i class="fas fa-edit"></i></button>
-                            <button onclick="event.stopPropagation(); deleteProduct(${p.id})" style="width:32px;height:32px;border-radius:8px;background:rgba(239,68,68,0.9);color:#fff;border:none;cursor:pointer;font-size:0.8em;"><i class="fas fa-trash"></i></button>
+                            <button onclick="event.stopPropagation(); openEditProductModal(${p.id})" style="width:32px;height:32px;border-radius:8px;background:rgba(59,130,246,0.9);color:#fff;border:none;cursor:pointer;font-size:0.8em;" aria-label="Editar ${escapeHtml(p.name)}"><i class="fas fa-edit" aria-hidden="true"></i></button>
+                            <button onclick="event.stopPropagation(); deleteProduct(${p.id})" style="width:32px;height:32px;border-radius:8px;background:rgba(239,68,68,0.9);color:#fff;border:none;cursor:pointer;font-size:0.8em;" aria-label="Eliminar ${escapeHtml(p.name)}"><i class="fas fa-trash" aria-hidden="true"></i></button>
                         </div>
                     ` : ''}
                 </div>
                 <div class="product-body">
-                    <div class="product-cat">${p.category}</div>
-                    <div class="product-name">${p.name}</div>
-                    <div class="product-desc">${p.desc}</div>
+                    <div class="product-cat">${escapeHtml(p.category)}</div>
+                    <div class="product-name">${escapeHtml(p.name)}</div>
+                    <div class="product-desc">${escapeHtml(p.desc)}</div>
                     <div class="product-footer">
                         <div class="product-price">$${p.price.toLocaleString('es-CL')}<small>IVA incluido</small></div>
                         ${editMode ? '' : `
@@ -1504,7 +1831,27 @@
         currentProduct = allProducts.find(p => p.id === id);
         currentQty = 1;
         document.getElementById('modalImg').className = `modal-img ${currentProduct.image ? '' : getCatBg(currentProduct.category)}`;
-        document.getElementById('modalImg').innerHTML = `<button class="modal-close" onclick="closeProductModal()"><i class="fas fa-times"></i></button>${currentProduct.image ? `<img src="${currentProduct.image}" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.innerHTML='<button class=\\'modal-close\\' onclick=\\'closeProductModal()\\'><i class=\\'fas fa-times\\'></i></button><div class=\\'modal-visual\\'>${currentProduct.emoji||'📦'}</div>'">` : `<div class="modal-visual">${currentProduct.emoji || '📦'}</div>`}`;
+        const modalImgEl = document.getElementById('modalImg');
+        modalImgEl.innerHTML = '';
+        const closeBtn = document.createElement('button');
+        closeBtn.className = 'modal-close';
+        closeBtn.onclick = closeProductModal;
+        const closeIcon = document.createElement('i');
+        closeIcon.className = 'fas fa-times';
+        closeBtn.appendChild(closeIcon);
+        modalImgEl.appendChild(closeBtn);
+        if (currentProduct.image) {
+            const img = document.createElement('img');
+            img.src = currentProduct.image;
+            img.style.cssText = 'width:100%;height:100%;object-fit:cover;';
+            img.onerror = function() { this.parentElement.innerHTML = ''; const dv = document.createElement('div'); dv.className = 'modal-visual'; dv.textContent = currentProduct.emoji || '📦'; modalImgEl.appendChild(dv); };
+            modalImgEl.appendChild(img);
+        } else {
+            const dv = document.createElement('div');
+            dv.className = 'modal-visual';
+            dv.textContent = currentProduct.emoji || '📦';
+            modalImgEl.appendChild(dv);
+        }
         document.getElementById('modalCat').textContent = currentProduct.category;
         document.getElementById('modalName').textContent = currentProduct.name;
         document.getElementById('modalDesc').textContent = currentProduct.desc;
@@ -1533,8 +1880,8 @@
     function quickAdd(id) { addToCart(id, 1); }
 
     // ===== CART =====
-    let cart = JSON.parse(localStorage.getItem(lk('cart')) || '[]');
-    function saveCart() { localStorage.setItem(lk('cart'), JSON.stringify(cart)); }
+    let cart = safeParse(lk('cart'), []);
+    function saveCart() { try { localStorage.setItem(lk('cart'), JSON.stringify(cart)); } catch(e) { showToast('Error guardando carrito'); } }
     function addToCart(productId, qty) {
         const product = allProducts.find(p => p.id === productId);
         const existing = cart.find(c => c.id === productId);
@@ -1557,18 +1904,18 @@
         }
         footerDiv.style.display = 'block';
         itemsDiv.innerHTML = cart.map(c => `
-            <div class="cart-item">
-                <div class="cart-item-img">${c.image ? '<img src="'+c.image+'" style="width:100%;height:100%;object-fit:cover;border-radius:10px;">' : (c.emoji || '📦')}</div>
+            <div class="cart-item" role="listitem" aria-label="${escapeHtml(c.name)} - cantidad ${c.qty}">
+                <div class="cart-item-img" aria-hidden="true">${c.image ? '<img src="'+escapeHtml(c.image)+'" alt="'+escapeHtml(c.name)+'" style="width:100%;height:100%;object-fit:cover;border-radius:10px;">' : (c.emoji || '📦')}</div>
                 <div class="cart-item-info">
-                    <div class="cart-item-name">${c.name}</div>
+                    <div class="cart-item-name">${escapeHtml(c.name)}</div>
                     <div class="cart-item-price">$${(c.price * c.qty).toLocaleString('es-CL')}</div>
-                    <div class="cart-item-qty">
-                        <button class="cart-qty-btn" onclick="changeCartQty(${c.id},-1)"><i class="fas fa-minus"></i></button>
-                        <span class="cart-qty-val">${c.qty}</span>
-                        <button class="cart-qty-btn" onclick="changeCartQty(${c.id},1)"><i class="fas fa-plus"></i></button>
+                    <div class="cart-item-qty" role="group" aria-label="Cantidad de ${escapeHtml(c.name)}">
+                        <button class="cart-qty-btn" onclick="changeCartQty(${c.id},-1)" aria-label="Reducir cantidad"><i class="fas fa-minus" aria-hidden="true"></i></button>
+                        <span class="cart-qty-val" aria-live="polite">${c.qty}</span>
+                        <button class="cart-qty-btn" onclick="changeCartQty(${c.id},1)" aria-label="Aumentar cantidad"><i class="fas fa-plus" aria-hidden="true"></i></button>
                     </div>
                 </div>
-                <button class="cart-item-remove" onclick="removeFromCart(${c.id})"><i class="fas fa-trash-alt"></i></button>
+                <button class="cart-item-remove" onclick="removeFromCart(${c.id})" aria-label="Eliminar ${escapeHtml(c.name)} del carrito"><i class="fas fa-trash-alt" aria-hidden="true"></i></button>
             </div>
         `).join('');
         const total = cart.reduce((s, c) => s + c.price * c.qty, 0);
@@ -1597,7 +1944,7 @@
         closeCart();
         const total = cart.reduce((s, c) => s + c.price * c.qty, 0);
         document.getElementById('checkoutSummary').innerHTML =
-            cart.map(c => `<div class="summary-item"><span>${c.name} x${c.qty}</span><span style="font-weight:600;">$${(c.price*c.qty).toLocaleString('es-CL')}</span></div>`).join('') +
+            cart.map(c => `<div class="summary-item"><span>${escapeHtml(c.name)} x${c.qty}</span><span style="font-weight:600;">$${(c.price*c.qty).toLocaleString('es-CL')}</span></div>`).join('') +
             `<div class="summary-total"><span>Total</span><span style="color:var(--text);">$${total.toLocaleString('es-CL')}</span></div>`;
         document.getElementById('checkoutModal').classList.add('active');
         document.body.style.overflow = 'hidden';
@@ -1628,11 +1975,11 @@
 
         // Save to localStorage (works offline, no server needed)
         try {
-            const orders = JSON.parse(localStorage.getItem(lk('real_orders')) || '[]');
+            const orders = safeParse(lk('real_orders'), []);
             orders.push(orderData);
             localStorage.setItem(lk('real_orders'), JSON.stringify(orders));
             showToast('✅ Pedido ' + orderData.id + ' registrado');
-        } catch(err) { console.log('Error saving order:', err); }
+        } catch(err) { showToast('⚠️ Error guardando pedido'); }
 
         if (orderData.payment === 'WhatsApp') {
             let msg = `🛒 *Pedido desde ${businessName}*\n\n👤 ${orderData.client}\n📱 ${orderData.phone}\n📍 ${orderData.address} - ${orderData.comuna}\n\n`;
@@ -1768,11 +2115,11 @@
         
         // Save to localStorage (works offline, no server needed)
         try {
-            const bookings = JSON.parse(localStorage.getItem(lk('bookings')) || '[]');
+            const bookings = safeParse(lk('bookings'), []);
             bookings.push(bookingData);
             localStorage.setItem(lk('bookings'), JSON.stringify(bookings));
             showToast('✅ Cita agendada - ID: ' + bookingData.id);
-        } catch(err) { console.log('Error saving booking:', err); }
+        } catch(err) { showToast('⚠️ Error guardando cita'); }
         
         // Send WhatsApp confirmation
         let msg = `📅 *Cita agendada en ${businessName}*\n\n👤 ${name}\n📱 ${phone}\n💻 ${product.name}\n💰 $${product.price.toLocaleString('es-CL')}\n📅 ${date}\n⏰ ${selectedTimeSlot}\n👨‍⚕️ ${professional || 'Cualquier profesional'}`;
