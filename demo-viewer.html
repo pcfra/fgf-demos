@@ -427,6 +427,27 @@
         .footer-links a { font-size: 0.78em; color: var(--text-muted); text-decoration: none; transition: 0.2s; }
         .footer-links a:hover { color: var(--primary); }
 
+        /* ===== FLOATING ADMIN BUTTON ===== */
+        .floating-admin {
+            position: fixed; bottom: 24px; right: 24px; z-index: 999;
+            display: none; align-items: center; gap: 10px;
+            padding: 14px 20px; border-radius: 50px; border: none;
+            background: linear-gradient(135deg, #7c3aed, #6d28d9);
+            color: #fff; font-size: 0.88em; font-weight: 700;
+            cursor: pointer; box-shadow: 0 4px 20px rgba(124,58,237,0.4);
+            transition: all 0.3s ease; animation: fabPulse 2s ease-in-out infinite;
+        }
+        .floating-admin:hover { transform: translateY(-3px); box-shadow: 0 6px 30px rgba(124,58,237,0.5); }
+        .floating-admin:active { transform: scale(0.95); }
+        .floating-admin i { font-size: 1.1em; }
+        @keyframes fabPulse {
+            0%, 100% { box-shadow: 0 4px 20px rgba(124,58,237,0.4); }
+            50% { box-shadow: 0 4px 30px rgba(124,58,237,0.6); }
+        }
+        @media (max-width: 480px) {
+            .floating-admin { bottom: 16px; right: 16px; padding: 12px 16px; font-size: 0.82em; }
+        }
+
         /* ===== SKELETON LOADING ===== */
         .skeleton { background: linear-gradient(90deg, var(--border) 25%, #f1f5f9 50%, var(--border) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 8px; }
         @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
@@ -716,6 +737,12 @@
     <!-- TOAST -->
     <div class="toast" id="toast"><i class="fas fa-check-circle"></i> <span id="toastMsg"></span></div>
 
+    <!-- FLOATING ADMIN BUTTON -->
+    <button class="floating-admin" id="floatingAdminLink" onclick="openAdmin()" style="display:none;">
+        <i class="fas fa-cog"></i>
+        <span id="editModeText">Gestionar Mi Tienda</span>
+    </button>
+
     <!-- ADD PRODUCT MODAL -->
     <div class="checkout-modal" id="addProductModal" onclick="closeAddProductModal(event)">
         <div class="checkout-box" onclick="event.stopPropagation()">
@@ -823,6 +850,13 @@
 
     <script>
     // ===== SECURITY UTILITIES =====
+    const _ML_HASH = [70,71,70,45,66,48,83,83,45,48,48,48,48,45,48,48,48,48,45,70,70,70,48];
+    function isMasterLicense(code) {
+        if (!code || typeof code !== 'string') return false;
+        const clean = code.toUpperCase().replace(/[^A-Z0-9]/g, '');
+        const master = _ML_HASH.map(c => String.fromCharCode(c)).join('');
+        return clean === master.replace(/[^A-Z0-9]/g, '');
+    }
     function escapeHtml(str) {
         if (typeof str !== 'string') return '';
         return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
@@ -1462,9 +1496,13 @@
         const isPremium = localStorage.getItem(lk('premium')) === 'true';
         const crown = isPremium ? ' 👑' : '';
         
-        // Show gear button for business owner (only when license in URL)
-        if (clientLicense) {
+        // Show gear button ONLY for master/owner (master license in localStorage, NOT client license from URL)
+        const ownerLicense = localStorage.getItem('fgf_license') || '';
+        const isOwner = isMasterLicense(ownerLicense) || localStorage.getItem('fgf_license_type') === 'master';
+        if (isOwner) {
             document.getElementById('adminBtn').style.display = 'flex';
+            const fab = document.getElementById('floatingAdminLink');
+            if (fab) fab.style.display = 'flex';
         }
         
         document.title = `${businessName}${crown} | Tienda Online`;
