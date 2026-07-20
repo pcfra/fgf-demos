@@ -957,9 +957,21 @@ function copyBoth() {
 }
 
 function shareWhatsApp(type) {
+    const name = document.getElementById('bizName').value.trim() || 'Tu Negocio';
+    const tipo = document.getElementById('bizType').value;
+    const typeEmoji = {
+        peluqueria:'💇', barberia:'💈', spa:'💆', clinica:'🏥', mascotas:'🐾',
+        gimnasio:'💪', psicologo:'🧠', nutricionista:'🥗', kinesiologo:'🦴',
+        tatuador:'🎨', profesor:'📚', fotografo:'📸', abogado:'⚖️',
+        taller:'🔧', desarmaduria:'🔩', ferreteria:'🔨', panaderia:'🥖',
+        restaurante:'🍽️', boutique:'👗', minimarket:'🛒', libreria:'📖', otro:'🏪'
+    }[tipo] || '🏪';
+    
     const msg = type === 'both'
-        ? `¡Hola! Te envío las demos:\n\nTienda: ${generatedUrls.tienda}\nAdmin: ${generatedUrls.admin}`
-        : `¡Hola! Te envío la demo:\n\n${generatedUrls[type]}`;
+        ? `${typeEmoji} *${name} — Tu Tienda Online*\n\n🛒 *Tienda para clientes:*\n${generatedUrls.tienda}\n\n📊 *Panel de administración:*\n${generatedUrls.admin}\n\n✨ Configurá tus productos, compartí el link y ¡listo para vender!`
+        : type === 'tienda'
+        ? `${typeEmoji} *${name} — Tienda Online*\n\n🛒 Mirá nuestros productos:\n${generatedUrls.tienda}\n\n📱 Pedí por WhatsApp desde la tienda`
+        : `${typeEmoji} *${name} — Admin Panel*\n\n📊 Administrá tu negocio:\n${generatedUrls.admin}`;
     window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
 }
 

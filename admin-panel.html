@@ -311,6 +311,7 @@
         <div class="nav-item" onclick="showPage('pedidos-online', this)" role="button" tabindex="0" aria-label="Pedidos Online"><i class="fas fa-globe" aria-hidden="true"></i> <span id="navPedidosLabel">Pedidos Online</span> <span style="margin-left:auto; background:var(--success); color:#fff; padding:2px 8px; border-radius:10px; font-size:0.7em; font-weight:700;">18</span></div>
         <div class="nav-item" onclick="showPage('ventas', this)" role="button" tabindex="0" aria-label="Ventas"><i class="fas fa-shopping-bag" aria-hidden="true"></i> <span id="navVentasLabel">Ventas</span></div>
         <div class="nav-item" onclick="showPage('productos', this)" role="button" tabindex="0" aria-label="Productos"><i class="fas fa-box" aria-hidden="true"></i> <span id="navProductosLabel">Productos</span></div>
+        <div class="nav-item" onclick="showPage('inventario', this)" role="button" tabindex="0" aria-label="Inventario"><i class="fas fa-warehouse" aria-hidden="true"></i> Inventario</div>
         <div class="nav-item" onclick="showPage('clientes', this)" role="button" tabindex="0" aria-label="Clientes"><i class="fas fa-users" aria-hidden="true"></i> Clientes</div>
         
         <div class="nav-section">Operaciones</div>
@@ -430,6 +431,18 @@
                 <div class="chart-card">
                     <h3><i class="fas fa-chart-pie" aria-hidden="true"></i> Métodos de Pago</h3>
                     <canvas id="chartPayment" height="200" role="img" aria-label="Gráfico de métodos de pago"></canvas>
+                </div>
+            </div>
+            
+            <!-- TOP PRODUCTS + MONTHLY SUMMARY -->
+            <div class="charts-row" style="margin-top:20px;">
+                <div class="chart-card">
+                    <h3><i class="fas fa-trophy"></i> Productos Más Vendidos</h3>
+                    <div id="topProductsList" style="padding:8px 0;"></div>
+                </div>
+                <div class="chart-card">
+                    <h3><i class="fas fa-calendar-alt"></i> Resumen del Mes</h3>
+                    <div id="monthlySummary" style="padding:8px 0;"></div>
                 </div>
             </div>
             
@@ -620,6 +633,63 @@
                     <table>
                         <thead><tr><th>Foto</th><th>Producto</th><th>Categoría</th><th>Precio</th><th>Vendidos</th><th>Stock</th><th>Acciones</th></tr></thead>
                         <tbody id="productosTable"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <!-- ===== INVENTARIO ===== -->
+        <div class="page-section" id="page-inventario">
+            <div class="page-header">
+                <h1>📦 Inventario</h1>
+                <div class="page-header-actions">
+                    <button class="btn btn-outline btn-sm" onclick="exportInventory()"><i class="fas fa-file-excel"></i> Exportar</button>
+                </div>
+            </div>
+            
+            <!-- INVENTORY STATS -->
+            <div class="stats-grid" style="margin-bottom:20px;">
+                <div class="stat-card">
+                    <div class="stat-icon" style="background:rgba(99,102,241,0.12); color:#6366f1;"><i class="fas fa-boxes"></i></div>
+                    <div class="stat-label">Total Productos</div>
+                    <div class="stat-value" id="invTotalProducts">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon" style="background:rgba(34,197,94,0.12); color:#22c55e;"><i class="fas fa-check-circle"></i></div>
+                    <div class="stat-label">En Stock</div>
+                    <div class="stat-value" style="color:#22c55e;" id="invInStock">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon" style="background:rgba(245,158,11,0.12); color:#f59e0b;"><i class="fas fa-exclamation-triangle"></i></div>
+                    <div class="stat-label">Stock Bajo</div>
+                    <div class="stat-value" style="color:#f59e0b;" id="invLowStock">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon" style="background:rgba(239,68,68,0.12); color:#ef4444;"><i class="fas fa-times-circle"></i></div>
+                    <div class="stat-label">Agotados</div>
+                    <div class="stat-value" style="color:#ef4444;" id="invOutOfStock">0</div>
+                </div>
+            </div>
+            
+            <!-- FILTERS -->
+            <div class="table-card" style="margin-bottom:16px;">
+                <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
+                    <div class="filter-btn active" onclick="filterInventory('all', this)">Todos</div>
+                    <div class="filter-btn" onclick="filterInventory('low', this)">⚠️ Stock Bajo</div>
+                    <div class="filter-btn" onclick="filterInventory('out', this)">🔴 Agotados</div>
+                    <div class="filter-btn" onclick="filterInventory('ok', this)">✅ OK</div>
+                    <div style="margin-left:auto;">
+                        <input id="invSearchInput" placeholder="Buscar producto..." style="padding:8px 14px;background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:8px;color:#fff;font-family:inherit;font-size:0.85em;width:200px;" oninput="searchInventory()">
+                    </div>
+                </div>
+            </div>
+            
+            <!-- INVENTORY TABLE -->
+            <div class="table-card">
+                <div style="overflow-x:auto;">
+                    <table>
+                        <thead><tr><th>Foto</th><th>Producto</th><th>Categoría</th><th>Precio</th><th>Vendidos</th><th>Stock</th><th>Estado</th><th>Acciones</th></tr></thead>
+                        <tbody id="inventoryTable"></tbody>
                     </table>
                 </div>
             </div>
@@ -1365,6 +1435,7 @@ function runOriginalInit() {
     document.getElementById('cfgHorario').value = getScopedConfig('horario') || bizHorario;
     renderDashboardSales();
     initDashboardCharts();
+    updateDashboardStats();
     fetchRealOrders();
 }
 
@@ -1857,6 +1928,7 @@ function showPage(page, el) {
     if (el) el.classList.add('active');
     if (page === 'ventas') renderVentasTable();
     if (page === 'productos') renderProductosTable();
+    if (page === 'inventario') renderInventory();
     if (page === 'clientes') renderClientesTable();
     if (page === 'reportes') initReportCharts();
     if (page === 'devoluciones') renderReturns('all');
@@ -1977,6 +2049,89 @@ function renderDashboardSales() {
             <td style="color:var(--muted); font-size:0.85em;">${s.date} ${s.time}</td>
         </tr>
     `).join('');
+    
+    // Render top products and monthly summary
+    renderTopProducts();
+    renderMonthlySummary();
+}
+
+// ===== TOP PRODUCTS & MONTHLY STATS =====
+function renderTopProducts() {
+    const container = document.getElementById('topProductsList');
+    if (!container) return;
+    
+    const sorted = [...products].sort((a, b) => b.sold - a.sold).slice(0, 5);
+    const maxSold = sorted[0]?.sold || 1;
+    
+    container.innerHTML = sorted.map((p, i) => {
+        const barWidth = (p.sold / maxSold) * 100;
+        const medal = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `#${i+1}`;
+        return `
+        <div style="display:flex;align-items:center;gap:12px;padding:10px 12px;${i < sorted.length-1 ? 'border-bottom:1px solid rgba(255,255,255,0.06);' : ''}">
+            <div style="width:28px;text-align:center;font-size:0.9em;font-weight:700;">${medal}</div>
+            <div style="width:36px;height:36px;border-radius:8px;overflow:hidden;background:rgba(255,255,255,0.05);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                ${p.image ? `<img src="${escapeHtml(p.image)}" style="width:100%;height:100%;object-fit:cover;">` : `<span style="font-size:1.1em;">${p.emoji}</span>`}
+            </div>
+            <div style="flex:1;min-width:0;">
+                <div style="font-weight:600;font-size:0.88em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${escapeHtml(p.name)}</div>
+                <div style="display:flex;align-items:center;gap:6px;margin-top:4px;">
+                    <div style="flex:1;height:4px;background:rgba(255,255,255,0.08);border-radius:2px;overflow:hidden;">
+                        <div style="width:${barWidth}%;height:100%;background:var(--primary);border-radius:2px;"></div>
+                    </div>
+                    <span style="font-size:0.72em;color:var(--muted);white-space:nowrap;">${p.sold} vendidos</span>
+                </div>
+            </div>
+            <div style="font-weight:700;font-size:0.85em;color:var(--success);white-space:nowrap;">$${(p.price * p.sold).toLocaleString('es-CL')}</div>
+        </div>`;
+    }).join('');
+}
+
+function renderMonthlySummary() {
+    const container = document.getElementById('monthlySummary');
+    if (!container) return;
+    
+    const now = new Date();
+    const currentMonth = now.getMonth();
+    const currentYear = now.getFullYear();
+    
+    const monthSales = allSales.filter(s => {
+        const [d, m, y] = s.date.split('/').map(Number);
+        return m - 1 === currentMonth && y === currentYear;
+    });
+    
+    const totalRevenue = monthSales.reduce((sum, s) => sum + s.total, 0);
+    const totalOrders = monthSales.length;
+    const avgOrder = totalOrders > 0 ? Math.round(totalRevenue / totalOrders) : 0;
+    const topClient = (() => {
+        const clients = {};
+        monthSales.forEach(s => { clients[s.client] = (clients[s.client] || 0) + s.total; });
+        const sorted = Object.entries(clients).sort((a, b) => b[1] - a[1]);
+        return sorted[0] || ['Sin datos', 0];
+    })();
+    
+    const monthName = now.toLocaleDateString('es-CL', { month: 'long', year: 'numeric' });
+    
+    container.innerHTML = `
+    <div style="text-align:center;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid rgba(255,255,255,0.06);">
+        <div style="font-size:0.78em;color:var(--muted);text-transform:capitalize;">${monthName}</div>
+        <div style="font-size:1.8em;font-weight:800;color:var(--success);margin-top:4px;">$${totalRevenue.toLocaleString('es-CL')}</div>
+        <div style="font-size:0.75em;color:var(--muted);">Ingresos totales</div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div style="text-align:center;padding:10px;background:rgba(255,255,255,0.03);border-radius:10px;">
+            <div style="font-size:1.3em;font-weight:700;">${totalOrders}</div>
+            <div style="font-size:0.72em;color:var(--muted);">Pedidos</div>
+        </div>
+        <div style="text-align:center;padding:10px;background:rgba(255,255,255,0.03);border-radius:10px;">
+            <div style="font-size:1.3em;font-weight:700;">$${avgOrder.toLocaleString('es-CL')}</div>
+            <div style="font-size:0.72em;color:var(--muted);">Promedio/Pedido</div>
+        </div>
+    </div>
+    <div style="margin-top:12px;padding:10px;background:rgba(99,102,241,0.1);border-radius:10px;">
+        <div style="font-size:0.75em;color:var(--muted);margin-bottom:4px;">🏆 Mejor Cliente</div>
+        <div style="font-weight:600;font-size:0.9em;">${escapeHtml(topClient[0])}</div>
+        <div style="font-size:0.75em;color:var(--success);font-weight:600;">$${topClient[1].toLocaleString('es-CL')} este mes</div>
+    </div>`;
 }
 
 // ===== RENDER VENTAS TABLE =====
@@ -2031,6 +2186,127 @@ function renderProductosTable() {
             </td>
         </tr>
     `).join('');
+}
+
+// ===== INVENTORY =====
+let inventoryFilter = 'all';
+
+function renderInventory() {
+    const tbody = document.getElementById('inventoryTable');
+    if (!tbody) return;
+    
+    // Stats
+    const totalProducts = products.length;
+    const inStock = products.filter(p => p.stock > 10 || p.stock === 999).length;
+    const lowStock = products.filter(p => p.managesStock && p.stock > 0 && p.stock <= 10).length;
+    const outOfStock = products.filter(p => p.managesStock && p.stock <= 0).length;
+    
+    document.getElementById('invTotalProducts').textContent = totalProducts;
+    document.getElementById('invInStock').textContent = inStock;
+    document.getElementById('invLowStock').textContent = lowStock;
+    document.getElementById('invOutOfStock').textContent = outOfStock;
+    
+    // Filter products
+    let filtered = [...products];
+    if (inventoryFilter === 'low') filtered = filtered.filter(p => p.managesStock && p.stock > 0 && p.stock <= 10);
+    else if (inventoryFilter === 'out') filtered = filtered.filter(p => p.managesStock && p.stock <= 0);
+    else if (inventoryFilter === 'ok') filtered = filtered.filter(p => p.stock > 10 || p.stock === 999);
+    
+    // Search
+    const q = document.getElementById('invSearchInput')?.value?.toLowerCase() || '';
+    if (q) filtered = filtered.filter(p => p.name.toLowerCase().includes(q) || (p.cat||'').toLowerCase().includes(q));
+    
+    tbody.innerHTML = filtered.map(p => {
+        const isOutOfStock = p.managesStock && p.stock <= 0;
+        const isLow = p.managesStock && p.stock > 0 && p.stock <= 10;
+        const statusBadge = isOutOfStock 
+            ? '<span class="badge badge-danger">Agotado</span>'
+            : isLow 
+                ? `<span class="badge badge-warning">⚠️ ${p.stock} uds</span>`
+                : p.stock === 999 
+                    ? '<span class="badge badge-success">∞ Sin límite</span>'
+                    : `<span class="badge badge-success">${p.stock} uds</span>`;
+        
+        const barWidth = p.stock === 999 ? 100 : Math.min(100, (p.stock / 100) * 100);
+        const barColor = isOutOfStock ? '#ef4444' : isLow ? '#f59e0b' : '#22c55e';
+        
+        return `
+        <tr style="${isOutOfStock ? 'opacity:0.6;' : ''}">
+            <td>
+                <div style="width:42px;height:42px;border-radius:10px;overflow:hidden;background:rgba(255,255,255,0.05);display:flex;align-items:center;justify-content:center;">
+                    ${p.image ? `<img src="${escapeHtml(p.image)}" style="width:100%;height:100%;object-fit:cover;">` : `<span style="font-size:1.3em;">${p.emoji}</span>`}
+                </div>
+            </td>
+            <td>
+                <div style="font-weight:600;">${escapeHtml(p.name)}</div>
+                <div style="font-size:0.72em;color:var(--muted);max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escapeHtml(p.desc || '')}</div>
+            </td>
+            <td><span class="badge badge-info" style="font-size:0.72em;">${escapeHtml(p.cat)}</span></td>
+            <td style="font-weight:700;">$${p.price.toLocaleString('es-CL')}</td>
+            <td>
+                <div style="font-weight:600;">${p.sold}</div>
+                <div style="font-size:0.7em;color:var(--muted);">unidades</div>
+            </td>
+            <td style="min-width:120px;">
+                <div style="display:flex;align-items:center;gap:8px;">
+                    <div style="flex:1;height:6px;background:rgba(255,255,255,0.08);border-radius:3px;overflow:hidden;">
+                        <div style="width:${barWidth}%;height:100%;background:${barColor};border-radius:3px;transition:0.3s;"></div>
+                    </div>
+                    <span style="font-weight:700;font-size:0.85em;min-width:30px;text-align:right;">${p.stock === 999 ? '∞' : p.stock}</span>
+                </div>
+            </td>
+            <td>${statusBadge}</td>
+            <td>
+                ${p.managesStock ? `<button class="btn btn-success btn-sm" style="padding:4px 10px;font-size:0.72em;background:#10b981;color:#fff;border:none;border-radius:6px;cursor:pointer;margin-right:4px;" onclick="adjustStock(${p.id}, 1)" title="Agregar stock"><i class="fas fa-plus"></i></button>` : ''}
+                <button class="btn btn-outline btn-sm" style="padding:4px 10px;font-size:0.72em;" onclick="editProductById(${p.id})"><i class="fas fa-edit"></i></button>
+            </td>
+        </tr>`;
+    }).join('');
+}
+
+function filterInventory(filter, el) {
+    inventoryFilter = filter;
+    document.querySelectorAll('#page-inventario .filter-btn').forEach(b => b.classList.remove('active'));
+    if (el) el.classList.add('active');
+    renderInventory();
+}
+
+function searchInventory() {
+    renderInventory();
+}
+
+function adjustStock(productId, delta) {
+    const p = products.find(pr => pr.id === productId);
+    if (!p) return;
+    
+    if (!p.managesStock) {
+        showToast('⚠️ Este producto no maneja stock');
+        return;
+    }
+    
+    const qty = prompt(`¿Cuántas unidades agregar a "${p.name}"? Actual: ${p.stock}`, '10');
+    if (!qty || isNaN(qty) || parseInt(qty) <= 0) return;
+    
+    p.stock += parseInt(qty);
+    saveProducts();
+    renderInventory();
+    renderProductosTable();
+    showToast(`✅ +${qty} unidades de "${p.name}". Stock: ${p.stock}`);
+}
+
+function exportInventory() {
+    const rows = [['Producto', 'Categoría', 'Precio', 'Vendidos', 'Stock', 'Estado']];
+    products.forEach(p => {
+        const status = p.managesStock && p.stock <= 0 ? 'Agotado' : p.managesStock && p.stock <= 10 ? 'Stock Bajo' : 'OK';
+        rows.push([p.name, p.cat || 'General', p.price, p.sold, p.stock === 999 ? 'Sin límite' : p.stock, status]);
+    });
+    const csv = rows.map(r => r.join(',')).join('\n');
+    const blob = new Blob(['\ufeff' + csv], {type:'text/csv;charset=utf-8;'});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `inventario-${new Date().toISOString().slice(0,10)}.csv`;
+    a.click();
+    showToast('📥 Inventario exportado');
 }
 
 function editProductById(id) {
@@ -2173,6 +2449,47 @@ function renderClientesTable() {
 }
 
 // ===== CHARTS =====
+// ===== UPDATE DASHBOARD STATS DYNAMICALLY =====
+function updateDashboardStats() {
+    const now = new Date();
+    const today = now.toLocaleDateString('es-CL');
+    const yesterday = new Date(now - 86400000).toLocaleDateString('es-CL');
+    
+    const todaySales = allSales.filter(s => s.date === today);
+    const yesterdaySales = allSales.filter(s => s.date === yesterday);
+    
+    const todayRevenue = todaySales.reduce((sum, s) => sum + s.total, 0);
+    const yesterdayRevenue = yesterdaySales.reduce((sum, s) => sum + s.total, 0);
+    
+    const todayOrders = todaySales.length;
+    const yesterdayOrders = yesterdaySales.length;
+    
+    const onlineOrders = todaySales.filter(s => s.payment === 'whatsapp' || s.source === 'online').length;
+    const cardPayments = todaySales.filter(s => s.payment === 'card').length;
+    
+    // Unique clients this month
+    const currentMonth = now.getMonth();
+    const currentYear = now.getFullYear();
+    const monthClients = new Set(allSales.filter(s => {
+        const [d, m, y] = s.date.split('/').map(Number);
+        return m - 1 === currentMonth && y === currentYear;
+    }).map(s => s.client));
+    
+    // Update stat values
+    document.getElementById('statValue1').textContent = `$${todayRevenue.toLocaleString('es-CL')}`;
+    document.getElementById('statValue2').textContent = todayOrders;
+    document.getElementById('statValue3').textContent = onlineOrders;
+    document.getElementById('statValue4').textContent = cardPayments;
+    
+    // Update change percentages
+    const revChange = yesterdayRevenue > 0 ? Math.round(((todayRevenue - yesterdayRevenue) / yesterdayRevenue) * 100) : 0;
+    const ordChange = todayOrders - yesterdayOrders;
+    document.querySelector('#statValue1').parentElement.querySelector('.stat-change').innerHTML = 
+        `<i class="fas fa-arrow-${revChange >= 0 ? 'up' : 'down'}"></i> ${revChange >= 0 ? '+' : ''}${revChange}% vs ayer`;
+    document.querySelector('#statValue2').parentElement.querySelector('.stat-change').innerHTML = 
+        `<i class="fas fa-arrow-${ordChange >= 0 ? 'up' : 'down'}"></i> ${ordChange >= 0 ? '+' : ''}${ordChange} vs ayer`;
+}
+
 const chartOpts = { responsive:true, plugins:{ legend:{ labels:{ color:'#94a3b8', font:{size:11} } } }, scales:{ x:{ ticks:{color:'#64748b',font:{size:10}}, grid:{color:'rgba(255,255,255,0.04)'} }, y:{ ticks:{color:'#64748b',font:{size:10}}, grid:{color:'rgba(255,255,255,0.04)'} } } };
 
 function initDashboardCharts() {
