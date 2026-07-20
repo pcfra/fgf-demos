@@ -775,7 +775,7 @@
     <!-- FLOATING ADMIN BUTTON -->
     <button class="floating-admin" id="floatingAdminLink" onclick="toggleEditMode()" style="display:none;">
         <i class="fas fa-cog"></i>
-        <span id="editModeText">Gestionar Mi Tienda</span>
+        <span id="editModeText">Administrar Mi Tienda</span>
     </button>
 
     <!-- ADD PRODUCT MODAL -->
@@ -1543,10 +1543,12 @@
         const isPremium = localStorage.getItem(lk('premium')) === 'true';
         const crown = isPremium ? ' 👑' : '';
         
-        // Show gear button ONLY for master/owner (master license in localStorage, NOT client license from URL)
+        // Show admin controls for: master license holder OR client license in URL (owner of this store)
         const ownerLicense = localStorage.getItem('fgf_license') || '';
-        const isOwner = isMasterLicense(ownerLicense) || localStorage.getItem('fgf_license_type') === 'master';
-        if (isOwner) {
+        const isMaster = isMasterLicense(ownerLicense) || localStorage.getItem('fgf_license_type') === 'master';
+        const hasClientLicense = clientLicense && clientLicense.startsWith('FGF-CLT');
+        const isStoreOwner = isMaster || hasClientLicense;
+        if (isStoreOwner) {
             document.getElementById('adminBtn').style.display = 'flex';
             const fab = document.getElementById('floatingAdminLink');
             if (fab) fab.style.display = 'flex';
@@ -1669,7 +1671,7 @@
             if (toolbar) toolbar.style.display = 'block';
             showToast('✅ Modo edición activado — tocá un producto para editarlo');
         } else {
-            text.textContent = 'Gestionar Mi Tienda';
+            text.textContent = 'Administrar Mi Tienda';
             btn.style.background = 'linear-gradient(135deg,#7c3aed,#6d28d9)';
             btn.querySelector('i').className = 'fas fa-cog';
             if (toolbar) toolbar.style.display = 'none';
