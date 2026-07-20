@@ -123,6 +123,69 @@
         }
         .hero-tag i { color: var(--accent); }
 
+        /* HERO BUTTONS */
+        .hero-actions { display: flex; gap: 12px; margin-top: 24px; justify-content: center; flex-wrap: wrap; }
+        .hero-btn {
+            display: inline-flex; align-items: center; gap: 8px; padding: 14px 28px;
+            border-radius: 14px; font-size: 0.95em; font-weight: 700; text-decoration: none;
+            transition: all 0.2s ease; cursor: pointer; border: none; font-family: inherit;
+        }
+        .hero-btn:hover { transform: translateY(-2px); }
+        .hero-btn-whatsapp {
+            background: #25d366; color: #fff;
+            box-shadow: 0 4px 20px rgba(37,211,102,0.4);
+        }
+        .hero-btn-whatsapp:hover { background: #128c7e; box-shadow: 0 6px 25px rgba(37,211,102,0.5); }
+        .hero-btn-catalog {
+            background: rgba(255,255,255,0.15); color: #fff;
+            border: 1px solid rgba(255,255,255,0.2); backdrop-filter: blur(10px);
+        }
+        .hero-btn-catalog:hover { background: rgba(255,255,255,0.25); }
+
+        /* SHARE PRODUCT BUTTON */
+        .share-product-btn {
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            width: 100%; padding: 14px; margin-top: 10px; border: 2px solid #25d366;
+            background: rgba(37,211,102,0.08); color: #25d366; border-radius: 14px;
+            font-size: 0.92em; font-weight: 700; cursor: pointer; font-family: inherit; transition: 0.2s;
+        }
+        .share-product-btn:hover { background: #25d366; color: #fff; }
+
+        /* ABOUT US SECTION */
+        .about-section {
+            margin: 0 24px 30px; padding: 28px; border-radius: 16px;
+            background: linear-gradient(135deg, rgba(37,99,235,0.06), rgba(124,58,237,0.04));
+            border: 1px solid var(--border);
+        }
+        .about-section h3 { font-size: 1.1em; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+        .about-section p { font-size: 0.9em; color: var(--text-muted); line-height: 1.7; }
+
+        /* FEATURED BADGE */
+        .product-badge-featured {
+            position: absolute; top: 14px; right: 14px;
+            padding: 5px 12px; border-radius: 8px; font-size: 0.72em; font-weight: 700;
+            background: linear-gradient(135deg, #f59e0b, #f97316); color: #fff;
+            z-index: 2; display: flex; align-items: center; gap: 4px;
+        }
+
+        /* COLOR PICKER IN EDIT MODE */
+        .color-picker-bar {
+            display: none; align-items: center; gap: 8px; padding: 8px 16px;
+            background: rgba(255,255,255,0.06); border-radius: 10px; margin-left: auto;
+        }
+        .color-picker-bar label { font-size: 0.75em; color: rgba(255,255,255,0.7); white-space: nowrap; }
+        .color-dot {
+            width: 24px; height: 24px; border-radius: 50%; border: 2px solid transparent;
+            cursor: pointer; transition: 0.2s;
+        }
+        .color-dot:hover, .color-dot.active { border-color: #fff; transform: scale(1.15); }
+
+        @media (max-width: 480px) {
+            .hero-actions { flex-direction: column; padding: 0 10px; }
+            .hero-btn { justify-content: center; padding: 16px 20px; }
+            .about-section { margin: 0 16px 20px; padding: 20px; }
+        }
+
         /* ===== TRUST BAR ===== */
         .trust-bar {
             background: #fff; border-bottom: 1px solid var(--border);
@@ -692,6 +755,14 @@
                 <span class="hero-tag"><i class="fas fa-credit-card"></i> Tarjeta y Contra Entrega</span>
                 <span class="hero-tag"><i class="fas fa-shield-alt"></i> Garantía Incluida</span>
             </div>
+            <div class="hero-actions" id="heroActions">
+                <a class="hero-btn hero-btn-whatsapp" id="heroWhatsAppBtn" href="#" target="_blank" rel="noopener">
+                    <i class="fab fa-whatsapp"></i> Escríbenos por WhatsApp
+                </a>
+                <a class="hero-btn hero-btn-catalog" href="#products" onclick="document.getElementById('productsGrid').scrollIntoView({behavior:'smooth'});return false;">
+                    <i class="fas fa-shopping-bag"></i> Ver Productos
+                </a>
+            </div>
         </div>
     </section>
 
@@ -701,6 +772,16 @@
         <div class="admin-toolbar-actions">
             <button class="admin-tool-btn" onclick="openAddProductModal()"><i class="fas fa-plus"></i> Producto</button>
             <button class="admin-tool-btn" onclick="openAddProductModal(); setTimeout(()=>{document.getElementById('newProductCategory').value='Promociones'},100)"><i class="fas fa-tag"></i> Oferta</button>
+            <div class="color-picker-bar" id="colorPickerBar" style="display:flex;">
+                <label>🎨 Color:</label>
+                <div class="color-dot" style="background:#2563eb;" data-color="blue" onclick="changeStoreColor('blue', this)" title="Azul"></div>
+                <div class="color-dot" style="background:#7c3aed;" data-color="purple" onclick="changeStoreColor('purple', this)" title="Morado"></div>
+                <div class="color-dot" style="background:#059669;" data-color="green" onclick="changeStoreColor('green', this)" title="Verde"></div>
+                <div class="color-dot" style="background:#dc2626;" data-color="red" onclick="changeStoreColor('red', this)" title="Rojo"></div>
+                <div class="color-dot" style="background:#f59e0b;" data-color="orange" onclick="changeStoreColor('orange', this)" title="Naranja"></div>
+                <div class="color-dot" style="background:#ec4899;" data-color="pink" onclick="changeStoreColor('pink', this)" title="Rosa"></div>
+                <div class="color-dot" style="background:#0891b2;" data-color="cyan" onclick="changeStoreColor('cyan', this)" title="Cyan"></div>
+            </div>
             <button class="admin-tool-btn" onclick="toggleEditMode()"><i class="fas fa-times"></i> Salir</button>
         </div>
     </div>
@@ -760,6 +841,13 @@
         </div>
     </div>
 
+    <!-- ABOUT US SECTION -->
+    <div class="about-section" id="aboutSection">
+        <h3><i class="fas fa-store" style="color:var(--primary);"></i> <span id="aboutTitle">Sobre Nosotros</span></h3>
+        <p id="aboutText">Somos un negocio comprometido con ofrecerte los mejores productos y servicio. Visítanos o escríbenos por WhatsApp para más información.</p>
+        <div id="aboutSocial" style="display:flex;gap:12px;margin-top:16px;flex-wrap:wrap;"></div>
+    </div>
+
     <!-- PRODUCT DETAIL MODAL -->
     <div class="modal-overlay" id="productModal" onclick="closeModal(event)" role="dialog" aria-modal="true" aria-label="Detalle de producto">
         <div class="modal" onclick="event.stopPropagation()">
@@ -780,6 +868,9 @@
                     <i class="fas fa-cart-plus" aria-hidden="true"></i>
                     <span>Agregar al carro</span>
                     <span class="total-label" id="modalTotal">$0</span>
+                </button>
+                <button class="share-product-btn" id="shareProductBtn" onclick="shareProduct(currentProduct?.id)">
+                    <i class="fab fa-whatsapp"></i> Compartir este producto
                 </button>
             </div>
         </div>
@@ -1026,6 +1117,13 @@
                             <p style="font-size:0.7em; color:var(--text-muted); margin-top:4px;">Cuántas unidades tiene disponibles</p>
                         </div>
                     </div>
+                    <div class="form-group">
+                        <label style="display:flex; align-items:center; gap:8px; cursor:pointer;">
+                            <input type="checkbox" id="featuredToggle" style="width:auto; accent-color:#f59e0b;">
+                            <span>⭐ Producto Destacado</span>
+                        </label>
+                        <p style="font-size:0.7em; color:var(--text-muted); margin-top:2px;">Aparecerá con un badge especial</p>
+                    </div>
                     <div class="form-row">
                         <div class="form-group">
                             <label>Categoría</label>
@@ -1086,6 +1184,12 @@
                             <p style="font-size:0.7em; color:var(--text-muted); margin-top:4px;">Unidades disponibles</p>
                         </div>
                     </div>
+                    <div class="form-group">
+                        <label style="display:flex; align-items:center; gap:8px; cursor:pointer;">
+                            <input type="checkbox" id="editFeaturedToggle" style="width:auto; accent-color:#f59e0b;">
+                            <span>⭐ Producto Destacado</span>
+                        </label>
+                    </div>
                     <div class="form-row">
                         <div class="form-group">
                             <label>Categoría</label>
@@ -1114,6 +1218,7 @@
         <p style="margin-bottom: 4px;" id="footerAddress"></p>
         <p style="margin-bottom: 12px;" id="footerSchedule"></p>
         <div class="footer-links" id="footerLinks"></div>
+        <div class="footer-social" id="footerSocial" style="display:flex;justify-content:center;gap:14px;margin-top:16px;"></div>
         <p style="margin-top: 20px; font-size: 0.75em; color: var(--text-light);">Powered by <span class="brand">FGF Digital</span> — Tu negocio en internet</p>
     </div>
 
@@ -1886,6 +1991,9 @@
 
         renderProducts(allProducts);
         renderOwnerInventorySummary();
+        initHeroWhatsApp();
+        initAboutSection();
+        loadStoreColor();
         
         document.getElementById('sectionTitle').textContent = isServiceBusiness ? 'Nuestros Servicios' : 'Nuestros Productos';
         document.getElementById('searchInputMobile').placeholder = isServiceBusiness ? 'Buscar servicios...' : 'Buscar productos...';
@@ -1988,6 +2096,7 @@
         document.getElementById('productPhotoPreview').textContent = '📷';
         document.getElementById('stockFieldGroup').style.display = 'none';
         document.getElementById('manageStockToggle').checked = false;
+        document.getElementById('featuredToggle').checked = false;
         productPhotoData = null;
         populateCategorySelect();
     }
@@ -2011,6 +2120,7 @@
         const desc = document.getElementById('newProductDesc').value.trim();
         const manageStock = document.getElementById('manageStockToggle').checked;
         const stock = manageStock ? (parseInt(document.getElementById('newProductStock').value) || 1) : 999;
+        const featured = document.getElementById('featuredToggle').checked;
         
         if (!name || !price) {
             showToast('⚠️ Completa nombre y precio');
@@ -2027,7 +2137,8 @@
             emoji: category === 'Promociones' ? '🏷️' : '📦',
             stock: stock,
             sold: 0,
-            managesStock: manageStock
+            managesStock: manageStock,
+            featured: featured
         };
         
         allProducts.unshift(newProduct);
@@ -2064,6 +2175,9 @@
         document.getElementById('editStockFieldGroup').style.display = managesStock ? 'block' : 'none';
         document.getElementById('editProductStock').value = managesStock ? (product.stock || 1) : '';
         
+        // Featured toggle
+        document.getElementById('editFeaturedToggle').checked = product.featured || false;
+        
         if (product.image) {
             const preview = document.getElementById('editPhotoPreview');
             preview.textContent = '';
@@ -2093,6 +2207,7 @@
         if (!product) return;
         
         const manageStock = document.getElementById('editManageStockToggle').checked;
+        const featured = document.getElementById('editFeaturedToggle').checked;
         
         product.name = document.getElementById('editProductName').value.trim();
         product.price = parseInt(document.getElementById('editProductPrice').value);
@@ -2100,6 +2215,7 @@
         product.desc = document.getElementById('editProductDesc').value.trim();
         product.stock = manageStock ? (parseInt(document.getElementById('editProductStock').value) || 1) : 999;
         product.managesStock = manageStock;
+        product.featured = featured;
         product.emoji = product.category === 'Promociones' ? '🏷️' : '📦';
         
         if (editPhotoData) {
@@ -2153,7 +2269,7 @@
             grid.innerHTML = addBtn + `<div class="no-results"><div class="icon">🔍</div><p>No se encontraron productos</p></div>`;
             return;
         }
-        grid.innerHTML = addBtn + products.map(p => {
+        grid.innerHTML = addBtn + sortByFeatured(products).map(p => {
             const isOutOfStock = p.managesStock && p.stock <= 0;
             return `
             <div class="product-card ${isOutOfStock ? 'out-of-stock' : ''}" onclick="${editMode ? '' : `openProductModal(${p.id})`}" role="article" aria-label="${escapeHtml(p.name)}">
@@ -2162,15 +2278,16 @@
                         ? `<img src="${escapeHtml(p.image)}" alt="${escapeHtml(p.name)}" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.innerHTML='<div class=\\'product-visual\\'>${escapeHtml(p.emoji||'📦')}</div>'">`
                         : `<div class="product-visual" aria-hidden="true">${p.emoji || '📦'}</div>`
                     }
+                    ${p.featured ? '<span class="product-badge-featured">⭐ Destacado</span>' : ''}
                     ${isOutOfStock ? `<span class="product-out-of-stock">Agotado</span>` : ''}
                     ${!isOutOfStock && p.stock < 10 && p.stock > 0 && p.managesStock ? `<span class="product-stock" aria-label="Últimas unidades disponibles">¡Últimas ${p.stock}!</span>` : ''}
-                    ${editMode && p.managesStock ? `<span style="position:absolute;top:8px;left:${isOutOfStock ? '85px' : '8px'};background:rgba(0,0,0,0.7);color:#fff;padding:3px 8px;border-radius:6px;font-size:0.7em;font-weight:600;">📦 ${p.stock} uds</span>` : ''}
+                    ${editMode && p.managesStock ? `<span style="position:absolute;top:8px;left:${isOutOfStock ? '85px' : (p.featured ? '95px' : '8px')};background:rgba(0,0,0,0.7);color:#fff;padding:3px 8px;border-radius:6px;font-size:0.7em;font-weight:600;">📦 ${p.stock} uds</span>` : ''}
                     ${editMode ? `
                         <div style="position:absolute;top:8px;right:8px;display:flex;gap:6px;">
                             <button onclick="event.stopPropagation(); openEditProductModal(${p.id})" style="width:32px;height:32px;border-radius:8px;background:rgba(59,130,246,0.9);color:#fff;border:none;cursor:pointer;font-size:0.8em;" aria-label="Editar ${escapeHtml(p.name)}"><i class="fas fa-edit" aria-hidden="true"></i></button>
                             <button onclick="event.stopPropagation(); deleteProduct(${p.id})" style="width:32px;height:32px;border-radius:8px;background:rgba(239,68,68,0.9);color:#fff;border:none;cursor:pointer;font-size:0.8em;" aria-label="Eliminar ${escapeHtml(p.name)}"><i class="fas fa-trash" aria-hidden="true"></i></button>
                         </div>
-                    ` : ''}
+                    ` : `<button onclick="event.stopPropagation(); shareProduct(${p.id})" style="position:absolute;top:8px;right:8px;width:32px;height:32px;border-radius:8px;background:rgba(37,211,102,0.9);color:#fff;border:none;cursor:pointer;font-size:0.8em;" aria-label="Compartir ${escapeHtml(p.name)}" title="Compartir por WhatsApp"><i class="fab fa-whatsapp" aria-hidden="true"></i></button>`}
                 </div>
                 <div class="product-body">
                     <div class="product-cat">${escapeHtml(p.category)}</div>
@@ -2237,6 +2354,104 @@
         if (total > 0) {
             summaryEl.style.display = 'block';
         }
+    }
+
+    // ===== HERO WHATSAPP BUTTON =====
+    function initHeroWhatsApp() {
+        const btn = document.getElementById('heroWhatsAppBtn');
+        if (btn) {
+            btn.href = 'https://wa.me/' + businessTel;
+        }
+        // For services, change catalog button to booking
+        if (isServiceBusiness) {
+            const catalogBtn = document.querySelector('.hero-btn-catalog');
+            if (catalogBtn) {
+                catalogBtn.href = '#';
+                catalogBtn.innerHTML = '<i class="fas fa-calendar-check"></i> Agendar Hora';
+                catalogBtn.onclick = function(e) { e.preventDefault(); openBookingModal(); };
+            }
+        }
+    }
+
+    // ===== SHARE PRODUCT =====
+    function shareProduct(productId) {
+        const p = allProducts.find(pr => pr.id === productId);
+        if (!p) return;
+        const msg = `🛍️ *${p.name}*\n💰 $${p.price.toLocaleString('es-CL')}\n📝 ${p.desc}\n\nTienda: ${businessName}\n📱 ${window.location.href}`;
+        window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
+    }
+
+    // ===== COLOR PICKER =====
+    const storeColors = {
+        blue:   ['#2563eb','#1d4ed8'],
+        purple: ['#7c3aed','#6d28d9'],
+        green:  ['#059669','#047857'],
+        red:    ['#dc2626','#b91c1c'],
+        orange: ['#f59e0b','#d97706'],
+        pink:   ['#ec4899','#db2777'],
+        cyan:   ['#0891b2','#0e7490']
+    };
+    function changeStoreColor(colorName, el) {
+        const [c1, c2] = storeColors[colorName] || storeColors.blue;
+        document.documentElement.style.setProperty('--primary', c1);
+        document.documentElement.style.setProperty('--primary-dark', c2);
+        try { localStorage.setItem(lk('store_color'), colorName); } catch(e) {}
+        // Update active dot
+        document.querySelectorAll('.color-dot').forEach(d => d.classList.remove('active'));
+        if (el) el.classList.add('active');
+        showToast('🎨 Color cambiado');
+    }
+    function loadStoreColor() {
+        const saved = localStorage.getItem(lk('store_color'));
+        if (saved && storeColors[saved]) {
+            const [c1, c2] = storeColors[saved];
+            document.documentElement.style.setProperty('--primary', c1);
+            document.documentElement.style.setProperty('--primary-dark', c2);
+        }
+    }
+
+    // ===== ABOUT US + SOCIAL LINKS =====
+    function initAboutSection() {
+        const aboutText = localStorage.getItem(lk('about_text'));
+        if (aboutText) {
+            document.getElementById('aboutText').textContent = aboutText;
+        }
+        
+        // Social links from localStorage
+        const socials = safeParse(lk('social_links'), {});
+        const socialContainer = document.getElementById('aboutSocial');
+        const footerSocial = document.getElementById('footerSocial');
+        
+        const socialDefs = [
+            { key: 'instagram', icon: 'fab fa-instagram', color: '#E4405F', label: 'Instagram' },
+            { key: 'facebook', icon: 'fab fa-facebook', color: '#1877F2', label: 'Facebook' },
+            { key: 'tiktok', icon: 'fab fa-tiktok', color: '#000', label: 'TikTok' },
+            { key: 'youtube', icon: 'fab fa-youtube', color: '#FF0000', label: 'YouTube' },
+            { key: 'twitter', icon: 'fab fa-x-twitter', color: '#000', label: 'X / Twitter' }
+        ];
+        
+        let hasSocial = false;
+        socialDefs.forEach(s => {
+            if (socials[s.key]) {
+                hasSocial = true;
+                const link = `<a href="${escapeHtml(socials[s.key])}" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:10px;background:${s.color}15;color:${s.color};font-size:0.82em;font-weight:600;text-decoration:none;transition:0.2s;border:1px solid ${s.color}30;" onmouseover="this.style.background='${s.color}';this.style.color='#fff'" onmouseout="this.style.background='${s.color}15';this.style.color='${s.color}'"><i class="${s.icon}"></i> ${s.label}</a>`;
+                if (socialContainer) socialContainer.innerHTML += link;
+                if (footerSocial) footerSocial.innerHTML += `<a href="${escapeHtml(socials[s.key])}" target="_blank" rel="noopener" style="color:var(--text-muted);text-decoration:none;font-size:0.82em;transition:0.2s;" onmouseover="this.style.color='var(--primary)'" onmouseout="this.style.color='var(--text-muted)'"><i class="${s.icon}" style="margin-right:4px;"></i>${s.label}</a>`;
+            }
+        });
+        
+        if (!hasSocial) {
+            document.getElementById('aboutSection').style.display = 'none';
+        }
+    }
+
+    // ===== FEATURED PRODUCT SORT =====
+    function sortByFeatured(products) {
+        return [...products].sort((a, b) => {
+            if (a.featured && !b.featured) return -1;
+            if (!a.featured && b.featured) return 1;
+            return 0;
+        });
     }
 
     // ===== SEARCH & FILTER =====
