@@ -805,9 +805,15 @@
                             <label>Precio ($) *</label>
                             <input id="newProductPrice" type="number" required placeholder="15000" inputmode="numeric">
                         </div>
-                        <div class="form-group">
-                            <label>Stock</label>
-                            <input id="newProductStock" type="number" placeholder="99" value="99" inputmode="numeric">
+                    </div>
+                    <div class="form-group">
+                        <label style="display:flex; align-items:center; gap:8px; cursor:pointer;">
+                            <input type="checkbox" id="manageStockToggle" onchange="toggleStockField()" style="width:auto; accent-color:var(--primary);">
+                            <span>📋 ¿Maneja unidades? (stock)</span>
+                        </label>
+                        <div id="stockFieldGroup" style="display:none; margin-top:8px;">
+                            <input id="newProductStock" type="number" placeholder="Ej: 10" inputmode="numeric" min="0">
+                            <p style="font-size:0.7em; color:var(--text-muted); margin-top:4px;">Cuántas unidades tiene disponibles</p>
                         </div>
                     </div>
                     <div class="form-row">
@@ -859,9 +865,15 @@
                             <label>Precio ($) *</label>
                             <input id="editProductPrice" type="number" required placeholder="15000" inputmode="numeric">
                         </div>
-                        <div class="form-group">
-                            <label>Stock</label>
-                            <input id="editProductStock" type="number" inputmode="numeric">
+                    </div>
+                    <div class="form-group">
+                        <label style="display:flex; align-items:center; gap:8px; cursor:pointer;">
+                            <input type="checkbox" id="editManageStockToggle" onchange="toggleEditStockField()" style="width:auto; accent-color:var(--primary);">
+                            <span>📋 ¿Maneja unidades? (stock)</span>
+                        </label>
+                        <div id="editStockFieldGroup" style="display:none; margin-top:8px;">
+                            <input id="editProductStock" type="number" placeholder="Ej: 10" inputmode="numeric" min="0">
+                            <p style="font-size:0.7em; color:var(--text-muted); margin-top:4px;">Unidades disponibles</p>
                         </div>
                     </div>
                     <div class="form-row">
@@ -1725,7 +1737,14 @@
         document.getElementById('addProductModal').classList.add('active');
         document.getElementById('addProductForm').reset();
         document.getElementById('productPhotoPreview').textContent = '📷';
+        document.getElementById('stockFieldGroup').style.display = 'none';
+        document.getElementById('manageStockToggle').checked = false;
         productPhotoData = null;
+    }
+
+    function toggleStockField() {
+        const checked = document.getElementById('manageStockToggle').checked;
+        document.getElementById('stockFieldGroup').style.display = checked ? 'block' : 'none';
     }
 
     function closeAddProductModal(e) {
@@ -1740,7 +1759,8 @@
         const price = parseInt(document.getElementById('newProductPrice').value);
         const category = document.getElementById('newProductCategory').value;
         const desc = document.getElementById('newProductDesc').value.trim();
-        const stock = parseInt(document.getElementById('newProductStock').value) || 99;
+        const manageStock = document.getElementById('manageStockToggle').checked;
+        const stock = manageStock ? (parseInt(document.getElementById('newProductStock').value) || 1) : 999;
         
         if (!name || !price) {
             showToast('⚠️ Completa nombre y precio');
@@ -1756,7 +1776,8 @@
             image: productPhotoData,
             emoji: category === 'Promociones' ? '🏷️' : '📦',
             stock: stock,
-            sold: 0
+            sold: 0,
+            managesStock: manageStock
         };
         
         allProducts.unshift(newProduct);
@@ -1764,6 +1785,11 @@
         renderProducts(allProducts);
         closeAddProductModal();
         showToast('✅ ' + (category === 'Promociones' ? 'Oferta publicada' : 'Producto agregado'));
+    }
+
+    function toggleEditStockField() {
+        const checked = document.getElementById('editManageStockToggle').checked;
+        document.getElementById('editStockFieldGroup').style.display = checked ? 'block' : 'none';
     }
 
     function openEditProductModal(productId) {
@@ -1775,7 +1801,12 @@
         document.getElementById('editProductPrice').value = product.price;
         document.getElementById('editProductCategory').value = product.category;
         document.getElementById('editProductDesc').value = product.desc;
-        document.getElementById('editProductStock').value = product.stock || 99;
+        
+        // Stock toggle
+        const managesStock = product.managesStock || product.stock < 999;
+        document.getElementById('editManageStockToggle').checked = managesStock;
+        document.getElementById('editStockFieldGroup').style.display = managesStock ? 'block' : 'none';
+        document.getElementById('editProductStock').value = managesStock ? (product.stock || 1) : '';
         
         if (product.image) {
             const preview = document.getElementById('editPhotoPreview');
@@ -1805,11 +1836,14 @@
         const product = allProducts.find(p => p.id === productId);
         if (!product) return;
         
+        const manageStock = document.getElementById('editManageStockToggle').checked;
+        
         product.name = document.getElementById('editProductName').value.trim();
         product.price = parseInt(document.getElementById('editProductPrice').value);
         product.category = document.getElementById('editProductCategory').value;
         product.desc = document.getElementById('editProductDesc').value.trim();
-        product.stock = parseInt(document.getElementById('editProductStock').value) || 99;
+        product.stock = manageStock ? (parseInt(document.getElementById('editProductStock').value) || 1) : 999;
+        product.managesStock = manageStock;
         product.emoji = product.category === 'Promociones' ? '🏷️' : '📦';
         
         if (editPhotoData) {
@@ -1870,7 +1904,8 @@
                         ? `<img src="${escapeHtml(p.image)}" alt="${escapeHtml(p.name)}" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.innerHTML='<div class=\\'product-visual\\'>${escapeHtml(p.emoji||'📦')}</div>'">`
                         : `<div class="product-visual" aria-hidden="true">${p.emoji || '📦'}</div>`
                     }
-                    ${p.stock < 10 && p.stock > 0 ? `<span class="product-stock" aria-label="Últimas unidades disponibles">¡Últimas!</span>` : ''}
+                    ${p.stock < 10 && p.stock > 0 && p.managesStock ? `<span class="product-stock" aria-label="Últimas unidades disponibles">¡Últimas ${p.stock}!</span>` : ''}
+                    ${editMode && p.managesStock ? `<span style="position:absolute;top:8px;left:8px;background:rgba(0,0,0,0.7);color:#fff;padding:3px 8px;border-radius:6px;font-size:0.7em;font-weight:600;">📦 ${p.stock} uds</span>` : ''}
                     ${editMode ? `
                         <div style="position:absolute;top:8px;right:8px;display:flex;gap:6px;">
                             <button onclick="event.stopPropagation(); openEditProductModal(${p.id})" style="width:32px;height:32px;border-radius:8px;background:rgba(59,130,246,0.9);color:#fff;border:none;cursor:pointer;font-size:0.8em;" aria-label="Editar ${escapeHtml(p.name)}"><i class="fas fa-edit" aria-hidden="true"></i></button>
