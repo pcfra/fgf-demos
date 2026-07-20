@@ -186,6 +186,30 @@
             .about-section { margin: 0 16px 20px; padding: 20px; }
         }
 
+        /* ===== ORDER NOTIFICATION ===== */
+        .order-notif {
+            position: fixed; top: 80px; right: 24px; z-index: 10000;
+            display: flex; align-items: center; gap: 12px;
+            padding: 16px 20px; border-radius: 16px;
+            background: linear-gradient(135deg, #059669, #047857);
+            color: #fff; box-shadow: 0 8px 30px rgba(5,150,105,0.4);
+            animation: notifSlide 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            max-width: 380px;
+        }
+        @keyframes notifSlide {
+            from { transform: translateX(120%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        .order-notif-icon { font-size: 2em; flex-shrink: 0; }
+        .order-notif-content { flex: 1; }
+        .order-notif-title { font-weight: 700; font-size: 0.95em; }
+        .order-notif-msg { font-size: 0.82em; opacity: 0.9; margin-top: 2px; }
+        .order-notif-close {
+            background: rgba(255,255,255,0.2); border: none; color: #fff;
+            width: 28px; height: 28px; border-radius: 50%; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+        }
+
         /* ===== TRUST BAR ===== */
         .trust-bar {
             background: #fff; border-bottom: 1px solid var(--border);
@@ -772,6 +796,8 @@
         <div class="admin-toolbar-actions">
             <button class="admin-tool-btn" onclick="openAddProductModal()"><i class="fas fa-plus"></i> Producto</button>
             <button class="admin-tool-btn" onclick="openAddProductModal(); setTimeout(()=>{document.getElementById('newProductCategory').value='Promociones'},100)"><i class="fas fa-tag"></i> Oferta</button>
+            <button class="admin-tool-btn" onclick="openAboutEditor()"><i class="fas fa-store"></i> Sobre Nosotros</button>
+            <button class="admin-tool-btn" onclick="openSocialEditor()"><i class="fas fa-share-alt"></i> Redes</button>
             <div class="color-picker-bar" id="colorPickerBar" style="display:flex;">
                 <label>🎨 Color:</label>
                 <div class="color-dot" style="background:#2563eb;" data-color="blue" onclick="changeStoreColor('blue', this)" title="Azul"></div>
@@ -1077,6 +1103,76 @@
                 </div>
             </div>
         </div>
+    </div>
+
+    <!-- ABOUT US EDITOR MODAL -->
+    <div class="checkout-modal" id="aboutEditorModal" onclick="closeAboutEditor(event)">
+        <div class="checkout-box" onclick="event.stopPropagation()">
+            <div class="checkout-header">
+                <h2><i class="fas fa-store" style="color:var(--primary); margin-right:8px;"></i> Editar "Sobre Nosotros"</h2>
+                <button class="checkout-close" onclick="closeAboutEditor()"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="checkout-body">
+                <div class="form-group">
+                    <label>Título de la sección</label>
+                    <input id="aboutTitleInput" placeholder="Sobre Nosotros" maxlength="50">
+                </div>
+                <div class="form-group">
+                    <label>Descripción de tu negocio</label>
+                    <textarea id="aboutTextInput" rows="4" placeholder="Contá la historia de tu negocio..."></textarea>
+                    <p style="font-size:0.72em;color:var(--text-muted);margin-top:4px;">Esto se muestra a tus clientes al final de la tienda</p>
+                </div>
+                <button class="checkout-submit" style="background:var(--primary);" onclick="saveAboutSection()">
+                    <i class="fas fa-save"></i> Guardar Cambios
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SOCIAL LINKS EDITOR MODAL -->
+    <div class="checkout-modal" id="socialEditorModal" onclick="closeSocialEditor(event)">
+        <div class="checkout-box" onclick="event.stopPropagation()">
+            <div class="checkout-header">
+                <h2><i class="fas fa-share-alt" style="color:var(--primary); margin-right:8px;"></i> Redes Sociales</h2>
+                <button class="checkout-close" onclick="closeSocialEditor()"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="checkout-body">
+                <p style="font-size:0.85em;color:var(--text-muted);margin-bottom:16px;">Pegá el link completo de cada red. Los que dejes vacíos no se muestran.</p>
+                <div class="form-group">
+                    <label><i class="fab fa-instagram" style="color:#E4405F;margin-right:6px;"></i> Instagram</label>
+                    <input id="socialInstagram" placeholder="https://instagram.com/tu-negocio" type="url">
+                </div>
+                <div class="form-group">
+                    <label><i class="fab fa-facebook" style="color:#1877F2;margin-right:6px;"></i> Facebook</label>
+                    <input id="socialFacebook" placeholder="https://facebook.com/tu-negocio" type="url">
+                </div>
+                <div class="form-group">
+                    <label><i class="fab fa-tiktok" style="color:#000;margin-right:6px;"></i> TikTok</label>
+                    <input id="socialTiktok" placeholder="https://tiktok.com/@tu-negocio" type="url">
+                </div>
+                <div class="form-group">
+                    <label><i class="fab fa-youtube" style="color:#FF0000;margin-right:6px;"></i> YouTube</label>
+                    <input id="socialYoutube" placeholder="https://youtube.com/@tu-canal" type="url">
+                </div>
+                <div class="form-group">
+                    <label><i class="fab fa-x-twitter" style="color:#000;margin-right:6px;"></i> X / Twitter</label>
+                    <input id="socialTwitter" placeholder="https://x.com/tu-negocio" type="url">
+                </div>
+                <button class="checkout-submit" style="background:var(--primary);" onclick="saveSocialLinks()">
+                    <i class="fas fa-save"></i> Guardar Redes
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ORDER NOTIFICATION TOAST -->
+    <div class="order-notif" id="orderNotif" style="display:none;">
+        <div class="order-notif-icon">🛒</div>
+        <div class="order-notif-content">
+            <div class="order-notif-title">¡Nuevo Pedido!</div>
+            <div class="order-notif-msg" id="orderNotifMsg"></div>
+        </div>
+        <button class="order-notif-close" onclick="closeOrderNotif()"><i class="fas fa-times"></i></button>
     </div>
 
     <!-- ADD PRODUCT MODAL -->
@@ -2410,9 +2506,103 @@
         }
     }
 
+    // ===== ABOUT US EDITOR =====
+    function openAboutEditor() {
+        const modal = document.getElementById('aboutEditorModal');
+        document.getElementById('aboutTitleInput').value = document.getElementById('aboutTitle').textContent;
+        document.getElementById('aboutTextInput').value = document.getElementById('aboutText').textContent;
+        modal.classList.add('active');
+    }
+    function closeAboutEditor(e) {
+        if (e && e.target !== e.currentTarget) return;
+        document.getElementById('aboutEditorModal').classList.remove('active');
+    }
+    function saveAboutSection() {
+        const title = document.getElementById('aboutTitleInput').value.trim() || 'Sobre Nosotros';
+        const text = document.getElementById('aboutTextInput').value.trim();
+        document.getElementById('aboutTitle').textContent = title;
+        document.getElementById('aboutText').textContent = text || 'Somos un negocio comprometido con ofrecerte los mejores productos y servicio.';
+        try {
+            localStorage.setItem(lk('about_title'), title);
+            localStorage.setItem(lk('about_text'), text);
+        } catch(e) {}
+        document.getElementById('aboutSection').style.display = 'block';
+        closeAboutEditor();
+        showToast('✅ Sección "Sobre Nosotros" actualizada');
+    }
+
+    // ===== SOCIAL LINKS EDITOR =====
+    function openSocialEditor() {
+        const modal = document.getElementById('socialEditorModal');
+        const socials = safeParse(lk('social_links'), {});
+        document.getElementById('socialInstagram').value = socials.instagram || '';
+        document.getElementById('socialFacebook').value = socials.facebook || '';
+        document.getElementById('socialTiktok').value = socials.tiktok || '';
+        document.getElementById('socialYoutube').value = socials.youtube || '';
+        document.getElementById('socialTwitter').value = socials.twitter || '';
+        modal.classList.add('active');
+    }
+    function closeSocialEditor(e) {
+        if (e && e.target !== e.currentTarget) return;
+        document.getElementById('socialEditorModal').classList.remove('active');
+    }
+    function saveSocialLinks() {
+        const socials = {};
+        const fields = { instagram: 'socialInstagram', facebook: 'socialFacebook', tiktok: 'socialTiktok', youtube: 'socialYoutube', twitter: 'socialTwitter' };
+        Object.entries(fields).forEach(([key, id]) => {
+            const val = document.getElementById(id).value.trim();
+            if (val) socials[key] = val;
+        });
+        try { localStorage.setItem(lk('social_links'), JSON.stringify(socials)); } catch(e) {}
+        initAboutSection();
+        closeSocialEditor();
+        showToast('✅ Redes sociales actualizadas');
+    }
+
+    // ===== ORDER NOTIFICATIONS =====
+    let orderNotifTimeout = null;
+    let lastOrderCount = 0;
+    function checkNewOrders() {
+        try {
+            const orders = safeParse(lk('real_orders'), []);
+            if (lastOrderCount > 0 && orders.length > lastOrderCount) {
+                const newOrder = orders[orders.length - 1];
+                showOrderNotification(newOrder);
+            }
+            lastOrderCount = orders.length;
+        } catch(e) {}
+    }
+    function showOrderNotification(order) {
+        const notif = document.getElementById('orderNotif');
+        const msg = document.getElementById('orderNotifMsg');
+        const items = order.items ? order.items.map(i => i.name).join(', ') : 'Pedido recibido';
+        msg.textContent = `${order.client || 'Cliente'} — $${(order.total || 0).toLocaleString('es-CL')}`;
+        notif.style.display = 'flex';
+        // Play notification sound
+        try {
+            const audio = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgip2Onp+WiXlwZ3d5hZ+am42GfnRqeH6LpqaemI2FgHlzdH2MqqyinZOKhH96dXR9jKqsoZ2TioR/e3d0fYyqrKGdk4qEf3t3dH2MqqyhnZOKhH97d3R9jKqsoZ2TioR/e3d0fYyqrKGdk4qEf3t3dH2M');
+            audio.volume = 0.5;
+            audio.play().catch(() => {});
+        } catch(e) {}
+        // Vibrate if available
+        if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
+        clearTimeout(orderNotifTimeout);
+        orderNotifTimeout = setTimeout(() => { notif.style.display = 'none'; }, 8000);
+    }
+    function closeOrderNotif() {
+        document.getElementById('orderNotif').style.display = 'none';
+        clearTimeout(orderNotifTimeout);
+    }
+    // Check for new orders every 5 seconds
+    setInterval(checkNewOrders, 5000);
+
     // ===== ABOUT US + SOCIAL LINKS =====
     function initAboutSection() {
+        const aboutTitle = localStorage.getItem(lk('about_title'));
         const aboutText = localStorage.getItem(lk('about_text'));
+        if (aboutTitle) {
+            document.getElementById('aboutTitle').textContent = aboutTitle;
+        }
         if (aboutText) {
             document.getElementById('aboutText').textContent = aboutText;
         }
@@ -2441,7 +2631,7 @@
         });
         
         if (!hasSocial) {
-            document.getElementById('aboutSection').style.display = 'none';
+            document.getElementById('aboutSocial').style.display = 'none';
         }
     }
 
