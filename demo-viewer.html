@@ -7,6 +7,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <script src="firebase-config.js"></script>
+    <script src="firebase-store.js"></script>
     <style>/* Fallback fonts for offline */ @media offline { body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important; } }</style>
     <style>
         :root {
@@ -1054,6 +1056,40 @@
         <i class="fab fa-whatsapp"></i>
         <span>Compartí tu Tienda</span>
     </button>
+
+    <!-- FIREBASE AUTH MODAL -->
+    <div id="authModal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;z-index:10001;background:rgba(0,0,0,0.6);backdrop-filter:blur(6px);align-items:center;justify-content:center;">
+        <div style="background:var(--bg-white);border-radius:20px;padding:32px 28px;width:90%;max-width:380px;box-shadow:var(--shadow-lg);position:relative;">
+            <button onclick="closeAuthModal()" style="position:absolute;top:12px;right:12px;background:none;border:none;font-size:1.2em;color:var(--text-muted);cursor:pointer;">✕</button>
+            <div style="text-align:center;margin-bottom:24px;">
+                <div id="authModalIcon" style="font-size:2.5em;margin-bottom:8px;">🔐</div>
+                <h2 id="authModalTitle" style="font-size:1.2em;font-weight:800;color:var(--text);">Iniciar Sesión</h2>
+                <p id="authModalSubtitle" style="font-size:0.82em;color:var(--text-muted);margin-top:4px;">Accede para administrar tu tienda</p>
+            </div>
+            <div id="authForm">
+                <div id="authNameGroup" style="display:none;margin-bottom:14px;">
+                    <label style="font-size:0.78em;font-weight:600;color:var(--text-muted);display:block;margin-bottom:4px;">Nombre</label>
+                    <input id="authName" type="text" placeholder="Tu nombre" style="width:100%;padding:12px;border-radius:10px;border:1.5px solid var(--border);font-size:0.9em;background:var(--bg);color:var(--text);">
+                </div>
+                <div style="margin-bottom:14px;">
+                    <label style="font-size:0.78em;font-weight:600;color:var(--text-muted);display:block;margin-bottom:4px;">Email</label>
+                    <input id="authEmail" type="email" placeholder="tu@email.com" style="width:100%;padding:12px;border-radius:10px;border:1.5px solid var(--border);font-size:0.9em;background:var(--bg);color:var(--text);">
+                </div>
+                <div style="margin-bottom:20px;">
+                    <label style="font-size:0.78em;font-weight:600;color:var(--text-muted);display:block;margin-bottom:4px;">Contraseña</label>
+                    <input id="authPassword" type="password" placeholder="••••••••" style="width:100%;padding:12px;border-radius:10px;border:1.5px solid var(--border);font-size:0.9em;background:var(--bg);color:var(--text);">
+                </div>
+                <button id="authSubmitBtn" onclick="handleAuth()" style="width:100%;padding:14px;border:none;border-radius:12px;background:var(--primary);color:#fff;font-weight:700;font-size:0.95em;cursor:pointer;transition:0.2s;">Iniciar Sesión</button>
+                <div id="authError" style="display:none;margin-top:12px;padding:10px;background:rgba(239,68,68,0.1);border-radius:8px;color:#ef4444;font-size:0.82em;text-align:center;"></div>
+            </div>
+            <div style="text-align:center;margin-top:16px;">
+                <span id="authToggle" onclick="toggleAuthMode()" style="font-size:0.82em;color:var(--primary);cursor:pointer;font-weight:600;">¿No tienes cuenta? Crear una</span>
+            </div>
+            <div style="text-align:center;margin-top:12px;">
+                <span onclick="fbDemoMode()" style="font-size:0.78em;color:var(--text-muted);cursor:pointer;text-decoration:underline;">Continuar sin cuenta (demo local)</span>
+            </div>
+        </div>
+    </div>
 
     <!-- ONBOARDING BANNER -->
     <div class="onboarding-banner" id="onboardingBanner">
@@ -3103,6 +3139,138 @@
     }
 
     updateCart();
+
+    // ===== FIREBASE AUTH =====
+    let authMode = 'login'; // login or register
+    let fbUser = null;
+    let fbStoreId = null;
+
+    async function initFirebaseAuth() {
+        try {
+            await initFirebase();
+            fbOnAuthChange(async (user) => {
+                fbUser = user;
+                if (user) {
+                    console.log('🔥 Logged in as:', user.email);
+                    closeAuthModal();
+                    // Determine store ID from URL or user email
+                    fbStoreId = businessName.toLowerCase().replace(/[^a-z0-9]/g, '-');
+                    // Load data from Firestore
+                    await loadFromFirestore();
+                } else {
+                    console.log('🔒 Not logged in, using localStorage');
+                    // Show login button for store owners
+                    const ownerLicense = localStorage.getItem('fgf_license') || '';
+                    const isMaster = isMasterLicense(ownerLicense);
+                    const hasClientLicense = clientLicense && clientLicense.startsWith('FGF-CLT');
+                    if (isMaster || hasClientLicense) {
+                        showAuthModal();
+                    }
+                }
+            });
+        } catch (e) {
+            console.warn('Firebase init failed, using localStorage only:', e);
+        }
+    }
+
+    async function loadFromFirestore() {
+        if (!fbUser || !fbStoreId) return;
+        try {
+            const products = await fbLoadProducts(fbUser.uid, fbStoreId);
+            if (products && products.length > 0) {
+                allProducts = products;
+                saveProductsToStorage(); // Also save to localStorage as backup
+                renderProducts(sortByFeatured(allProducts));
+                showToast('☁️ Productos cargados desde la nube');
+            }
+            const config = await fbLoadConfig(fbUser.uid, fbStoreId);
+            if (config) {
+                // Apply cloud config over URL params
+                if (config.name) businessName = config.name;
+                if (config.tel) businessTel = config.tel;
+                if (config.dir) businessDir = config.dir;
+                if (config.color) businessColor = config.color;
+                document.getElementById('navName').textContent = businessName;
+                document.getElementById('heroName').textContent = businessName;
+            }
+        } catch (e) {
+            console.warn('Firestore load error:', e);
+        }
+    }
+
+    async function saveToFirestore() {
+        if (!fbUser || !fbStoreId) return;
+        try {
+            await fbSaveProducts(fbUser.uid, fbStoreId, allProducts);
+            await fbSaveConfig(fbUser.uid, fbStoreId, {
+                name: businessName, tipo: businessTipo, tel: businessTel,
+                dir: businessDir, horario: businessHorario, color: businessColor
+            });
+            console.log('☁️ Saved to Firestore');
+        } catch (e) {
+            console.warn('Firestore save error:', e);
+        }
+    }
+
+    // Wrap existing saveProductsToStorage to also save to Firestore
+    const _origSaveProducts = saveProductsToStorage;
+    saveProductsToStorage = function() {
+        _origSaveProducts();
+        saveToFirestore();
+    };
+
+    function showAuthModal() {
+        document.getElementById('authModal').style.display = 'flex';
+    }
+    function closeAuthModal() {
+        document.getElementById('authModal').style.display = 'none';
+    }
+    function toggleAuthMode() {
+        authMode = authMode === 'login' ? 'register' : 'login';
+        const isRegister = authMode === 'register';
+        document.getElementById('authModalTitle').textContent = isRegister ? 'Crear Cuenta' : 'Iniciar Sesión';
+        document.getElementById('authModalSubtitle').textContent = isRegister ? 'Registra tu tienda en la nube' : 'Accede para administrar tu tienda';
+        document.getElementById('authSubmitBtn').textContent = isRegister ? 'Crear Cuenta' : 'Iniciar Sesión';
+        document.getElementById('authNameGroup').style.display = isRegister ? 'block' : 'none';
+        document.getElementById('authToggle').textContent = isRegister ? '¿Ya tienes cuenta? Iniciar sesión' : '¿No tienes cuenta? Crear una';
+        document.getElementById('authModalIcon').textContent = isRegister ? '📝' : '🔐';
+        document.getElementById('authError').style.display = 'none';
+    }
+    async function handleAuth() {
+        const email = document.getElementById('authEmail').value.trim();
+        const pass = document.getElementById('authPassword').value;
+        const name = document.getElementById('authName').value.trim();
+        const errEl = document.getElementById('authError');
+        errEl.style.display = 'none';
+        if (!email || !pass) { errEl.textContent = 'Completa todos los campos'; errEl.style.display = 'block'; return; }
+        if (pass.length < 6) { errEl.textContent = 'La contraseña debe tener al menos 6 caracteres'; errEl.style.display = 'block'; return; }
+        try {
+            if (authMode === 'register') {
+                await fbRegister(email, pass, name || email.split('@')[0]);
+                showToast('✅ Cuenta creada. ¡Bienvenido!');
+            } else {
+                await fbLogin(email, pass);
+                showToast('✅ Sesión iniciada');
+            }
+        } catch (e) {
+            const messages = {
+                'auth/email-already-in-use': 'Este email ya está registrado',
+                'auth/user-not-found': 'No existe una cuenta con este email',
+                'auth/wrong-password': 'Contraseña incorrecta',
+                'auth/invalid-email': 'Email inválido',
+                'auth/weak-password': 'La contraseña es muy débil'
+            };
+            errEl.textContent = messages[e.code] || e.message;
+            errEl.style.display = 'block';
+        }
+    }
+    function fbDemoMode() {
+        closeAuthModal();
+        showToast('📱 Modo demo local — los datos se guardan en este dispositivo');
+    }
+
+    // Initialize Firebase on page load
+    initFirebaseAuth();
 
     // ===== DEMO WATERMARK (no license) =====
     if (!clientLicense) {
